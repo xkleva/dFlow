@@ -1,5 +1,5 @@
 class Job < ActiveRecord::Base
-  default_scope where( :deleted_at => nil ) #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
+  default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
   belongs_to :source
   before_save :generate_search_title
   before_validation :generate_source_id
@@ -12,44 +12,10 @@ class Job < ActiveRecord::Base
 
   attr_accessor :failed
   attr_accessor :metadata
-  attr_accessor :new_status
-  attr_accessor :new_project
   attr_accessor :new_copyright
   attr_accessor :import_rownr
   attr_accessor :copyright_value_exp
 
-
-  #Returns Job processing folder
-  def job_processing_folder
-    job_dir = Pathname.new(DigFlow::Application.config.base_processing_directory + "/" + id.to_s)
-    if !job_dir.exist?
-      puts "#{job_dir} doesn't exist"
-      return nil
-    end
-    job_dir
-  end
-
-  def column_data(key)
-    case key
-    when "title"
-      return title
-    when "author"
-      return author
-    when "id"
-      return id
-    when "user_id"
-      return user.name
-    when "status_id"
-      return status.name
-    when "catalog_id"
-      return catalog_id
-    when "project_id"
-      return project.name
-    else
-      metadata = job_metadata.find_by_key(key)
-      return metadata ? metadata.value : ""
-    end
-  end
 
   def self.search(searchterm)
     Job.where("(lower(title) LIKE ?) OR (lower(name) LIKE ? ) OR (lower(author) LIKE ?) OR (lower(search_title) LIKE ?) OR (id = ?) OR (catalog_id = ?)",

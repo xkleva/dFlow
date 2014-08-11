@@ -1,0 +1,333 @@
+sv:
+  users:
+    index:
+      header: "Användare"
+    edit:
+      header: "Redigera användare"
+    login:
+      header: "Logga in"
+      submit: "Logga in"
+      fail: "Felaktigt användarnamn eller lösenord"
+      link: "Logga in"
+    show:
+      header: "Användare detaljvy"
+    form:
+      submit: "Spara"
+    logout: "Logga ut"
+    delete: "Radera användare"
+    delete_error: "Kunde inte radera användare"
+    delete_confirm: "Alla användarens jobb och projekt kommer flyttas till dig. Är du säker?"
+    delete_note: "Användaren raderad av administratör"
+    deleted: "Raderade användare"
+    undelete: "Återskapa användare"
+    user: "Användare"
+    username: "Användarnamn"
+    password: "Lösenord"
+    password_confirm: "Bekräfta lösenord"
+    change_password:
+      change_password: "Byt lösenord"
+    name: "Namn"
+    email: "E-post"
+    role: "Roll"
+    new:
+      create: "Ny användare"
+      header: "Ny användare"
+    logged_in_as: "Inloggad som"
+
+  projects:
+    index:
+      header: "Projekt"
+    active: "Pågående"
+    delete: "Radera projekt"
+    delete_confirm: "Bekräfta att du vill radera projektet"
+    done: "Avslutade"
+    project: "projekt"
+    edit:
+      header: "Redigera projekt"
+    show:
+      header: "Projekt"
+    new:
+      create: "Nytt projekt"
+      header: "Nytt Projekt"
+    link_to_project: "Till projektsidan"
+    name: "Namn"
+    owner: "Ägare"
+    note: "Kommentar"
+    progress: "Status"
+    copyright: "Copyright"
+    toggle_link:
+      prioritized_jobs: "< Prioriterade jobb >"
+
+  jobs:
+    created_by: "Skapad av"
+    toggle_link:
+      xml: "< XML >"
+      activity_log: "< Aktivitetslogg >"
+    index: 
+      header: "Jobblista"
+    job: "Jobb"
+    click_to_add: "<span class=\"placeholder\">Dubbelklicka för att lägga till</span>"
+    click_to_add_serial_metadata: "<span class=\"placeholder\">Dubbelklicka för att ändra periodikametadata </span>"
+    delete: "Radera"
+    delete_confirm: "Bekräfta radering"
+    edit:
+      header: "Redigera jobb"
+    catalog_request:
+      header: "Nytt jobb"
+    batch_fetch: 
+      header: "Importerade jobb"
+    batch:
+      jobs_to_be_imported_into: "jobb som ska importeras till"
+    batch_quality_control:
+      submit: "Kvalitetskontrollera"
+    failed: "Felaktiga jobb"
+    form:
+      libris_fetch:  "Importera post"
+      import: "Importera"
+      batch_import: "Importera"
+    quarantined: "Karantän"
+    quarantine_note: "Kommentera"
+    quarantine_error: "Du måste kommentera!"
+    restart: "Starta om jobb"
+    restart_note: "Kommentera"
+    restart_error: "Du måste kommentera!"
+    restart_confirm: "Är du säker på att du vill starta om jobbet? All data skickad till lagringsyta kommer att skrivas över."
+    quarantine_header: "Jobb i karantän"
+    pdf_link: "Länk till pdf"
+    quality_control_ok: "Kvalitetskontroll OK"
+    prioritized_jobs: "Prioriterade jobb"
+    prioritized:
+      label: "prioriterat"
+      message: "Prioriterat!"
+    priority_job: "Prioriterat jobb"
+    prioritize: "Prioritera"
+    deprioritize: "Nedprioritera"
+    search: "Sök jobb"
+    search_filter_on_owner_prompt: "Filtrera på ägare"
+    search_filter_on_created_by_prompt: "Filtrera på skapad av"
+    search_filter_on_status_prompt: "Filtrera på status"
+    search_filter_on_project_prompt: "Filtrera på projekt"
+    guessed_page_count: "Uppskattat sidantal"
+    page_count: "Sidantal"
+    errors:
+      schema_does_not_validate_xml: "Xml validerar inte mot schema"
+      source_not_responding: "Källan svarar inte"
+      same_catalog_id: "Det finns redan jobb skapade med det angivna id:t"
+      no_hits_found: "Inga jobb motsvarar filtret"
+    monographs: "Monografier"
+    manuscripts: "Handskrifter"
+    scope: "Omfång"
+
+    print:
+      command: "Skriv ut"
+      page_title: ""
+      header: "Utskrift"
+      scanned: "Skannad"
+      pending: "Pågående"
+      scanned_by: "Av"
+      date: "Datum"
+      lastjob_command: "Öppna utskrift för det senast skapade jobbet:"
+
+    new:
+      create: "Nytt jobb"
+      header: "Nytt jobb"
+      create_label: "Nytt singeljobb"
+    show:
+      header: "Jobb"
+    import:
+      header: "Importera jobb"
+      label: "Batchimportera jobb"
+
+    upload_file: "Ladda upp fil (tabbseparerad, UTF-8)"
+
+    object_information:  "Objektinformation"
+    comment: "Kommentar"
+    priority: "Prioritet"
+    change_priority: "Byt prioritet"
+    name:  "Jobbnamn"
+    name_desc: "Plats för beskrivande titel vid behov..."
+    original_title: "Originaltitel"
+    serial_metadata: "Metadata periodika"
+    type_of_record: "Typ av post"
+    type_of_record_as: "Periodika"
+    type_of_record_am: "Monografi"
+    type_of_record_tm: "Handskrift"
+    ordinals: "Ordinalitet"
+    chronologicals: "Kronologi"
+    key: "Nyckel"
+    value: "Värde"
+    note: "Kommentar"
+    note_desc: "Beställare, leverans, problem etc."
+    object_info: "Objektinformation"
+    object_info_desc: "Information om objektet, lösblad, scanningsförfarande, arbetsflöde etc."
+    title: "Titel"
+    author: "Författare"
+    owner : "Ägare"
+    user_id: "Ägare"
+    status_id: "Status"
+    status:  "Status"
+    change_status: "Byt status"
+    catalog_id: "Katalog-ID"
+    source_id: "Källa"
+    project: "Projekt"
+    change_project: "Byt projekt"
+    summary: "Projektöversikt"
+    created_by: "Skapad av"
+    archive: "Arkiv"
+    location: "Placering"
+
+    copyright: "Copyright"
+    change_copyright: "Ändra copyright"
+  
+    all: "Alla jobb"
+    created: "Preparering"
+    digitizing: "Digitalisering"
+    post_processing: "Efterbearbetning"
+    quality_control: "Kvalitetskontroll"
+    quarantine: "Sätt i karantän"
+    unquarantine: "Avsluta karantän"
+    done: "Klart"
+    job_switcher:
+      previous: "Föregående"
+      next: "Nästa"
+      first: "Första"
+      last:  "Sista"
+
+    error:
+      heading: "Kan inte hämta data"
+      information: "Ett fel inträffade när Dflow försökte hämta data från källan. Vänligen kontrollera id eller försök igen senare."
+
+    sources:
+      Letter: "Brev"
+      Document: "Dokument"
+      Libris: "Libris"
+  statuses:
+    manual_select: "Välj ny status"
+    create_begin: "Jobb skapas"
+    create_end: "Jobb skapat"
+    deleted: "Jobb raderat"
+    digitizing_begin: "Digitalisering"
+    digitizing_end: "Digitialisering klar"
+    done: "Klar"
+    post_processing_begin: "Efterbearbetning"
+    post_processing_end: "Efterbearbetning klar"
+    post_processing_user_input_begin: "Manuell efterbearbetning"
+    post_processing_user_input_end: "Manuell efterbearbetning klar"
+    publish_begin: "Publish begin"
+    publish_end: "Publish end"
+    quality_control_begin: "Kvalitetskontroll"
+    quality_control_end: "Kvalitetskontroll ok"
+    waiting_for_digitizing_begin: "Väntar på digitalisering"
+    waiting_for_digitizing_end: "Väntan över"
+    waiting_for_post_processing_begin: "Väntar på efterbearbetning"
+    waiting_for_post_processing_end: "Väntan över"
+    waiting_for_quality_control_begin: "Väntar på kvalitetskontroll"
+    waiting_for_quality_control_end: "Väntan över"
+    waiting_for_mets_control_begin: "Väntar på metskontroll"
+    waiting_for_mets_control_end: "Väntan över"
+    mets_control_begin: "Metskontroll"
+    mets_control_end: "Metskontroll klar"
+    mets_production_begin: "Metsproduktion"
+    mets_production_end: "Metsproduktion klar"
+    quarantined: "Satt i karantän"
+    unquarantined: "Tagits ur karantän"
+
+  events:
+    change_user: "Ny användare"
+    change_status: "Ny status"
+    change_project: "Nytt projekt"
+    quarantine: "Karantän"
+    unquarantine: "Ur karantän"
+    name: "Händelse"
+    to: "till"
+    note: "Kommentar"
+    type: "Typ"
+
+  common:
+    edit: "Redigera"
+    new: "Nytt"
+    form:
+      submit: "Spara"
+      cancel: "Avbryt"
+    start_digitizing: "Starta digitalisering"
+    timestamp: "Tid"
+    summary: "Översikt"
+
+  mets_data:
+    copyright_status:
+      label: "Copyright"
+      default_from_config: "Förvalt"
+      default_from_project: "Projekt"
+      not_set: "Ej valt"
+      default: "Förvalt enl. konfiguration"
+      may_publish: "Får publiceras"
+      may_not_publish: "Får inte publiceras"
+
+  mets:
+    structure:
+      am: "Monograph"
+      as: "Serial"
+      tm: "Monograph"
+    errors:
+      job_directory_missing: "METS-katalog för jobbet saknas"
+      job_directory_exists_twice: "Multipla METS-kataloger finns"
+      page_count_missing: "Sidantal saknas"
+      page_count_to_low: "För få sidor"
+      pdf_missing: "PDF saknas"
+      pdf_empty: "PDF tom"
+      directory_missing: "Katalog saknas"
+      files_missing: "Filer saknas"
+      file_missing: "Fil saknas"
+      file_empty: "Fil tom"
+      page_metadata_missing: "Metadata för sidan saknas"
+      page_count_missing: "Sidantal saknas (pagecount)"
+      page_count_to_low: "För lågt sidantal (pagecount)"
+      page_not_defined: "Definitionen fel för sida"
+      group_name_not_found: "Gruppnamnet finns inte"
+      unable_to_write_file: "Kunde inte skriva fil"
+      mets_xml_invalid: "METS XML är ogiltig"
+      zip_creation_failed: "Skapande av ZIP misslyckades"
+      job_move_failed: "Kunde inte flytta jobb"
+
+  will_paginate:
+    previous_label: "&#8592; Föregående"
+    next_label: "Nästa &#8594;"
+    page_gap: "&hellip;"
+    page_entries_info:
+      single_page:
+        zero:  "Ingen träff!"
+        one:   "1 träff"
+        other: "%{count} träffar"
+      single_page_html:
+        zero:  "Ingen träff!"
+        one:   "<b>1</b> träff"
+        other: "<b>&nbsp;%{count}</b> träffar"
+
+      multi_page: "Visar träffar %{from} - %{to} av %{count}"
+      multi_page_html: "Visar träffar <b>%{from}&nbsp;-&nbsp;%{to}</b> av <b>%{count}</b>"
+    per_page_label: "Träffar per sida"
+
+  mailalerts:
+    subject_prefix: "Dflow: "
+    header: "Detta är ett automatiskt genererat meddelande från DFlow"
+    footer: "Svara ej på detta mail. Om du ej vill få mail av den här typen, meddela dteam@ub.gu.se -Digitaliseringsteamet Göteborgs Universitetsbibliotek"
+    system_user: "DFlow"
+    quarantined:
+      subject: "Ett jobb har satts i karantän!"
+      system_message: "Satt i karantän av systemet"
+    unquarantined:
+      subject: "Ett jobb har plockats ur karantän!"
+    restart:
+      subject: "Ett jobb har startats om!"
+    welcome:
+      subject: "DFlow: Ditt konto har skapats!"
+      hello: "Hej,"
+      message_top: "Ett konto har skapats för dig med följande uppgifter:"
+      message_bottom: "För att logga in använder du adressen http://dflow.ub.gu.se"
+
+  statistics:
+    index:
+      header: "Statistik"
+    jobs:
+      header: "Jobböversikt"
+      total: "Totalt"

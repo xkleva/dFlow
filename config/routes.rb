@@ -1,4 +1,21 @@
 Rails.application.routes.draw do
+
+  namespace :api, :defaults => {:format => :json} do
+    get 'config/config_values/:api_key' , to: 'config#config_values'
+    get 'jobs/job_metadata/:job_id/:api_key', to: 'jobs#job_metadata'
+    get 'jobs/update_metadata/:job_id/:key/:metadata/:api_key', to: 'jobs#update_metadata'
+    get 'jobs/mets_data/:job_id/:api_key' , to: 'jobs#mets_data'
+    get 'jobs/mets_dmdid_attribute/:job_id/:group/:api_key' , to: 'jobs#mets_dmdid_attribute'
+    get 'jobs/process_request/:process_id/:api_key', to: 'jobs#process_request'
+
+    get 'jobs/get_next_w_status/:status/:api_key' , to: 'jobs#get_next_w_status'
+    get 'workflows/change_status/:job_id/:status/:api_key' , to: 'workflows#change_status'
+    get 'jobs/quarantine_job/:job_id/:message_key/:api_key' , to: 'jobs#quarantine_job'
+    get 'api/check_connection/:api_key' , to: 'api#check_connection'
+    get 'jobs/get_small_work_images/:job_id/:startnr/:count/:api_key' , to: 'jobs#get_small_work_images'
+    post 'jobs/update_page_info' , to: 'jobs#update_page_info'
+    get 'jobs/get_image/:job_id/:page/:api_key', to: 'jobs#get_image'
+  end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

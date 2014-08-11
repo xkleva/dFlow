@@ -1,23 +1,334 @@
-# Files in the config/locales directory are used for internationalization
-# and are automatically loaded by Rails. If you want to use locales other
-# than English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t 'hello'
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t('hello') %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more, please read the Rails Internationalization guide
-# available at http://guides.rubyonrails.org/i18n.html.
-
 en:
-  hello: "Hello world"
+  users:
+    index:
+      header: "List of users"
+    edit:
+      header: "Edit user"
+    login:
+      header: "Login"
+      submit: "Login"
+      fail: "Invalid login credentials"
+      link: "Login"
+    show:
+      header: "User detail"
+    form:
+      submit: "Save"
+    logout: "Logout"
+    delete: "Delete user"
+    delete_error: "Unable to delete user"
+    delete_confirm: "If you delete user, all jobs and projects will be moved to you. Are you sure?"
+    delete_note: "User deleted by administrator"
+    deleted: "Deleted users"
+    undelete: "Recreate user"
+    user: "User"
+    username: "Username"
+    password: "Password"
+    password_confirm: "Confirm password"
+    change_password:
+      change_password: "Change Password"
+    name: "Name"
+    email: "Email"
+    role: "Role"
+    new: 
+      create: "New user"
+      header: "New user"
+    logged_in_as: "Logged in as"
+
+  projects:
+    index:
+      header: "Projects"
+    active: "Active"
+    delete: "Delete project"
+    delete_confirm: "Confirm that you want to delete this project"
+    done: "Done"
+    project: "project"
+    edit:
+      header: "Edit project"
+    show:
+      header: "Project"
+    new:
+      create: "New project"
+      header: "New project"
+    link_to_project: "To project page"
+    name: "Name"
+    owner: "Owner"
+    note: "Note"
+    progress: "Progress"
+    copyright: "Copyright"
+    toggle_link:
+      prioritized_jobs: "< Prioritized Jobs >"
+
+  jobs:
+    created_by: "Created by"
+    toggle_link:
+      xml: "Show/Hide XML"
+      activity_log: "Show/Hide Events"
+    index:
+      header: "List of jobs"
+    job: "Job"
+    click_to_add: "<span class=\"placeholder\">Doubleclick to add</span>"
+    click_to_add_serial_metadata: "<span class=\"placeholder\">Doubleclick to change </span>"
+    delete: "Delete"
+    delete_confirm: "Confirm delete"
+    edit:
+      header: "Edit job"
+    catalog_request:
+      header: "New job"
+    batch_fetch:
+      header: "Jobs fetched"
+    batch:
+      jobs_to_be_imported_into: "jobs to be imported into"
+    batch_quality_control:
+      submit: "Quality control"
+    failed: "failed jobs"
+    form:
+      libris_fetch:  "Fetch record"
+      import: "Fetch"
+      batch_import: "Import"
+    quarantined: "Quarantined"
+    quarantine_note: "Comment"
+    quarantine_error: "You have to comment!"
+    restart: "Restart job"
+    restart_note: "Comment"
+    restart_error: "You have to comment!"
+    restart_confirm: "Are you sure that you want to restart the job? All data previously sent to storage unit will be overwritten."
+    quarantine_header: "Jobs in Quarantine"
+    pdf_link: "Link to pdf"
+    quality_control_ok: "Kvalitetskontroll OK"
+    prioritized_jobs: "Prioritized jobs"
+    prioritized:
+      label: "Prioritized"
+      message: "Prioritized job!"
+    priority_job: Prioritized job
+    prioritize: Prioritize
+    deprioritize: Deprioritize
+    search: "Search jobs"
+    search_filter_on_owner_prompt: "Filter by owner"
+    search_filter_on_created_by_prompt: "Filter by created by"
+    search_filter_on_status_prompt: "Filter by status"
+    search_filter_on_project_prompt: "Filter by project"
+    guessed_page_count: "Estimated page count"
+    page_count: "Page count"
+    errors:
+      schema_does_not_validate_xml: "Schema does not validate"
+      source_not_responding: "Source not responding"
+      same_catalog_id: "There are aready jobs created with the given id"
+      no_hits_found: "No hits found according to filter"
+    monographs: "Monographs"
+    manuscripts: "Manuscripts"
+    scope: "Scope"
+    
+    print:
+      command: "Print"
+      page_title: ""
+      header: "Print"
+      scanned: "Scanned"
+      pending: "Pending"
+      scanned_by: "By"
+      date: "Date"
+      lastjob_command: "Open printable page for the last created job:"
+
+    new:
+      create: "New job"
+      header: "New job"
+      create_label: "New Single Job"
+    show:
+      header: "Job"
+    import:
+      header: "Fetch jobs"
+      label: "Batch Fetch Jobs"
+
+    upload_file: "Upload file (tab separated, UTF-8)"
+
+    object_information: "Object information"
+    comment: "Comment"
+    priority: "Priority"
+    change_priority: "Change Priority"
+    name: "Jobname"
+    name_desc: "Room for a describing name when needed..."
+    original_title: "Original title"
+    serial_metadata: "Serial metadata"
+    type_of_record: "Type of record"
+    type_of_record_as: Serial
+    type_of_record_am: Monograph
+    type_of_record_tm: Manuscript
+    ordinals: "Ordinals"
+    chronologicals: "Chronologicals"
+    key: "Key"
+    value: "Value"
+    note: "Note"
+    note_desc: "Customer, delivery information, problems etc."
+    object_info: "Object Information"
+    object_info_desc: "Information about the object, loose pages, scanning equipment, workflows etc."
+    title: "Title"
+    author: "Author"
+    owner : "Owner"
+    user_id: "Owner"
+    status_id: "Status"
+    status: "Status"
+    change_status: "Change Status"
+    catalog_id: "Catalog Id"
+    source_id: "Source"
+    project: "Project"
+    change_project: "Change Project"
+    summary: "Project summary"
+    created_by: "Created by"
+    archive: "Archive"
+    location: "Location"
+
+    copyright: "Copyright"
+    change_copyright: "Change Copyright"
+
+    all: "All Jobs"
+    created: "New Jobs"
+    digitizing: "Digitizing"
+    post_processing: "Post Processing"
+    quality_control: "Quality Control"
+    quarantine: "Quarantine"
+    unquarantine: "Unquarantine"
+    done: "Done"
+    job_switcher:
+      previous: "Previous"
+      next: "Next"
+      first: "Första"
+      last:  "Sista"
+    
+    error:
+      heading: "Cannot fetch data"
+      information: "An error occurred when Dflow was trying to fetch data from the source. Please check the id or try again later."
+    
+    sources:
+      Letter: "Letter"
+      Document: "Document"
+      Libris: "Libris"
+      
+  statuses:
+    manual_select: "Select new status"
+    create_begin: "Job to be created"
+    create_end: "Job created"
+    deleted: "Job deleted"
+    digitizing_begin: "Digitizing"
+    digitizing_end: "Digitizing done"
+    done: "Done"
+    post_processing_begin: "Post processing"
+    post_processing_end: "Post processing done"
+    post_processing_user_input_begin: "PP User input required"
+    post_processing_user_input_end: "PP User input done"
+    publish_begin: "Publish begin"
+    publish_end: "Publish end"
+    quality_control_begin: "Quality control"
+    quality_control_end: "Quality control ok"
+    waiting_for_digitizing_begin: "Waiting for digitizing"
+    waiting_for_digitizing_end: "Waiting ended"
+    waiting_for_post_processing_begin: "Waiting for post processing"
+    waiting_for_post_processing_end: "Waiting ended"
+    waiting_for_quality_control_begin: "Waiting for quality control"
+    waiting_for_quality_control_end: "Waiting ended"
+    waiting_for_mets_control_begin: "Waiting for mets control"
+    waiting_for_mets_control_end: "Waiting ended"
+    mets_control_begin: "Mets control"
+    mets_control_end: "Mets control done"
+    mets_production_begin: "Mets production"
+    mets_production_end: "Mets production done"
+    quarantined: "Quarantined"
+    unquarantined: "Removed from quarantine"
+
+  events:
+    change_user: "User changed"
+    change_status: "Status changed"
+    change_project: "Project changed"
+    quarantine: Quarantine
+    unquarantine: Unquarantine
+    name: "Event"
+    to: "to"
+    note: "Comment"
+    type: "Type"
+
+  common:
+    edit: "Edit"
+    new: "New"
+    form:
+      submit: "Save"
+      cancel: "Cancel"
+    start_digitizing: "Digitize"
+    timestamp: "Time"
+    summary: "Summary"
+  
+  mets_data:
+    copyright_status:
+      label: "Copyright"
+      default_from_config: "Default: "
+      default_from_project: "Project: "
+      not_set: "Not set"
+      default: "Default by configuration"
+      may_publish: "May publish"
+      may_not_publish: "May not publish"
+      
+  mets:
+    structure:
+      am: "Monograph"
+      as: "Serial"
+      tm: "Monograph"
+    errors:
+      job_directory_missing: "METS directory for job missing"
+      job_directory_exists_twice: "Multiple METS directories exist"
+      page_count_missing: "Page count missing"
+      page_count_to_low: "Not enough pages"
+      pdf_missing: "PDF missing"
+      pdf_empty: "PDF empty"
+      directory_missing: "Directory missing"
+      files_missing: "Files missing"
+      file_missing: "File missing"
+      file_empty: "File empty"
+      page_metadata_missing: "Page metadata missing"
+      page_count_missing: "Page count missing"
+      page_count_to_low: "Page count to low"
+      page_not_defined: "Page not defined properly"
+      group_name_not_found: "Groupname not found"
+      unable_to_write_file: "Unable to write file"
+      mets_xml_invalid: "METS XML is invalid"
+      zip_creation_failed: "ZIP file creation failed"
+      job_move_failed: "Unable to move job"
+
+  will_paginate:
+    previous_label: "&#8592; Previous"
+    next_label: "Next &#8594;"
+    page_gap: "&hellip;"
+    page_entries_info:
+      single_page:
+        zero:  "No %{model} found"
+        one:   "Displaying 1 %{model}"
+        other: "Displaying all %{count} %{model}"
+      single_page_html:
+        zero:  "No %{model} found"
+        one:   "Displaying <b>1</b> %{model}"
+        other: "Displaying <b>all&nbsp;%{count}</b> %{model}"
+
+      multi_page: "Displaying %{model} %{from} - %{to} of %{count} in total"
+      multi_page_html: "Displaying %{model} <b>%{from}&nbsp;-&nbsp;%{to}</b> of <b>%{count}</b> in total"
+    per_page_label: "Hits per page"
+
+  mailalerts:
+    subject_prefix: "Dflow: "
+    header: "This is an auto-generated message from DFlow"
+    footer: "Do not reply to this email. If you do not wish to receive emails of this kind, please send a message to dteam@ub.gu.se -Digitizing Team, Gothenburg University Library"
+    system_user: "DFlow"
+    quarantined:
+      subject: "A job has been quarantined!"
+      system_message: "Quarantined by the system"
+    unquarantined:
+      subject: "A job has been removed from quarantine!"
+    restart:
+      subject: "A job has been restarted!"
+    welcome:
+      subject: "DFlow: Your account has been created"
+      hello: "Hi,"
+      message_top: "An account has been created for you with the following information:"
+      message_bottom: "To log in, please use the following address: http://dflow.ub.gu.se"
+
+  statistics:
+    index:
+      header: "Statistics"
+    jobs:
+      header: "Job overview"
+      total: "Total"
