@@ -11,7 +11,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140808113414) do
+ActiveRecord::Schema.define(version: 20140814142309) do
+
+  create_table "entries", force: true do |t|
+    t.integer  "job_id"
+    t.integer  "flow_step_id"
+    t.string   "state"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "flow_steps", force: true do |t|
+    t.integer  "flow_id"
+    t.integer  "process_id",         limit: 255
+    t.string   "goto_true"
+    t.string   "goto_false"
+    t.string   "condition_method"
+    t.string   "condition_operator"
+    t.string   "condition_value"
+    t.string   "params"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "flows", force: true do |t|
+    t.string   "name"
+    t.integer  "start_position"
+    t.text     "params_info"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "jobs", force: true do |t|
     t.text     "name"
@@ -23,13 +52,16 @@ ActiveRecord::Schema.define(version: 20140808113414) do
     t.integer  "created_by"
     t.integer  "updated_by"
     t.text     "xml"
-    t.boolean  "quarantined",  default: false
+    t.boolean  "quarantined",    default: false
     t.text     "comment"
     t.text     "object_info"
     t.text     "search_title"
-    t.text     "metadata",     default: ""
+    t.text     "metadata",       default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "progress_state"
+    t.integer  "flow_id"
+    t.text     "flow_params"
   end
 
   create_table "roles", force: true do |t|

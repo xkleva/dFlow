@@ -1,0 +1,26 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  id: 1
+  role_id: 1
+  email: 
+  username: guest_user
+  password: password
+  name: Guest User
+
+two:
+  id: 2
+  role_id: 2
+  email: 
+  username: operator_user
+  password: MyText
+  name: Operator User
+
+
+three:
+  id: 3
+  role_id: 3
+  email: 
+  username: admin_user
+  password: MyText
+  name: Admin User

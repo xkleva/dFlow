@@ -131,7 +131,7 @@ class Libris < SourceBase
   end
 
   def self.search_title(job)
-    "#{job.title} #{job.ordinals_and_chronologicals}"
+    "#{job.title}"
   end
 
   def self.schema_validation(job)

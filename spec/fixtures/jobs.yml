@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  id: 1
+  name: MyText
+  catalog_id: 1
+  title: MyTitle
+  author: MyAuthor
+  deleted_at:
+  created_by: 1
+  updated_by: 1
+  source: one
+  metadata: '{"job":{}, "0001": {}}'
+
+two:
+  id: 2
+  name: MyText2
+  catalog_id: 2
+  title: MyTitle2
+  author: MyAuthor2
+  deleted_at:
+  created_by: 1
+  updated_by: 1
+  source: two
+  metadata: '{"job":{}, "0001": {}}'

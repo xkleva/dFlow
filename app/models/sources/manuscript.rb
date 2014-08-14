@@ -97,11 +97,11 @@ class Manuscript < SourceBase
   
 
   def self.search_title(job)
-    archive_title = job.job_metadata.find_by_key("archive")
-    archive_title = archive_title ? archive_title.value : ""
-    location = job.job_metadata.find_by_key("location")
-    location = location ? location.value : ""
-    "#{archive_title} #{location}"
+    #archive_title = job.job_metadata.find_by_key("archive")
+    #archive_title = archive_title ? archive_title.value : ""
+    #location = job.job_metadata.find_by_key("location")
+    #location = location ? location.value : ""
+    #"#{archive_title} #{location}"
   end
 
   #Defines if copyright shall be inherited from source or set at job creation

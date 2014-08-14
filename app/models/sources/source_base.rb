@@ -7,13 +7,7 @@ class SourceBase
   attr_accessor :metadata
 
   def initialize(user_id, project_id, catalog_id)
-    @user_id = user_id
-    @project_id = project_id
     @catalog_id = catalog_id
-  end
-
-  def new_job_status_id
-    Status.find_by_name("create_begin").id
   end
 
   def source_id
@@ -22,8 +16,6 @@ class SourceBase
 
   def job_params
     {
-      user_id: @user_id,
-      project_id: @project_id,
       catalog_id: @catalog_id,
       mods: @mods,
       xml: @xml,
@@ -31,7 +23,6 @@ class SourceBase
       author: @author,
       metadata: @metadata,
       source_id: source_id,
-      status_id: new_job_status_id
     }
   end
 

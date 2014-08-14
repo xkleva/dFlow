@@ -1,5 +1,4 @@
 class Source < ActiveRecord::Base
-  attr_accessible :classname
 
   def xml_data(job)
     class_call(:xml_data, job)

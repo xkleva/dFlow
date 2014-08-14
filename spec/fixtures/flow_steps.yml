@@ -1,0 +1,30 @@
+one:
+  id: 1
+  flow_id:
+  process_id: 1
+  goto_true: 2
+  goto_false:
+  condition_method:
+  condition_operator:
+  condition_value:
+  params:
+two:
+  id: 2
+  flow_id:
+  process_id: 2
+  goto_true: 3
+  goto_false:
+  condition_method:
+  condition_operator:
+  condition_value:
+  params:
+three:
+  id: 3
+  flow_id:
+  process_id: 3
+  goto_true:
+  goto_false:
+  condition_method:
+  condition_operator:
+  condition_value:
+  params:

@@ -52,4 +52,6 @@ class ApplicationController < ActionController::Base
 	    session[:history] = session[:history].last(10) # limit the size to 10
 	    @back=session[:history][-2]
 	end
+
+	
 end

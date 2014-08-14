@@ -1,1 +1,16 @@
-Rails.application.config.api_key = your_key_here
+Rails.application.config.api_key = <your_key_here>
+
+Rails.application.config.process_list = {
+	"scan_job" => {
+		id: "scan_job"
+	},
+	"rename_files" => {
+		id: "rename_files"
+	}
+	"move_files" => {
+		id: "move_files"
+	}
+	"copy_files" => {
+		id: "copy_files"
+	}
+}
