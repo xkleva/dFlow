@@ -4,7 +4,7 @@ class Job < ActiveRecord::Base
   default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
   scope :active, -> {where(quarantined: false, deleted_at: nil)}
 
-  has_many :processing_entries
+  has_many :entries
   belongs_to :source
   before_save :generate_search_title
   before_validation :generate_source_id
@@ -14,15 +14,10 @@ class Job < ActiveRecord::Base
   validates :source_id, :presence => true
   validate :xml_validity
 
-# Sets state for current task
-def set_state(state)
-  processing_entries.create(flow_step_id: current_processing_entry.flow_step_id, state: state)
-  self.save
-end
 
 # Returns the current workflowStep if any
-def current_processing_entry
-  processing_entries.most_recent
+def current_entry
+  entries.most_recent
 end
 
 # Updates metadata for a specific key

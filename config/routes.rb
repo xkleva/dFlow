@@ -6,18 +6,9 @@ Rails.application.routes.draw do
     get 'jobs/job_metadata', to: 'jobs#job_metadata'
     get 'jobs/update_metadata', to: 'jobs#update_metadata'
     get 'jobs/process_request', to: 'jobs#process_request'
-    
-    get 'jobs/mets_data/:job_id/:api_key' , to: 'jobs#mets_data'
-    get 'jobs/mets_dmdid_attribute/:job_id/:group/:api_key' , to: 'jobs#mets_dmdid_attribute'
-    
-
-    get 'jobs/get_next_w_status/:status/:api_key' , to: 'jobs#get_next_w_status'
-    get 'workflows/change_status/:job_id/:status/:api_key' , to: 'workflows#change_status'
-    get 'jobs/quarantine_job/:job_id/:message_key/:api_key' , to: 'jobs#quarantine_job'
-    
-    get 'jobs/get_small_work_images/:job_id/:startnr/:count/:api_key' , to: 'jobs#get_small_work_images'
-    post 'jobs/update_page_info' , to: 'jobs#update_page_info'
-    get 'jobs/get_image/:job_id/:page/:api_key', to: 'jobs#get_image'
+    get 'jobs/process_initiate', to: 'jobs#process_initiate'
+    get 'jobs/process_done', to: 'jobs#process_done'
+    get 'jobs/process_progress', to: 'jobs#process_progress'
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

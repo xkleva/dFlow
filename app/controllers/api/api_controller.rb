@@ -7,6 +7,7 @@ class Api::ApiController < ApplicationController
 		render json: {status: ResponseData::ResponseStatus.new("SUCCESS")}
 	end
 
+	private 
 	#Check if api_key is correct, otherwise return error
 	def check_key
 		api_key = params[:api_key]
@@ -15,7 +16,6 @@ class Api::ApiController < ApplicationController
 		end
 	end
 
-	private 
 	# Sorts a list of files based on filename
 	def sort_files(files)
 		files.sort_by { |x| x.basename.to_s[/^(\d+)\./,1].to_i }

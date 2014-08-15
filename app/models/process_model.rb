@@ -1,12 +1,20 @@
 # Contains methods for process management
 class ProcessModel
-	attr_accessor :id,:allowed_processes,:code
+	  # Required dependency for ActiveModel::Errors
+	  extend ActiveModel::Naming
+	  attr_accessor :id,:allowed_processes,:code
+	  attr_reader   :errors
 
-	def initialize(process_hash)
-		@id = process_hash[:id]
-		@allowed_processes = process_hash[:allowed_processes]
-		@code = process_hash[:code]
-	end
+	  def initialize(process_hash)
+	  	@id = process_hash[:id]
+	  	@allowed_processes = process_hash[:allowed_processes]
+	  	@code = process_hash[:code]
+	  	@errors = ActiveModel::Errors.new(self)
+	  end
+
+	  def validate!
+	  	errors.add(:name, "cannot be nil") if name == nil
+	  end
 
 	# Returns config hash for given process_id
 	def self.find_on_code(process_code)
@@ -24,21 +32,45 @@ class ProcessModel
 	def first_pending_job
 		entry = entries("PENDING").oldest
 		return nil if entry.nil?
-		Job.find(entry.job_id)
+		Job.find_by_id(entry.job_id)
 	end
 
 	# Updates the state for given job
 	def update_state_for_job(job_id, state)
-		job = Job.find(job_id)
-		return false if job.nil?
+
+		job = Job.find_by_id(job_id)
+		if !job
+			errors.add(:job_id, "could_not_find_job")
+			return false
+		end
 		
-		workflow_step = FlowStep.find(job.current_processing_entry.workflow_step_id)
-		return false if workflow_step.nil?
+		flow_step = FlowStep.find_by_id(job.current_entry.flow_step_id)
+		if !flow_step
+			errors.add(:flow_step_id, "could_not_find_flow_step")
+			return false
+		end
 
-		return false if workflow_step.process_id != process_id
+		if flow_step.process_id != id
+			errors.add(:process_id, "process_ids_do_not_match")
+			return false
+		end
 
-		pe = Entry.new(job_id: job.id, flow_step_id: workflow_step.id, state: state)
-		return pe.save!
+		entry = Entry.new(job_id: job.id, flow_step_id: flow_step.id, state: state)
+		if !entry.save
+			@errors = entry.errors
+			return false
+		end
+		return true
+	end
+
+	def update_progress_for_job(job_id, progress)
+		begin
+			job = Job.find(job_id)
+			job.progress_state = progress.to_json
+		rescue
+			return false
+		end
+
 	end
 
 	# returns true if process can be started based on running and allowed concurrent processes
@@ -51,4 +83,5 @@ class ProcessModel
 		end
 		return true
 	end
+
 end

@@ -7,18 +7,19 @@ module ResponseData
 			@code = ResponseCodes.const_get(code.upcase)
 		end
 
-		def set_error(code,msg)
-			@error = ResponseError.new(code,msg)
+		def set_error(code, msg, error_list = nil)
+			@error = ResponseError.new(code,msg, error_list)
 			return self
 		end
 	end
 
 	class ResponseError
-		attr_accessor :code, :msg
+		attr_accessor :code, :msg, :error_list
 
-		def initialize(code, msg)
+		def initialize(code, msg, error_list = nil)
 			@code = ErrorCodes.const_get(code.upcase)
 			@msg = msg
+			@error_list = error_list
 		end
 	end
 end
