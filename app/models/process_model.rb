@@ -55,14 +55,33 @@ class ProcessModel
 			return false
 		end
 
-		entry = Entry.new(job_id: job.id, flow_step_id: flow_step.id, state: state)
+		# create new entry for state
+		return false if !new_entry(job.id, flow_step.id, state)
+
+		# If job is done, ask for next step and create entry
+		if state == "DONE"
+			next_step = flow_step.next_step(job, true)
+			if !next_step # If nil create JOB_END entry
+				return false if !new_entry(job.id, nil, "JOB_END")
+			else
+				return false if !new_entry(job.id, next_step.id, "PENDING")
+			end
+		end
+
+		return true
+	end
+
+	# cretaes an entry for given parameters
+	def new_entry(job_id, flow_step_id, state)
+		entry = Entry.new(job_id: job_id, flow_step_id: flow_step_id, state: state)
 		if !entry.save
 			@errors = entry.errors
 			return false
 		end
-		return true
+		true
 	end
 
+	# Updates job progress field
 	def update_progress_for_job(job_id, progress)
 		begin
 			job = Job.find(job_id)
@@ -73,9 +92,10 @@ class ProcessModel
 
 	end
 
-	# returns true if process can be started based on running and allowed concurrent processes
+	# Returns true if process can be started based on running and allowed concurrent processes
 	def startable?
 		processing = 0
+
 		# Check if the allowed amount of processes are already running
 		processing = entries("STARTED").size
 		if allowed_processes && processing >= allowed_processes

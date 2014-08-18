@@ -28,3 +28,12 @@ three:
   condition_operator:
   condition_value:
   params:
+four:
+  id: 4
+  flow_id:
+  process_id:
+  goto_true: 2
+  goto_false:
+  condition_method: "param_deskew"
+  condition_operator: "eq"
+  condition_value: "true"

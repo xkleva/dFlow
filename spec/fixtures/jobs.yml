@@ -23,3 +23,15 @@ two:
   updated_by: 1
   source: two
   metadata: '{"job":{}, "0001": {}}'
+
+three:
+  id: 3
+  name: MyText3
+  catalog_id: 3
+  title: MyTitle3
+  author: MyAuthor3
+  deleted_at:
+  created_by: 1
+  updated_by: 1
+  source: two
+  metadata: '{"job":{}, "0001": {}}'

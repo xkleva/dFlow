@@ -28,6 +28,30 @@ module ModelHelper
 			code: "copy_files",
 			allowed_processes: 1
 		}
+
+		Rails.application.config.flow_parameters = [
+			{
+				id: 1,
+				code: "deskew",
+				type: "boolean"
+			},
+			{
+				id: 2,
+				code: "crop",
+				type: "boolean"
+			},
+			{
+				id: 3
+				code: "ocr",
+				type: "boolean"
+			},
+			{
+				id: 4,
+				code: "ocr_flow",
+				type: "string",
+				values: ["littbank", "lasstod", "GUB"]
+			}
+		]
 	]
 	end
 end

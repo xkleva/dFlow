@@ -87,6 +87,29 @@ RSpec.describe ProcessModel, :type => :model do
 				expect(entry.state).to eq("STARTED")
 			end
 		end
+		context "for valid job and state with following process do DONE" do
+			it "should return true" do
+				flag = @rename_files_model.update_state_for_job(2,"DONE")
+				expect(flag).to be true
+			end
+			it "should update job state and create new pending entry" do
+				@rename_files_model.update_state_for_job(2,"DONE")
+				job = Job.find(2)
+				entry = job.current_entry
+				expect(entry.state).to eq("PENDING")
+			end
+		end
+		context "for valid job and state without following process do DONE" do
+			it "should return true" do
+				expect(@move_files_model.update_state_for_job(3,"DONE")).to be true
+			end
+			it "should update job state and create new pending entry" do
+				@move_files_model.update_state_for_job(3,"DONE")
+				job = Job.find(3)
+				entry = job.current_entry
+				expect(entry.state).to eq("JOB_END")
+			end
+		end
 	end
 	describe "startable" do
 		context "method has no limitation" do

@@ -6,7 +6,7 @@ class Entry < ActiveRecord::Base
 
 	belongs_to :job
 	belongs_to :flow_step
-	validates_inclusion_of :state, :in => ["PENDING", "STARTED", "DONE"]
+	validates_inclusion_of :state, :in => ["PENDING", "STARTED", "DONE", "JOB_END"]
 
 	def self.most_recent
 		order('created_at DESC').limit(1).first
