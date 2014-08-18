@@ -28,6 +28,7 @@ module ModelHelper
 			code: "copy_files",
 			allowed_processes: 1
 		}
+	]
 
 		Rails.application.config.flow_parameters = [
 			{
@@ -41,17 +42,17 @@ module ModelHelper
 				type: "boolean"
 			},
 			{
-				id: 3
+				id: 3,
 				code: "ocr",
 				type: "boolean"
 			},
 			{
 				id: 4,
+				dependency: [{3 => true}],
 				code: "ocr_flow",
 				type: "string",
 				values: ["littbank", "lasstod", "GUB"]
 			}
 		]
-	]
 	end
 end

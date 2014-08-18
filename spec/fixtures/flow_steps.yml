@@ -34,6 +34,7 @@ four:
   process_id:
   goto_true: 2
   goto_false:
-  condition_method: "param_deskew"
+  condition_method: "1"
   condition_operator: "eq"
   condition_value: "true"
+  params:

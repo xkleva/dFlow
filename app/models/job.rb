@@ -24,8 +24,17 @@ end
 def update_metadata_key(key, metadata)
   metadata_temp = JSON.parse(self.metadata || '{}')
   metadata_temp[key] = metadata
-
   self.metadata = metadata_temp.to_json
+end
+
+def update_flow_param_key(key, param)
+  flow_params_temp = JSON.parse(self.flow_params || '{}')
+  flow_params_temp[key] = param
+  self.flow_params = flow_params_temp
+end
+
+def get_flow_param_key(key)
+  JSON.parse(self.flow_params || '{}')[key]
 end
 
 ###OLD METHODS###

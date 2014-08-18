@@ -3,6 +3,7 @@ one:
   id: 1
   name: flow_one
   start_position: one
+  params_info: '[{param_id: 1, default_value: true},{param_id: 2, default_value: true}, {param_id: 3, default_value: true}, {param_id: 4, default_value: "GUB"}]'
 
 two:
   id: 2

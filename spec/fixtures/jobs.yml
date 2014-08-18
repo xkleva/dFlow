@@ -11,6 +11,7 @@ one:
   updated_by: 1
   source: one
   metadata: '{"job":{}, "0001": {}}'
+  flow_params: '{"1": true, "2": true, "3": true, "4": "GUB"}'
 
 two:
   id: 2
@@ -35,3 +36,16 @@ three:
   updated_by: 1
   source: two
   metadata: '{"job":{}, "0001": {}}'
+
+four:
+  id: 4
+  name: MyText4
+  catalog_id: 1
+  title: MyTitle4
+  author: MyAuthor4
+  deleted_at:
+  created_by: 1
+  updated_by: 1
+  source: one
+  metadata: '{"job":{}, "0001": {}}'
+  flow_params: '{"1": true, "2": true, "3": true, "4": "GUB"}'
