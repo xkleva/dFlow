@@ -22,7 +22,7 @@ class Libris
         job_data[:metadata] = {}
         job_data[:metadata][:type_of_record] =  marc_record.leader[6..7]
         job_data[:xml] = librisdata
-        job_data[:source_id] = SOURCE_ID
+        job_data[:source_id] = Source.where(classname: self.name).first.id
         job_data[:catalog_id] = catalog_id
       end
     rescue

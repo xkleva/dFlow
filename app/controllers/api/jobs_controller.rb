@@ -92,7 +92,7 @@ class Api::JobsController < Api::ApiController
 		job_params = params[:data]
 		job_params[:metadata] = job_params[:metadata].to_json
 		parameters = ActionController::Parameters.new(job_params)
-		job = Job.create(parameters.permit(:name, :title, :author, :metadata, :xml, :source_id, :catalog_id, :comment, :object_info, :metadata, :flow_id, :flow_params))
+		job = Job.create(parameters.permit(:name, :title, :author, :metadata, :xml, :source_id, :catalog_id, :comment, :object_info, :flow_id, :flow_params))
 
 		if job.save
 			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
