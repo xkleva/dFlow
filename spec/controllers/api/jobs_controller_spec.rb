@@ -52,7 +52,6 @@ describe Api::JobsController do
 				expect(json['status']['code'] == 0).to be true
 				expect(json['data']['job_id'].nil?).to be false
 				job = Job.find(json['data']['job_id'])
-				#expect(job.current_processing_entry.state == "STARTED").to be true
 			end
 		end
 		context "with valid attributes, but too many processes going on" do 
@@ -103,6 +102,24 @@ describe Api::JobsController do
 			it "should return a success json message" do
 				get :process_progress, api_key: @api_key, job_id: 2, process_code: "rename_files", progress_info: {total: 10, done: 2, percent_done: 20}
 				expect(json['status']['code']).to eq(0)
+			end
+		end
+	end
+	describe "POST create_job" do
+		context "with valid job parameters" do
+			it "should create job and return success message" do
+				@libris = Source.where(classname: "Libris").first
+				data = @libris.fetch_source_data(1234)
+				post :create_job, api_key: @api_key, data: data
+				expect(json['status']['code']).to eq(0)
+			end
+		end
+		context "with invalid job parameters" do
+			it "should return an error message" do
+				@libris = Source.where(classname: "Libris").first
+				data = @libris.fetch_source_data(1)
+				post :create_job, api_key: @api_key, data: data
+				expect(json['status']['code']).to eq(-1)
 			end
 		end
 	end

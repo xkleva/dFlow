@@ -44,7 +44,7 @@ class Api::JobsController < Api::ApiController
 			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("QUEUE_ERROR", "No jobs currently waiting for process with id '#{params[:process_id]}", @process.errors)
 		else
 			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
-			@response[:data] = {job_id: job.id}
+			@response[:data] = {job_id: job.id, params: job.current_entry.flow_step.params}
 		end
 
 		render json: @response
@@ -87,6 +87,20 @@ class Api::JobsController < Api::ApiController
 		render json: @response
 	end
 
+	# Creates a job from given parameter data
+	def create_job
+		job_params = params[:data]
+		job_params[:metadata] = job_params[:metadata].to_json
+		parameters = ActionController::Parameters.new(job_params)
+		job = Job.create(parameters.permit(:name, :title, :author, :metadata, :xml, :source_id, :catalog_id, :comment, :object_info, :metadata, :flow_id, :flow_params))
+
+		if job.save
+			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
+		else
+			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not save job with name '#{job[:name]}", job.errors)
+		end
+		render json: @response
+	end
 
 	# Checks if job exists, and sets @job variable. Otherwise, return error.
 	private

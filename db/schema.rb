@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20140814142309) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "entries", force: true do |t|
     t.integer  "job_id"
     t.integer  "flow_step_id"
@@ -23,7 +26,7 @@ ActiveRecord::Schema.define(version: 20140814142309) do
 
   create_table "flow_steps", force: true do |t|
     t.integer  "flow_id"
-    t.integer  "process_id",         limit: 255
+    t.integer  "process_id"
     t.string   "goto_true"
     t.string   "goto_false"
     t.string   "condition_method"

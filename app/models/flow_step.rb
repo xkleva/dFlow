@@ -7,9 +7,9 @@ class FlowStep < ActiveRecord::Base
 			success = evaluate_condition(job)
 		end
 
-		if success = true
+		if success == true
 			return get_goto_true_step
-		elsif success = false
+		elsif success == false
 			return get_goto_false_step
 		end
 	end

@@ -33,6 +33,10 @@ group :test, :development do
 end
 
 gem 'nokogiri'
+
+gem 'pg'
+
+gem 'marc'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
