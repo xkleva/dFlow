@@ -10,6 +10,9 @@ Rails.application.routes.draw do
     get 'jobs/process_done', to: 'jobs#process_done'
     get 'jobs/process_progress', to: 'jobs#process_progress'
     post 'jobs/create_job', to: 'jobs#create_job'
+
+    get 'sources/fetch_source_data', to: 'sources#fetch_source_data'
+    get 'sources/validate_new_objects', to: 'sources#validate_new_objects'
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

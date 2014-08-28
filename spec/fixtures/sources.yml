@@ -1,7 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  classname: Document
+  id: 1
+  classname: Libris
 
 two:
-  classname: Libris
+  id: 2
+  classname: Document
+
+three:
+  id: 3
+  classname: Letter

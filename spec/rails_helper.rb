@@ -2,7 +2,7 @@
 ENV["RAILS_ENV"] ||= 'test'
 require 'spec_helper'
 require File.expand_path("../../config/environment", __FILE__)
-require "#{::Rails.root}/app/models/sources/libris"
+Dir[Rails.root.join("app/models/sources/*.rb")].each { |f| require f }
 require 'rspec/rails'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in

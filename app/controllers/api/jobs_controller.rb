@@ -104,9 +104,7 @@ class Api::JobsController < Api::ApiController
 
 	# Checks if job exists, and sets @job variable. Otherwise, return error.
 	private
-	def check_params
-		@response ||= {}
-		
+	def check_params	
 		#Check job_id
 		if params[:job_id]
 			@job = Job.where(id: params[:job_id]).first
