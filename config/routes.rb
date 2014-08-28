@@ -13,6 +13,8 @@ Rails.application.routes.draw do
 
     get 'sources/fetch_source_data', to: 'sources#fetch_source_data'
     get 'sources/validate_new_objects', to: 'sources#validate_new_objects'
+
+    get 'flows/get_flow', to: 'flows#get_flow'
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

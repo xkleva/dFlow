@@ -44,4 +44,18 @@ RSpec.describe FlowStep, :type => :model do
 			end
 		end
 	end
+	describe "get_node_ids_from_startpont" do
+		context "an valid node id" do
+			it "should return a list of entries" do
+				node_ids = FlowStep.get_node_ids_from_startpoint(1)
+				expect(node_ids.size).to be 3
+			end
+		end
+		context "an invalid node id" do
+			it "should return an empty array" do
+				node_ids = FlowStep.get_node_ids_from_startpoint(0)
+				expect(node_ids.size).to be 0
+			end
+		end
+	end
 end

@@ -50,4 +50,60 @@ class FlowStep < ActiveRecord::Base
 			return FlowStep.find_by_id(step_id)
 		end
 	end
+
+	# Step is final if no goto exists
+	def is_final_step?
+		return !goto_true && !goto_true
+	end
+
+	def has_goto_false?
+		if goto_false && goto_false.is_i?
+			return true
+		else 
+			return false
+		end
+	end
+
+	def has_goto_true?
+		if goto_true && goto_true.is_i?
+			return true
+		else 
+			return false
+		end
+	end
+
+	def self.get_node_ids_from_startpoint(start_point)
+		node_ids = []
+		start = FlowStep.find_by_id(start_point)
+		if !start
+			return node_ids
+		end
+
+		current_step = start
+		continue = true
+		i = 0
+
+		# Iterate through all steps until end
+		while continue && i < 10000 do
+			i += 1
+			node_ids << current_step.id
+
+			# If final step, break loop
+			if current_step.is_final_step?
+				continue = false
+				next
+			end
+
+			# If goto_false exists, add all node ids from false node
+			if current_step.has_goto_false?
+				node_ids << get_node_ids_from_startpoint(current_step.goto_false.to_i)
+			end
+			
+			if current_step.has_goto_true?
+				current_step = FlowStep.find_by_id(current_step.goto_true.to_i)
+			end
+		end
+
+		return node_ids.uniq
+	end
 end

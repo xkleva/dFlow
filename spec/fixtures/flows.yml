@@ -2,15 +2,15 @@
 one:
   id: 1
   name: flow_one
-  start_position: one
+  start_position: 1
   params_info: '[{param_id: 1, default_value: true},{param_id: 2, default_value: true}, {param_id: 3, default_value: true}, {param_id: 4, default_value: "GUB"}]'
 
 two:
   id: 2
   name: flow_two
-  start_position: two
+  start_position: 2
 
 three:
   id: 3
   name: flow_three
-  start_position: three
+  start_position: 3
