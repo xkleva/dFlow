@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     get 'sources/validate_new_objects', to: 'sources#validate_new_objects'
 
     get 'flows/get_flow', to: 'flows#get_flow'
+    post 'flows/update_flow_steps', to: 'flows#update_flow_steps'
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

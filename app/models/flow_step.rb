@@ -1,4 +1,6 @@
 class FlowStep < ActiveRecord::Base
+	belongs_to :goto_true_step, class_name: "FlowStep", foreign_key: "goto_true"
+	belongs_to :goto_false_step, class_name: "FlowStep", foreign_key: "goto_false"
 
 	# Returns the next step for a given job
 	def next_step(job, success = nil)
@@ -8,9 +10,9 @@ class FlowStep < ActiveRecord::Base
 		end
 
 		if success == true
-			return get_goto_true_step
+			return goto_true_step
 		elsif success == false
-			return get_goto_false_step
+			return goto_false_step
 		end
 	end
 
@@ -33,45 +35,24 @@ class FlowStep < ActiveRecord::Base
 		return false
 	end
 
-	# Returns next step for condition == true
-	def get_goto_true_step
-		return nil if !goto_true
-		if goto_true.is_i?
-			step_id = goto_true.to_i
-			return FlowStep.find_by_id(step_id)
-		end
-	end
-
-	# Returns next step for condition == false
-	def get_goto_false_step
-		return nil if !goto_false
-		if goto_false.is_i?
-			step_id = goto_false.to_i
-			return FlowStep.find_by_id(step_id)
-		end
-	end
-
 	# Step is final if no goto exists
 	def is_final_step?
-		return !goto_true && !goto_true
+		return !goto_true_step && !goto_false_step
 	end
 
 	def has_goto_false?
-		if goto_false && goto_false.is_i?
+		if goto_false_step
 			return true
-		else 
-			return false
 		end
 	end
 
 	def has_goto_true?
-		if goto_true && goto_true.is_i?
+		if goto_true_step
 			return true
-		else 
-			return false
 		end
 	end
 
+	# Returns all flow_steps from start_point to end
 	def self.get_node_ids_from_startpoint(start_point)
 		node_ids = []
 		start = FlowStep.find_by_id(start_point)
