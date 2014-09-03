@@ -19,7 +19,7 @@ class Api::FlowsController < Api::ApiController
 		if @flow.update_flow_steps(new_steps, new_start_position)
 			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
 		else
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not find update flow step definition for flow #{params[:flow_id]}")
+			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not find update flow step definition for flow #{params[:flow_id]}", @flow.errors)
 		end
 		render json: @response
 	end
