@@ -4,6 +4,12 @@ class Api::JobsController < Api::ApiController
 	before_filter :check_params
 
 
+	# Returns all jobs
+	def index
+		jobs = Job.all 
+		render json: {jobs: jobs}, status: 200
+	end
+
 	# Returns the metadata for a given job
 	def job_metadata
 		begin

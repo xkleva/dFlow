@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   namespace :api, :defaults => {:format => :json} do
     get 'check_connection' , to: 'api#check_connection'
     
+    get 'jobs', to: 'jobs#index'
     get 'jobs/job_metadata', to: 'jobs#job_metadata'
     get 'jobs/update_metadata', to: 'jobs#update_metadata'
     get 'jobs/process_request', to: 'jobs#process_request'

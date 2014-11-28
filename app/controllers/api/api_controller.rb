@@ -4,7 +4,7 @@ class Api::ApiController < ApplicationController
 
 	# Connection test method
 	def check_connection
-		render json: {status: ResponseData::ResponseStatus.new("SUCCESS")}
+		render json: 'SUCCESS', status: 200
 	end
 
 	private 
@@ -13,7 +13,7 @@ class Api::ApiController < ApplicationController
 		@response ||= {}
 		api_key = params[:api_key]
 		if api_key != Rails.application.config.api_key
-			render json: {status: ResponseData::ResponseStatus.new("FAIL").set_error("AUTH_ERROR", "Could not authorize API-key")}
+			render json: {error: "Could not authorize API-key: #{params[:api_key]}"}, status: 400
 		end
 	end
 

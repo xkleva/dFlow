@@ -10,6 +10,16 @@ describe Api::JobsController do
 		@api_key = Rails.application.config.api_key
 	end
 
+	describe "GET index" do
+		context "with existing jobs" do
+			it "should return all jobs" do
+				get :index, api_key: @api_key
+				expect(json['jobs'].size).to be > 0
+				expect(response.status).to eq 200
+			end
+		end
+	end
+
 	describe "GET job_metadata" do 
 		context "with invalid attributes" do 
 			it "returns a json message" do 
