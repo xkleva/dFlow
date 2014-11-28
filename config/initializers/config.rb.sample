@@ -1,5 +1,6 @@
 Rails.application.config.api_key = <your_key_here>
 
+# List of all available processes, the id is what identifies the process in the flow.
 Rails.application.config.process_list = {
 	"scan_job" => {
 		id: "scan_job"
