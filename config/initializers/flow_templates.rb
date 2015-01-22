@@ -54,8 +54,8 @@ Rails.application.config.flow_templates =
 				type: :boolean,
 				default: true
 			}
-		]
-		flow_steps: {
+		],
+		flow_steps:
 			[
 				{
 					id: 1,
@@ -92,54 +92,11 @@ Rails.application.config.flow_templates =
 					#process_id:
 					goto_true: 2,
 					#goto_false
-					condition_method: "1"
-  					condition_operator: "eq"
+					condition_method: "1",
+  					condition_operator: "eq",
   					condition_value: "true"
-  					params:
+  					#params:
 				}
-
-
 			]
-  id: 1
-  flow_id:
-  process_id: 1
-  goto_true: 2
-  goto_false:
-  condition_method:
-  condition_operator:
-  condition_value:
-  params:
-two:
-  id: 2
-  flow_id:
-  process_id: 2
-  goto_true: 3
-  goto_false:
-  condition_method:
-  condition_operator:
-  condition_value:
-  params:
-three:
-  id: 3
-  flow_id:
-  process_id: 3
-  goto_true:
-  goto_false:
-  condition_method:
-  condition_operator:
-  condition_value:
-  params:
-four:
-  id: 4
-  flow_id:
-  process_id:
-  goto_true: 2
-  goto_false:
-  condition_method: "1"
-  condition_operator: "eq"
-  condition_value: "true"
-  params:
-		}
-
 	}
 ]
