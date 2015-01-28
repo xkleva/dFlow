@@ -8,9 +8,9 @@ class Api::JobsController < Api::ApiController
 	def job_metadata
 		begin
 			@response[:data] = JSON.parse(@job.metadata)
-			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
+			success_msg
 		rescue
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("DATA_ACCESS_ERROR", "Could not get metadata for job '#{params[:job_id]}'")
+			error_msg("DATA_ACCESS_ERROR", "Could not get metadata for job '#{params[:job_id]}'")
 		end
 		render_json
 	end
@@ -19,9 +19,9 @@ class Api::JobsController < Api::ApiController
 	def update_metadata
 		begin
 			@job.update_metadata_key(params[:key], params[:metadata])
-			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
+			success_msg
 		rescue
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("DATA_ACCESS_ERROR", "Could not update metadata for job '#{params[:job_id]}'")
+			error_msg("DATA_ACCESS_ERROR", "Could not update metadata for job '#{params[:job_id]}'")
 		end
 		render_json
 	end
@@ -36,9 +36,9 @@ class Api::JobsController < Api::ApiController
 		job = @process.first_pending_job
 
 		if job.nil?
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("QUEUE_ERROR", "No jobs currently waiting for process with id '#{params[:process_id]}", @process.errors)
+			error_msg("QUEUE_ERROR", "No jobs currently waiting for process with id '#{params[:process_id]}", @process.errors)
 		else
-			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
+			success_msg
 			@response[:data] = {job_id: job.id, params: job.current_entry.flow_step.params}
 		end
 		render_json
@@ -50,9 +50,9 @@ class Api::JobsController < Api::ApiController
 	  return unless process_startable # Return if process cannot start for some reason
 
 		if @process.update_state_for_job(@job.id, "STARTED")
-			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
+			success_msg
 		else
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("DATA_ACCESS_ERROR", "Could not change state for job with id '#{params[:job_id]}'", @process.errors)
+			error_msg("DATA_ACCESS_ERROR", "Could not change state for job with id '#{params[:job_id]}'", @process.errors)
 		end
 		render_json
 	end
@@ -60,9 +60,9 @@ class Api::JobsController < Api::ApiController
 	# Sets a process for given job and process_method as done
 	def process_done
 		if @process.update_state_for_job(@job.id, "DONE")
-			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
+			success_msg
 		else
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("DATA_ACCESS_ERROR", "Could not change state for job with id '#{params[:job_id]}", @process.errors)
+			error_msg("DATA_ACCESS_ERROR", "Could not change state for job with id '#{params[:job_id]}", @process.errors)
 		end
 		render_json
 	end
@@ -70,9 +70,9 @@ class Api::JobsController < Api::ApiController
 	# Contains progress information about given job and process
 	def process_progress
 		if @process.update_progress_for_job(@job.id, params[:progress_info])
-			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
+			success_msg
 		else
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("DATA_ACCESS_ERROR", "Could not update progress information for job with id '#{params[:job_id]}", @process.errors)
+		  error_msg("DATA_ACCESS_ERROR", "Could not update progress information for job with id '#{params[:job_id]}", @process.errors)
 		end
 		render_json
 	end
@@ -85,9 +85,9 @@ class Api::JobsController < Api::ApiController
 		job = Job.create(parameters.permit(:name, :title, :author, :metadata, :xml, :source_id, :catalog_id, :comment, :object_info, :flow_id, :flow_params))
 
 		if job.save
-			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
+			success_msg
 		else
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not save job with name '#{job[:name]}", job.errors)
+			error_msg("OBJECT_ERROR", "Could not save job with name '#{job[:name]}", job.errors)
 		end
 		render_json
 	end
@@ -105,8 +105,8 @@ class Api::JobsController < Api::ApiController
 		if params[:job_id]
 			@job = Job.where(id: params[:job_id]).first
 			if @job.nil?
-				@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not find job '#{params[:job_id]}'")
-				render json: @response
+				error_msg("OBJECT_ERROR", "Could not find job '#{params[:job_id]}'")
+				render_json
 				return false
 			end
 		end
@@ -118,8 +118,8 @@ class Api::JobsController < Api::ApiController
 		if params[:process_code]
 			@process = ProcessModel.find_on_code(params[:process_code])
 			if !@process
-				@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not find process with id '#{params[:process_id]}'")
-				render json: @response
+				error_msg("OBJECT_ERROR", "Could not find process with id '#{params[:process_id]}'")
+				render_json
 				return false
 			end
 		end
@@ -130,8 +130,8 @@ class Api::JobsController < Api::ApiController
 	def check_job_and_process
 		if params[:job_id] && params[:process_code]
 			if @job.current_entry.flow_step.process_id != @process.id
-				@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("QUEUE_ERROR", "Job with id '#{params[:process_code]}' is not currently working on #{params[:process_code]}")
-				render json: @response
+				error_msg("QUEUE_ERROR", "Job with id '#{params[:process_code]}' is not currently working on #{params[:process_code]}")
+				render_json
 				return false
 			end
 		end
@@ -142,7 +142,7 @@ class Api::JobsController < Api::ApiController
 	def process_startable
 		# Check if the allowed amount of processes are already running
 		if !@process.startable?
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("QUEUE_ERROR", "Too many running processes with id '#{params[:process_id]}", @process.errors)
+			error_msg("QUEUE_ERROR", "Too many running processes with id '#{params[:process_id]}", @process.errors)
 			render_json
 			return false
 		end

@@ -13,7 +13,8 @@ class Api::ApiController < ApplicationController
 		@response ||= {}
 		api_key = params[:api_key]
 		if api_key != Rails.application.config.api_key
-			render json: {status: ResponseData::ResponseStatus.new("FAIL").set_error("AUTH_ERROR", "Could not authorize API-key")}
+			error_msg("AUTH_ERROR", "Could not authorize API-key")
+			render_json
 		end
 	end
 
@@ -31,5 +32,13 @@ class Api::ApiController < ApplicationController
 		if @response[:status].code == ResponseCodes.const_get("FAIL")
 			render json: @response, status: 400
 		end
+	end
+
+	def error_msg(code="ERROR", msg="", error_list = nil)
+		@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error(code, msg, error_list)
+	end
+
+	def success_msg
+		@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
 	end
 end
