@@ -12,7 +12,7 @@ class Api::JobsController < Api::ApiController
 		rescue
 			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("DATA_ACCESS_ERROR", "Could not get metadata for job '#{params[:job_id]}'")
 		end
-		render json: @response
+		render_json
 	end
 
 	# Updates metadata for a specific key
@@ -23,48 +23,38 @@ class Api::JobsController < Api::ApiController
 		rescue
 			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("DATA_ACCESS_ERROR", "Could not update metadata for job '#{params[:job_id]}'")
 		end
-		render json: @response
+		render_json
 	end
 
-	# Returns a job to work on for given process unless too many processes are already running 
+	# Returns a job to work on for given process unless too many processes are already running
 	def process_request
 		job = nil
 
-		# Check if the allowed amount of processes are already running
-		if !@process.startable?
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("QUEUE_ERROR", "Too many running processes with id '#{params[:process_id]}", @process.errors)
-			render json: @response
-			return
-		end
+		return unless process_startable #Return if process cannot start for some reason
 
 		# Find job that is PENDING for method
 		job = @process.first_pending_job
-		
+
 		if job.nil?
 			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("QUEUE_ERROR", "No jobs currently waiting for process with id '#{params[:process_id]}", @process.errors)
 		else
 			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
 			@response[:data] = {job_id: job.id, params: job.current_entry.flow_step.params}
 		end
-
-		render json: @response
+		render_json
 	end
 
 	# Initiates given process for given job
 	def process_initiate
-		# Check if the allowed amount of processes are already running
-		if !@process.startable?
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("QUEUE_ERROR", "Too many running processes with id '#{params[:process_id]}", @process.errors)
-			render json: @response
-			return
-		end
+
+	  return unless process_startable # Return if process cannot start for some reason
 
 		if @process.update_state_for_job(@job.id, "STARTED")
 			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
 		else
 			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("DATA_ACCESS_ERROR", "Could not change state for job with id '#{params[:job_id]}'", @process.errors)
 		end
-		render json: @response
+		render_json
 	end
 
 	# Sets a process for given job and process_method as done
@@ -74,7 +64,7 @@ class Api::JobsController < Api::ApiController
 		else
 			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("DATA_ACCESS_ERROR", "Could not change state for job with id '#{params[:job_id]}", @process.errors)
 		end
-		render json: @response
+		render_json
 	end
 
 	# Contains progress information about given job and process
@@ -84,7 +74,7 @@ class Api::JobsController < Api::ApiController
 		else
 			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("DATA_ACCESS_ERROR", "Could not update progress information for job with id '#{params[:job_id]}", @process.errors)
 		end
-		render json: @response
+		render_json
 	end
 
 	# Creates a job from given parameter data
@@ -99,40 +89,64 @@ class Api::JobsController < Api::ApiController
 		else
 			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not save job with name '#{job[:name]}", job.errors)
 		end
-		render json: @response
+		render_json
 	end
 
 	# Checks if job exists, and sets @job variable. Otherwise, return error.
 	private
-	def check_params	
-		#Check job_id
+	def check_params
+		return unless check_job_id
+		return unless check_process_id
+		return unless check_job_and_process
+	end
+
+	#Check job_id
+	def check_job_id
 		if params[:job_id]
 			@job = Job.where(id: params[:job_id]).first
 			if @job.nil?
 				@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not find job '#{params[:job_id]}'")
 				render json: @response
-				return
+				return false
 			end
 		end
+		return true
+	end
 
-		#Check process_id
+	#Check process_id
+	def check_process_id
 		if params[:process_code]
 			@process = ProcessModel.find_on_code(params[:process_code])
 			if !@process
 				@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not find process with id '#{params[:process_id]}'")
 				render json: @response
-				return
+				return false
 			end
 		end
+		return true
+	end
 
-		#If both job and process are set, check if they are valid together
+	#If both job and process are set, check if they are valid together
+	def check_job_and_process
 		if params[:job_id] && params[:process_code]
 			if @job.current_entry.flow_step.process_id != @process.id
 				@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("QUEUE_ERROR", "Job with id '#{params[:process_code]}' is not currently working on #{params[:process_code]}")
 				render json: @response
-				return
+				return false
 			end
 		end
+		return true
+	end
+
+	# Checks if process is startable and sets proper error messages if not
+	def process_startable
+		# Check if the allowed amount of processes are already running
+		if !@process.startable?
+			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("QUEUE_ERROR", "Too many running processes with id '#{params[:process_id]}", @process.errors)
+			render_json
+			return false
+		end
+		return true
 	end
 
 end

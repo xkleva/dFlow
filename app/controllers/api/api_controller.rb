@@ -7,7 +7,7 @@ class Api::ApiController < ApplicationController
 		render json: {status: ResponseData::ResponseStatus.new("SUCCESS")}
 	end
 
-	private 
+	private
 	#Check if api_key is correct, otherwise return error
 	def check_key
 		@response ||= {}
@@ -22,4 +22,14 @@ class Api::ApiController < ApplicationController
 		files.sort_by { |x| x.basename.to_s[/^(\d+)\./,1].to_i }
 	end
 
+	# Renders the response object as json with proper request status
+	def render_json
+		# If successful, render with 200
+		if @response[:status].code == ResponseCodes.const_get("SUCCESS")
+			render json: @response, status: 200
+		end
+		if @response[:status].code == ResponseCodes.const_get("FAIL")
+			render json: @response, status: 400
+		end
+	end
 end
