@@ -41,5 +41,4 @@ public/assets/
 doc/app/
 
 #Ignore Gemfile.lock
-Gemfile.lock
-
+#Gemfile.lock
