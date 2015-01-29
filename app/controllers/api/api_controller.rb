@@ -30,14 +30,16 @@ class Api::ApiController < ApplicationController
 			render json: @response, status: 200
 		end
 		if @response[:status].code == ResponseCodes.const_get("FAIL")
-			render json: @response, status: 400
+			render json: @response, status: @response[:status].error.http_status
 		end
 	end
 
+ # Generates an error object from code, message and error list
 	def error_msg(code="ERROR", msg="", error_list = nil)
 		@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error(code, msg, error_list)
 	end
 
+	# Generates a success object
 	def success_msg
 		@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
 	end
