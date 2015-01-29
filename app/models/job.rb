@@ -18,6 +18,7 @@ class Job < ActiveRecord::Base
     test.errors.empty?
   end
 
+  # Checks validity
   def xml_validity
     errors.add(:base, "Marc must be valid xml") unless xml_valid?(xml)
   end

@@ -49,3 +49,4 @@ gem 'marc'
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
+gem "codeclimate-test-reporter", group: :test, require: nil
