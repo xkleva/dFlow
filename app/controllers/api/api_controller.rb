@@ -13,12 +13,8 @@ class Api::ApiController < ApplicationController
 		@response ||= {}
 		api_key = params[:api_key]
 		if api_key != Rails.application.config.api_key
-<<<<<<< HEAD
-			render json: {error: "Could not authorize API-key: #{params[:api_key]}"}, status: 400
-=======
 			error_msg("AUTH_ERROR", "Could not authorize API-key")
 			render_json
->>>>>>> master
 		end
 	end
 
