@@ -37,9 +37,4 @@ class Api::ApiController < ApplicationController
 	def error_msg(code=ErrorCodes::ERROR, msg="", error_list = nil)
 		@response[:error] = {code: code[:code], msg: msg, errors: error_list}
 	end
-
-	# Generates a success object
-	def success_msg
-		#@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
-	end
 end
