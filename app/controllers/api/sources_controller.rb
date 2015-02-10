@@ -7,8 +7,8 @@ class Api::SourcesController < Api::ApiController
 	def validate_new_objects
 		objects = params[:objects]
 		if objects.empty?
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("REQUEST_ERROR", "No valid objects are given")
-			render json: @response
+			error_msg(ErrorCodes::REQUEST_ERROR, "No valid objects are given")
+			render_json
 			return
 		end
 		success = 0
@@ -19,14 +19,14 @@ class Api::SourcesController < Api::ApiController
 			# Validate source name
 			source_object = Source.where(classname: object[:source_name]).first
 			if !source_object
-				object[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not find a source with name '#{object[:source_name]}")
+				error_msg(ErrorCodes::OBJECT_ERROR, "Could not find a source with name '#{object[:source_name]}")
 				fail += 1
 				next
 			end
 
 			# Validate other parameters
 			if !source_object.validate_job_fields(object)
-				object[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("VALIDATION_ERROR", "Could not validate given fields")
+				error_msg(ErrorCodes::VALIDATION_ERROR, "Could not validate given fields")
 				fail += 1
 				next
 			end
@@ -44,12 +44,10 @@ class Api::SourcesController < Api::ApiController
 		@response[:data][:objects] = objects
 		@response[:data][:catalog_ids] = catalog_ids
 		if fail > 0
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "A number of objects did not validate: #{fail} / #{success+fail}")
-		else
-			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
+			error_msg(ErrorCodes::OBJECT_ERROR, "A number of objects did not validate: #{fail} / #{success+fail}")
 		end
 
-		render json: @response
+		render_json
 	end
 
 	# Returns hash with source data for a given source and catalog_id
@@ -60,20 +58,19 @@ class Api::SourcesController < Api::ApiController
 		# Identify source object
 		source_object = Source.find_by_id(source_id)
 		if !source_object
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not find a source with id '#{source_id}")
-			render json: @response
+			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find a source with id '#{source_id}")
+			render_json
 			return
 		end
 
 		# Fetch source data
 		source_data = source_object.fetch_source_data(catalog_id)
 		if source_data && !source_data.empty?
-			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
 			@response[:data] = source_data
 		else
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not find source data for source: '#{source_id} and catalog_id: #{catalog_id}")
+			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find source data for source: '#{source_id} and catalog_id: #{catalog_id}")
 		end
-		render json: @response
+		render_json
 	end
 
 end

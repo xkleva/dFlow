@@ -6,9 +6,7 @@ class Api::FlowsController < Api::ApiController
 	# Returns a flow as json
 	def get_flow
 		@response[:data] = @flow
-		@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
-
-		render json: @response
+		render_json
 	end
 
 	# Updates flow_steps for given flow and new start position
@@ -16,12 +14,10 @@ class Api::FlowsController < Api::ApiController
 		new_steps = JSON.parse(params[:new_flow_steps])
 		new_start_position = params[:new_start_position]
 		
-		if @flow.update_flow_steps(new_steps, new_start_position)
-			@response[:status] = ResponseData::ResponseStatus.new("SUCCESS")
-		else
-			@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not find update flow step definition for flow #{params[:flow_id]}", @flow.errors)
+		if !@flow.update_flow_steps(new_steps, new_start_position)
+			error_msg(ErrorCodes::QUEUE_ERROR, "Could not find update flow step definition for flow #{params[:flow_id]}", @flow.errors)
 		end
-		render json: @response
+		render_json
 	end
 
 	# Validate standardized parameters
@@ -31,8 +27,8 @@ class Api::FlowsController < Api::ApiController
 			@flow = Flow.find_by_id(flow_id)
 			# If flow doesn't exist, return error message
 			if !@flow
-				@response[:status] = ResponseData::ResponseStatus.new("FAIL").set_error("OBJECT_ERROR", "Could not find a flow with id #{flow_id}")
-				render json: @response
+				error_msg(ErrorCodes::OBJECT_ERROR, "Could not find a flow with id #{flow_id}")
+				render_json
 				return 
 			end
 		end

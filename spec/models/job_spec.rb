@@ -6,8 +6,16 @@ end
 
 RSpec.describe Job, :type => :model do
 	before :each do
-		
+
 	end
+	describe "create job" do
+		context "from valid libris id" do
+			it "should create a job object" do
+				
+			end
+		end
+	end
+
 	describe "update_metadata_key" do
 		context "insert new key" do
 			it "should save new key value" do
