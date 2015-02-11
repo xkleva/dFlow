@@ -11,12 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150211101507) do
+ActiveRecord::Schema.define(version: 20150211141515) do
 
   create_table "entries", force: :cascade do |t|
     t.integer  "job_id"
     t.integer  "flow_step_id"
-    t.string   "state"
+    t.string   "state",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -24,18 +24,18 @@ ActiveRecord::Schema.define(version: 20150211101507) do
   create_table "flow_steps", force: :cascade do |t|
     t.integer  "flow_id"
     t.integer  "process_id"
-    t.string   "goto_true"
-    t.string   "goto_false"
-    t.string   "condition_method"
-    t.string   "condition_operator"
-    t.string   "condition_value"
-    t.string   "params"
+    t.string   "goto_true",          limit: 255
+    t.string   "goto_false",         limit: 255
+    t.string   "condition_method",   limit: 255
+    t.string   "condition_operator", limit: 255
+    t.string   "condition_value",    limit: 255
+    t.string   "params",             limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "flows", force: :cascade do |t|
-    t.string   "name"
+    t.string   "name",           limit: 255
     t.integer  "start_position"
     t.text     "params_info"
     t.datetime "created_at"
@@ -68,6 +68,13 @@ ActiveRecord::Schema.define(version: 20150211101507) do
     t.text     "classname"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "treenodes", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
