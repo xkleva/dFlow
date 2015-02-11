@@ -32,6 +32,7 @@ nbproject/
 
 config/initializers/api_key.rb
 config/initializers/config.rb
+config/passwd
 
 # Ignore generated css etc.
 .sass-cache/
