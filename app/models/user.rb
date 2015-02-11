@@ -21,6 +21,8 @@ class User < ActiveRecord::Base
     update_attribute(:deleted_at, Time.now)
   end
   
+  # Read all users from input file and create users that do not already exist
+  # This step does nothing if supplied file is missing
   def self.create_missing_users_from_file(filename = "#{Rails.root}/config/passwd")
     return if !File.exist?(filename)
     File.open(filename, "r:utf-8") do |file|
