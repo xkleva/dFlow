@@ -13,7 +13,7 @@
 
 ActiveRecord::Schema.define(version: 20150211101507) do
 
-  create_table "entries", force: true do |t|
+  create_table "entries", force: :cascade do |t|
     t.integer  "job_id"
     t.integer  "flow_step_id"
     t.string   "state"
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20150211101507) do
     t.datetime "updated_at"
   end
 
-  create_table "flow_steps", force: true do |t|
+  create_table "flow_steps", force: :cascade do |t|
     t.integer  "flow_id"
     t.integer  "process_id"
     t.string   "goto_true"
@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(version: 20150211101507) do
     t.datetime "updated_at"
   end
 
-  create_table "flows", force: true do |t|
+  create_table "flows", force: :cascade do |t|
     t.string   "name"
     t.integer  "start_position"
     t.text     "params_info"
@@ -42,7 +42,7 @@ ActiveRecord::Schema.define(version: 20150211101507) do
     t.datetime "updated_at"
   end
 
-  create_table "jobs", force: true do |t|
+  create_table "jobs", force: :cascade do |t|
     t.text     "name"
     t.integer  "source_id"
     t.integer  "catalog_id"
@@ -64,19 +64,13 @@ ActiveRecord::Schema.define(version: 20150211101507) do
     t.text     "flow_params"
   end
 
-  create_table "roles", force: true do |t|
-    t.text     "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "sources", force: true do |t|
+  create_table "sources", force: :cascade do |t|
     t.text     "classname"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "users", force: true do |t|
+  create_table "users", force: :cascade do |t|
     t.text     "email"
     t.text     "username"
     t.text     "name"
