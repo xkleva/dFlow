@@ -1,3 +1,4 @@
+### Assign your API-key here (must be aplpha-numerical)
 Rails.application.config.api_key = <your_key_here>
 
 ### USER ROLES DEFINITION

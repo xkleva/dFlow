@@ -17,6 +17,8 @@ Rails.application.routes.draw do
 
     get 'flows/get_flow', to: 'flows#get_flow'
     post 'flows/update_flow_steps', to: 'flows#update_flow_steps'
+
+    get 'config/role_list', to: 'config#role_list'
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
