@@ -7,6 +7,22 @@ module ModelHelper
 	def config_init
 		Rails.application.config.api_key = "test_key"
 
+		Rails.application.config.user_roles = [
+			{
+				name: "ADMIN",
+				rights: []
+			},
+			{
+				name: "GUEST",
+				unassignable: true,
+				rights: []
+			},
+			{
+				name: "OPERATOR",
+				rights: []
+			}
+		]
+
 		Rails.application.config.process_list = [
 		{
 			id: 1,
