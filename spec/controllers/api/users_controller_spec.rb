@@ -20,7 +20,7 @@ describe Api::UsersController do
 		end
 		context "With invalid role" do
 			it "should return an error object" do
-				post :create, api_key: @api_key, user: {username: "Testuser", name: "John Doe", role: "FUBAR"}
+				post :create, api_key: @api_key, user: {username: "Testuser", name: "John Doe", role: "FOO"}
 				expect(json['error']).to_not be nil
 				expect(json['user']).to be nil
 				expect(response.status).to eq 400
