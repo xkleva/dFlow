@@ -9,6 +9,9 @@ Rails.application.routes.draw do
     # User API
     post 'users/create', to: 'users#create'
 
+    # Treenode API
+    post 'treenodes/create', to: 'treenodes#create'
+
     
     get 'jobs', to: 'jobs#index'
     get 'jobs/job_metadata', to: 'jobs#job_metadata'

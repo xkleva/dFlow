@@ -2,3 +2,8 @@
 one:
   id: 1
   name: Toppnod
+
+two:
+  id: 2
+  name: Barn
+  parent_id: 1
