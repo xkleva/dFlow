@@ -1,0 +1,3 @@
+admin:$2a$10$kBeMudKP99B0rdHE8MF1eO/oMxbn5u9I5ne6YUIrBRlGStd6yMq2O:Administrator New User:adminnew@example.com:ADMIN
+test2:$2a$10$8REfyBWRpB/mKbJ8mHVBwObBeY35zAtME0IyyT36eoY0gkv3U8lTW:Test2 New User:test2new@example.com:OPERATOR
+test3:$2a$10$AG0U7Vw0/xJspy16INEjn.NWuQKJA.u8fxahgz2slTH.U.uHZdWJq:Test3 User:test3@example.com:OPERATOR
