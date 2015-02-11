@@ -3,6 +3,15 @@ class User < ActiveRecord::Base
 	validates :username, :presence => true
 	validates :username, :uniqueness => true
 	validates :name, :presence => true
+	validates :role, :presence => true
+	validate :role_valid
+
+	# Validates that role exists in config file
+	def role_valid
+		if Rails.application.config.user_roles.select{|role| role[:name] == self.role}.empty?
+			errors.add(:role, "Role does not exist in config")
+		end
+	end
 
 	def email_present?
 		!email.nil?

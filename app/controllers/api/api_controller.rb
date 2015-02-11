@@ -24,11 +24,12 @@ class Api::ApiController < ApplicationController
 	end
 
 	# Renders the response object as json with proper request status
-	def render_json
-		# If successful, render with 200
+	def render_json(status=200)
+		# If successful, render given status
 		if @response[:error].nil?
-			render json: @response, status: 200
+			render json: @response, status: status
 		else
+		# If not successful, render with status from ErrorCodes module
 			render json: @response, status: ErrorCodes.const_get(@response[:error][:code])[:http_status]
 		end
 	end

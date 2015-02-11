@@ -13,6 +13,7 @@ describe Api::ConfigController do
 	describe "GET role_list" do
 		context "Role exist" do
 			it "should return list of roles" do
+				
 				get :role_list, api_key: @api_key
 				expect(json['roles']).to_not be nil
 			end
