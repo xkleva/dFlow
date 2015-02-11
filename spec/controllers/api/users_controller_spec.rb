@@ -13,14 +13,14 @@ describe Api::UsersController do
 	describe "POST create" do
 		context "With valid parameters" do
 			it "should return a user object with id" do
-				post :create, api_key: @api_key, user: {username: "Testuser", name: "John Doe", role: "ADMIN"}
+			 post :create, api_key: @api_key, user: {username: "Testuser", name: "John Doe", role: "ADMIN"}
 				expect(json['user']['id']).to_not be nil
 				expect(response.status).to eq 201
 			end
 		end
 		context "With invalid role" do
 			it "should return an error object" do
-				post :create, api_key: @api_key, user: {username: "Testuser", name: "John Doe", role: "FUBAR"}
+				post :create, api_key: @api_key, user: {username: "Testuser", name: "John Doe", role: "FOO"}
 				expect(json['error']).to_not be nil
 				expect(json['user']).to be nil
 				expect(response.status).to eq 400
