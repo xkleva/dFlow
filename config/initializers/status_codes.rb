@@ -14,8 +14,14 @@ module ErrorCodes
 
 	# Used for authentication errors (i.e. needs admin rights)
 	AUTH_ERROR = {
-		http_status: 404,
+		http_status: 401,
 		code: "AUTH_ERROR"
+	}
+
+	# Used for session validation errors
+	SESSION_ERROR = {
+		http_status: 401,
+		code: "SESSION_ERROR"
 	}
 
 	# Used when data cannot be retrieved (i.e. error in request or database)

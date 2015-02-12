@@ -5,6 +5,9 @@ class User < ActiveRecord::Base
   validates :name, :presence => true
   validates :role, :presence => true
   validate :role_valid
+  DEFAULT_PASSWD_FILE = "#{Rails.root}/config/passwd"
+  DEFAULT_TOKEN_EXPIRE = 1.day
+  has_many :access_tokens
 
   # Validates that role exists in config file
   def role_valid
@@ -20,10 +23,60 @@ class User < ActiveRecord::Base
   def delete
     update_attribute(:deleted_at, Time.now)
   end
+
+  # Authenticate user against password sources
+  def authenticate(provided_password)
+    authenticate_passwd_file(provided_password)
+  end
+
+  # Clear all tokens that have expired
+  def clear_expired_tokens
+    access_tokens.where("token_expire < ?", Time.now).destroy_all
+  end
+
+  # First clear all invalid tokens. Then look for our provided token.
+  # If we find one, we know it is valid, and therefor update its validity
+  # further into the future
+  def validate_token(provided_token)
+    clear_expired_tokens
+    token_object = access_tokens.find_by_token(provided_token)
+    return false if !token_object
+    token_object.update_attribute(:token_expire, Time.now + DEFAULT_TOKEN_EXPIRE)
+    true
+  end
+
+  # Authenticate against local passwd file
+  # If we run in test environment, read filename from Rails.cache to reach a test passwd file
+  # instead of the system one.
+  def authenticate_passwd_file(provided_password, filename = DEFAULT_PASSWD_FILE)
+    if Rails.env == "test"
+      filename = Rails.cache.read("test_passwd_filename")
+    end
+    return false if !filename || !File.exist?(filename)
+    File.open(filename, "r:utf-8") do |file|
+      file.each_line do |line| 
+        line.chomp!
+        username,passhash,_fullname,_email,_role = line.split(/:/)
+        if self.username == username
+          pass = BCrypt::Password.new(passhash)
+          if(pass == provided_password)
+            token_object = generate_token
+            return token_object.token
+          end
+          return false
+        end
+      end
+    end
+  end
+
+  # Generate a random token
+  def generate_token
+    access_tokens.create(token: SecureRandom.hex, token_expire: Time.now + DEFAULT_TOKEN_EXPIRE)
+  end
   
   # Read all users from input file and create users that do not already exist
   # This step does nothing if supplied file is missing
-  def self.create_missing_users_from_file(filename = "#{Rails.root}/config/passwd")
+  def self.create_missing_users_from_file(filename = DEFAULT_PASSWD_FILE)
     return if !File.exist?(filename)
     File.open(filename, "r:utf-8") do |file|
       file.each_line do |line| 

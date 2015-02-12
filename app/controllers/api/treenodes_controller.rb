@@ -19,6 +19,37 @@ class Api::TreenodesController < Api::ApiController
 
 	end
 
+	# Returns a Treenode
+	def show
+		if params[:id] == 'root'
+			treenode = RootTreenode.new(name: "root")
+		else
+			treenode = Treenode.find_by_id(params[:id])
+		end
+
+		# If treenode does not exist, return error
+		if treenode.nil?
+			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find Treenode with id #{params[:id]}")
+			render_json
+			return
+		end
+
+		@response[:treenode] = treenode.as_json
+
+		# If flag 'show_children' is true, return all children in json response
+		if params[:show_children]
+			@response[:treenode][:children] = treenode.children
+		end
+
+		# If flag 'show_breadcrum' is true, return breadcrumb in json response
+		if params[:show_breadcrumb]
+			@response[:treenode][:breadcrumb] = treenode.breadcrumb
+		end
+
+		render_json(200)
+
+	end
+
 	private
 
 	def treenode_params
