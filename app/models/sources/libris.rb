@@ -25,24 +25,41 @@ class Libris
   def self.fetch_source_data(catalog_id)
     url = URI.parse(LIBRIS_XSEARCH_MARC+catalog_id.to_s)
     job_data = {}
-    begin
-      open(url) do |conn|
-        librisdata = conn.read
-        librisdoc = Nokogiri::XML(librisdata)
-        librisdoc.remove_namespaces!
-        record = librisdoc.search("/xsearch/collection/record").first
-        marc_record = MARC::XMLReader.new(StringIO.new(record.to_xml)).first
-        job_data[:title] = [marc_record['245']['a'],marc_record['245']['b']].compact.join(" ")
-        job_data[:author] = marc_record['100']['a'] if marc_record['100']
-        job_data[:metadata] = {}
-        job_data[:metadata][:type_of_record] =  marc_record.leader[6..7]
-        job_data[:xml] = librisdata
-        job_data[:source_id] = Source.where(classname: self.name).first.id
-        job_data[:catalog_id] = catalog_id
-      end
-    rescue
-      return {}
+    job_data = fetch_from_libris(url)
+    job_data[:catalog_id] = catalog_id if not job_data.blank?
+    return job_data
+  rescue
+    return {}
+  end
+
+  private
+
+  def self.fetch_from_libris(url)
+    job_data = {}
+    open(url) do |conn|
+      librisdata = conn.read
+      librisdoc = Nokogiri::XML(librisdata)
+      librisdoc.remove_namespaces!
+      record = librisdoc.search("/xsearch/collection/record").first
+      job_data = data_from_record(record)
+      job_data[:xml] = librisdata if not job_data.blank?
     end
     return job_data
+  rescue
+    return {}
   end
+
+  def self.data_from_record(record)
+    job_data = {}
+    marc_record = MARC::XMLReader.new(StringIO.new(record.to_xml)).first
+    job_data[:title] = [marc_record['245']['a'],marc_record['245']['b']].compact.join(" ")
+    job_data[:author] = marc_record['100']['a'] if marc_record['100']
+    job_data[:metadata] = {}
+    job_data[:metadata][:type_of_record] =  marc_record.leader[6..7]
+    job_data[:source_id] = Source.where(classname: self.name).first.id
+    return job_data
+  rescue
+    return {}
+  end
+
 end
