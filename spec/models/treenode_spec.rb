@@ -25,6 +25,25 @@ RSpec.describe Treenode, :type => :model do
 				expect(treenode.valid?).to be true
 			end
 		end
+		context "name is not unique for parent" do
+			treenode = Treenode.new(name: "Barn", parent_id: 1)
+			it "should invalidate object" do
+				expect(treenode.valid?).to be false
+			end
+			it "should return a validation error for field 'name'" do
+				expect(treenode.errors.messages[:name]).to_not be nil
+			end
+		end
+	end
+
+	describe "children" do
+		context "children exists" do
+			treenode = Treenode.find(1)
+			it "should return a list of children" do
+				expect(treenode.children).to_not be nil
+				expect(treenode.children.first).to be_a(Treenode)
+			end
+		end
 	end
 
 end
