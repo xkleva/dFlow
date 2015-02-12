@@ -8,10 +8,10 @@ Rails.application.routes.draw do
     get 'config/role_list', to: 'config#role_list'
 
     # User API
-    post 'users/create', to: 'users#create'
+    resources :users
 
     # Treenode API
-    post 'treenodes/create', to: 'treenodes#create'
+    resources :treenodes
 
     
     get 'jobs', to: 'jobs#index'
@@ -28,7 +28,6 @@ Rails.application.routes.draw do
 
     get 'flows/get_flow', to: 'flows#get_flow'
     post 'flows/update_flow_steps', to: 'flows#update_flow_steps'
-
     
   end
   # The priority is based upon order of creation: first created -> highest priority.

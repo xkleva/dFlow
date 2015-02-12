@@ -55,4 +55,43 @@ describe Api::TreenodesController do
 			end
 		end
 	end
+
+	describe "GET show" do
+		context "Existing treenode without children" do
+			before :each do
+				get :show, api_key: @api_key, id: 1
+			end
+			it "should return treenode object" do
+				expect(json['treenode']).to_not be nil
+			end
+			it "should not return children objects" do
+				expect(json['treenode']['children']).to be nil
+			end
+		end
+		context "Exisiting treenode with children" do
+			before :each do
+				get :show, api_key: @api_key, id: 1, show_children: true
+			end
+			it "should return a treenode object" do
+				expect(json['treenode']).to_not be nil
+			end
+			it "should return a list of children" do
+				expect(json['treenode']['children']).to_not be nil
+			end
+			it "should return children with ids" do
+				expect(json['treenode']['children'][0]['id']).to be_an(Integer)
+			end
+		end
+		context "Non Existing treenode onject" do
+			before :each do
+				get :show, api_key: @api_key, id: -1
+			end
+			it "should return an error message" do
+				expect(json['error']).to_not be nil
+			end
+			it "should not return a treenode object" do
+				expect(json['treenode']).to be nil
+			end
+		end
+	end
 end
