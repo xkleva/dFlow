@@ -23,16 +23,23 @@ class Api::TreenodesController < Api::ApiController
 	def show
 		treenode = Treenode.find_by_id(params[:id])
 
+		# If treenode does not exist, return error
 		if treenode.nil?
 			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find Treenode with id #{params[:id]}")
 			render_json
 			return
 		end
 
+		@response[:treenode] = treenode.as_json
+
+		# If flag 'show_children' is true, return all children in json response
 		if params[:show_children]
-			@response[:treenode] = treenode.as_json(include: :children)
-		else
-			@response[:treenode] = treenode.as_json
+			@response[:treenode][:children] = treenode.children
+		end
+
+		# If flag 'show_breadcrum' is true, return breadcrumb in json response
+		if params[:show_breadcrumb]
+			@response[:treenode][:breadcrumb] = treenode.breadcrumb
 		end
 
 		render_json(200)

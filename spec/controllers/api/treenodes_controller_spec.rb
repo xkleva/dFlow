@@ -93,5 +93,19 @@ describe Api::TreenodesController do
 				expect(json['treenode']).to be nil
 			end
 		end
+		context "Exisiting treenode with multi level breadcrumb" do
+			before :each do
+				get :show, api_key: @api_key, id: 3, show_breadcrumb: true
+			end
+			it "should return a treenode object" do
+				expect(json['treenode']).to_not be nil
+			end
+			it "should return a list of breadcrumb nodes" do
+				expect(json['treenode']['breadcrumb']).to_not be nil
+			end
+			it "should return breadcrumb nodes with ids" do
+				expect(json['treenode']['breadcrumb'][0]['id']).to be_an(Integer)
+			end
+		end
 	end
 end

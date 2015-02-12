@@ -26,4 +26,21 @@ class Treenode < ActiveRecord::Base
       end
     end
   end
+
+  # Returns a list of objects containing id and name for parents until root is reached
+  def breadcrumb
+    breadcrumb = []
+    current_parent = self.parent_id
+
+    # Loop through entire parent structure
+    while !current_parent.nil?
+      tn = Treenode.find(current_parent)
+      breadcrumb << {id: tn.id, name: tn.name}
+      current_parent = tn.parent_id
+    end
+
+    # return breadcrumb starting from top parent
+    return breadcrumb.reverse
+  end
+
 end
