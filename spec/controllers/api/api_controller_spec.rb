@@ -20,7 +20,7 @@ describe Api::ApiController, :type => :controller do
 		context "with an invalid key" do
 			it "should return error status" do
 				get :check_connection, api_key: "wrong"
-				expect(response.status).to eq 404
+				expect(response.status).to eq 401
 			end
 		end
 	end

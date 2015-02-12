@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :session
 
   namespace :api, :defaults => {:format => :json} do
     get 'check_connection' , to: 'api#check_connection'

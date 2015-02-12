@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150211141515) do
+ActiveRecord::Schema.define(version: 20150212085700) do
+
+  create_table "access_tokens", force: :cascade do |t|
+    t.integer  "user_id"
+    t.text     "token"
+    t.datetime "token_expire"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
 
   create_table "entries", force: :cascade do |t|
     t.integer  "job_id"
