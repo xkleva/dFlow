@@ -107,5 +107,18 @@ describe Api::TreenodesController do
 				expect(json['treenode']['breadcrumb'][0]['id']).to be_an(Integer)
 			end
 		end
+		context "Asking for 'root' node" do
+			before :each do
+				get :show, api_key: @api_key, id: 'root', show_children: true
+			end
+			it "should return a treenode without id" do
+				expect(json['treenode']).to_not be nil
+				expect(json['treenode']['id']).to be nil
+			end
+			it "should return children with parent_id = nil" do
+				expect(json['treenode']['children']).to_not be nil
+				expect(json['treenode']['children'][0]['parent_id']).to be nil
+			end
+		end
 	end
 end

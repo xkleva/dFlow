@@ -21,7 +21,11 @@ class Api::TreenodesController < Api::ApiController
 
 	# Returns a Treenode
 	def show
-		treenode = Treenode.find_by_id(params[:id])
+		if params[:id] == 'root'
+			treenode = RootTreenode.new(name: "root")
+		else
+			treenode = Treenode.find_by_id(params[:id])
+		end
 
 		# If treenode does not exist, return error
 		if treenode.nil?
