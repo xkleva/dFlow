@@ -9,7 +9,7 @@ RSpec.describe SessionController, :type => :controller do
   end
 
   describe "create session" do
-    it "should return access_token on valid credentials" do
+     it "should return access_token on valid credentials" do
       post :create, username: "admin", password: "admin"
       user = User.find_by_username("admin")
       expect(json['access_token']).to be_truthy

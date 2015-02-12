@@ -38,8 +38,8 @@ RSpec.describe Treenode, :type => :model do
 
 	describe "children" do
 		context "children exists" do
-			treenode = Treenode.find(1)
 			it "should return a list of children" do
+			treenode = Treenode.find_by_id(1)
 				expect(treenode.children).to_not be nil
 				expect(treenode.children.first).to be_a(Treenode)
 			end

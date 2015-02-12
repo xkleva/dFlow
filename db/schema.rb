@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 20150212085700) do
   create_table "entries", force: :cascade do |t|
     t.integer  "job_id"
     t.integer  "flow_step_id"
-    t.string   "state",        limit: 255
+    t.string   "state"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -32,18 +32,18 @@ ActiveRecord::Schema.define(version: 20150212085700) do
   create_table "flow_steps", force: :cascade do |t|
     t.integer  "flow_id"
     t.integer  "process_id"
-    t.string   "goto_true",          limit: 255
-    t.string   "goto_false",         limit: 255
-    t.string   "condition_method",   limit: 255
-    t.string   "condition_operator", limit: 255
-    t.string   "condition_value",    limit: 255
-    t.string   "params",             limit: 255
+    t.string   "goto_true"
+    t.string   "goto_false"
+    t.string   "condition_method"
+    t.string   "condition_operator"
+    t.string   "condition_value"
+    t.string   "params"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "flows", force: :cascade do |t|
-    t.string   "name",           limit: 255
+    t.string   "name"
     t.integer  "start_position"
     t.text     "params_info"
     t.datetime "created_at"
