@@ -67,6 +67,7 @@ GEM
       mini_portile (~> 0.6.0)
     pg (0.18.1)
     rack (1.6.0)
+    rack-cors (0.3.1)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.0)
@@ -151,6 +152,7 @@ DEPENDENCIES
   marc
   nokogiri
   pg
+  rack-cors
   rails (= 4.2.0)
   rspec-rails (~> 3.0.0)
   sdoc (~> 0.4.0)
