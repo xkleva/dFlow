@@ -62,21 +62,17 @@ RSpec.describe SessionController, :type => :controller do
     end
 
     it "should return access_token for valid external user credentials" do
-      if Rails.configuration.external_auth
-        post :create, username: "fake_external_user", password: "fake_valid_password"
-        user = User.find_by_username("fake_external_user")
-        expect(json['access_token']).to be_truthy
-        expect(json['token_type']).to eq("bearer")
-        expect(json['access_token']).to eq(user.access_tokens.first.token)
-      end
+      post :create, username: "fake_external_user", password: "fake_valid_password"
+      user = User.find_by_username("fake_external_user")
+      expect(json['access_token']).to be_truthy
+      expect(json['token_type']).to eq("bearer")
+      expect(json['access_token']).to eq(user.access_tokens.first.token)
     end
 
     it "should return 401 with error on invalid external user credentials" do
-      if Rails.configuration.external_auth
-        post :create, username: "fake_external_user", password: "fake_invalid_password"
-        expect(response.status).to eq(401)
-        expect(json['error']).to be_truthy
-      end
+      post :create, username: "fake_external_user", password: "fake_invalid_password"
+      expect(response.status).to eq(401)
+      expect(json['error']).to be_truthy
     end
   end
   
