@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
   private
   def validate_token
     token = get_token
-    token.force_encoding('utf-8')
+    token.force_encoding('utf-8') if token
     token_object = AccessToken.find_by_token(token)
     if !token_object || !token_object.user.validate_token(token)
       headers['WWW-Authenticate'] = "Token"
