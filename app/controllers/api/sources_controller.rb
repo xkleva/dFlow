@@ -58,7 +58,7 @@ class Api::SourcesController < Api::ApiController
 		# Identify source object
 		source_object = Source.find_by_id(source_id)
 		if !source_object
-			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find a source with id '#{source_id}")
+			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find a source with id #{source_id}")
 			render_json
 			return
 		end
@@ -68,7 +68,7 @@ class Api::SourcesController < Api::ApiController
 		if source_data && !source_data.empty?
 			@response[:data] = source_data
 		else
-			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find source data for source: '#{source_id} and catalog_id: #{catalog_id}")
+			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find source data for source: #{source_id} and catalog_id: #{catalog_id}")
 		end
 		render_json
 	end

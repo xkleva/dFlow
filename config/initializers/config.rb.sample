@@ -27,10 +27,10 @@ Rails.application.config.process_list = {
 	},
 	"rename_files" => {
 		id: "rename_files"
-	}
+	},
 	"move_files" => {
 		id: "move_files"
-	}
+	},
 	"copy_files" => {
 		id: "copy_files"
 	}
