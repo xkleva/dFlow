@@ -102,7 +102,9 @@ class User < ActiveRecord::Base
 
   # Generate a random token
   def generate_token
-    access_tokens.create(token: SecureRandom.hex, token_expire: Time.now + DEFAULT_TOKEN_EXPIRE)
+    token_hash = SecureRandom.hex
+    token_hash.force_encoding('utf-8')
+    access_tokens.create(token: token_hash, token_expire: Time.now + DEFAULT_TOKEN_EXPIRE)
   end
   
   # Read all users from input file and create users that do not already exist
