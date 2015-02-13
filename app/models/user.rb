@@ -61,7 +61,6 @@ class User < ActiveRecord::Base
     uri.query = URI.encode_www_form(params)
     res = Net::HTTP.get_response(uri)
     json_response = JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
-    pp [json_response, json_response["auth"]["yesno"]]
     if(json_response["auth"]["yesno"])
       token_object = generate_token
       return token_object.token
