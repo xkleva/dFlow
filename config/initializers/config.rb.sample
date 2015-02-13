@@ -35,3 +35,19 @@ Rails.application.config.process_list = {
 		id: "copy_files"
 	}
 }
+
+# List of available sources
+Rails.application.config.sources = [
+  {
+    name: 'libris',
+    label: 'Libris'
+  },
+  {
+    name: 'other_source',
+    label: 'Other Source'
+  },
+  {
+    name: 'operakallan',
+    label: 'Operakällan'
+  }
+]
