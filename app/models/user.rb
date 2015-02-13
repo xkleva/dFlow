@@ -24,11 +24,6 @@ class User < ActiveRecord::Base
     update_attribute(:deleted_at, Time.now)
   end
 
-  # Authenticate user against password sources
-  def authenticate(provided_password)
-    authenticate_passwd_file(provided_password)
-  end
-
   # Clear all tokens that have expired
   def clear_expired_tokens
     access_tokens.where("token_expire < ?", Time.now).destroy_all
@@ -45,10 +40,51 @@ class User < ActiveRecord::Base
     true
   end
 
+  # Authenticate user against password sources
+  def authenticate(provided_password)
+    user_file_data = authenticate_get_local_user
+    auth_status = false
+    if user_file_data
+      auth_status = authenticate_local(user_file_data, provided_password)
+    else
+      if Rails.configuration.external_auth
+        auth_status = authenticate_external(provided_password)
+      end
+    end
+    auth_status
+  end
+
+  # Authenticate against external server
+  def authenticate_external(provided_password)
+    uri = URI(Rails.configuration.external_auth_url + "/" + self.username)
+    params = { :password => provided_password}
+    uri.query = URI.encode_www_form(params)
+    res = Net::HTTP.get_response(uri)
+    json_response = JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
+    pp [json_response, json_response["auth"]["yesno"]]
+    if(json_response["auth"]["yesno"])
+      token_object = generate_token
+      return token_object.token
+    end
+    false
+  end
+
   # Authenticate against local passwd file
   # If we run in test environment, read filename from Rails.cache to reach a test passwd file
   # instead of the system one.
-  def authenticate_passwd_file(provided_password, filename = DEFAULT_PASSWD_FILE)
+  def authenticate_local(user_file_data, provided_password)
+    if self.username == user_file_data[:username]
+      pass = BCrypt::Password.new(user_file_data[:passhash])
+      if(pass == provided_password)
+        token_object = generate_token
+        return token_object.token
+      end
+    end
+    false
+  end
+
+  # Check if user exists at all in local file
+  def authenticate_get_local_user(filename = DEFAULT_PASSWD_FILE)
     if Rails.env == "test"
       filename = Rails.cache.read("test_passwd_filename")
     end
@@ -58,15 +94,11 @@ class User < ActiveRecord::Base
         line.chomp!
         username,passhash,_fullname,_email,_role = line.split(/:/)
         if self.username == username
-          pass = BCrypt::Password.new(passhash)
-          if(pass == provided_password)
-            token_object = generate_token
-            return token_object.token
-          end
-          return false
+          return {username: username, passhash: passhash }
         end
       end
     end
+    false
   end
 
   # Generate a random token

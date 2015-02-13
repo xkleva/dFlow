@@ -20,6 +20,10 @@ Rails.application.config.user_roles = [
 	}
 ]
 
+# Flags for using external authentication source
+Rails.application.config.external_auth = false
+Rails.application.config.external_auth_url = "https://login-server.example.com/auth"
+
 # List of all available processes, the id is what identifies the process in the flow.
 Rails.application.config.process_list = {
 	"scan_job" => {
