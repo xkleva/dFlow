@@ -19,6 +19,15 @@ RSpec.describe Treenode, :type => :model do
 				expect(treenode.errors.messages[:name]).to_not be nil
 			end
 		end
+		context "name is nil" do
+			treenode = Treenode.new(name: nil, parent_id: 1)
+			it "should invalidate object" do
+				expect(treenode.valid?).to be false
+			end
+			it "should return a validation error for field name" do
+				expect(treenode.errors.messages[:name]).to_not be nil
+			end
+		end
 		context "name is properly formatted" do
 			treenode = Treenode.new(name: "Tree Node", parent_id: 1)
 			it "should validate object" do

@@ -50,7 +50,7 @@ module ErrorCodes
 
 	# Used when object validation fails
 	VALIDATION_ERROR = {
-		http_status: 400,
+		http_status: 422,
 		code: "VALIDATION_ERROR"
 	}
 end

@@ -11,7 +11,7 @@ describe Api::UsersController do
 	end
 
 	describe "POST create" do
-		context "With valid parameters" do
+		context "with valid parameters" do
 			it "should return a user object with id" do
 			 post :create, api_key: @api_key, user: {username: "Testuser", name: "John Doe", role: "ADMIN"}
 				expect(json['user']['id']).to_not be nil
@@ -23,7 +23,7 @@ describe Api::UsersController do
 				post :create, api_key: @api_key, user: {username: "Testuser", name: "John Doe", role: "FOO"}
 				expect(json['error']).to_not be nil
 				expect(json['user']).to be nil
-				expect(response.status).to eq 400
+				expect(response.status).to eq 422
 			end
 		end
 	end

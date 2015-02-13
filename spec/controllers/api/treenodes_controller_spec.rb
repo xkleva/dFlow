@@ -35,8 +35,8 @@ describe Api::TreenodesController do
 			it "should not return a treeenode object" do
 				expect(json['treenode']).to be nil
 			end
-			it "should return status code 400" do
-				expect(response.status).to eq 400
+			it "should return status code 422" do
+				expect(response.status).to eq 422
 			end
 		end
 
@@ -50,8 +50,23 @@ describe Api::TreenodesController do
 			it "should not return a treeenode object" do
 				expect(json['treenode']).to be nil
 			end
-			it "should return status code 400" do
-				expect(response.status).to eq 400
+			it "should return status code 422" do
+				expect(response.status).to eq 422
+			end
+		end
+
+		context "With invalid name" do
+			before :each do
+				post :create, api_key: @api_key, treenode: {name: nil, parent_id: 1}
+			end
+			it "should return an error object" do
+				expect(json['error']).to_not be nil
+			end
+			it "should not return a treeenode object" do
+				expect(json['treenode']).to be nil
+			end
+			it "should return status code 422" do
+				expect(response.status).to eq 422
 			end
 		end
 	end
@@ -82,7 +97,7 @@ describe Api::TreenodesController do
 				expect(json['treenode']['children'][0]['id']).to be_an(Integer)
 			end
 		end
-		context "Non Existing treenode onject" do
+		context "Non Existing treenode object" do
 			before :each do
 				get :show, api_key: @api_key, id: -1
 			end
