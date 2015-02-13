@@ -27,4 +27,14 @@ describe Api::UsersController do
 			end
 		end
 	end
+
+	describe "GET index" do
+		context "with existing users" do
+			it "should return a list of users" do
+				get :index, api_key: @api_key
+				expect(json['users']).to_not be nil
+				expect(json['users'][0]['id']).to be_an(Integer)
+			end
+		end
+	end
 end

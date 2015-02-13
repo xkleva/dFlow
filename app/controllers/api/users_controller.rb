@@ -2,6 +2,8 @@ class Api::UsersController < Api::ApiController
 	before_filter :check_key
 
 	def index
+		@response[:users] = User.all
+		render_json
 	end
 
 	# Creates a User 
