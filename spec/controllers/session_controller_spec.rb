@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe SessionController, :type => :controller do
   before :each do
+    WebMock.disable_net_connect!
     # Load user with username "admin" and password "admin"
     passwd_file = "#{Rails.root}/spec/support/test-passwd-first"
     User.create_missing_users_from_file(passwd_file)
@@ -17,8 +18,14 @@ RSpec.describe SessionController, :type => :controller do
       expect(json['access_token']).to eq(user.access_tokens.first.token)
     end
 
-    it "should return 401 with error on invalid credentials" do
+    it "should return 401 with error on invalid password and invalid user" do
       post :create, username: "invalid_user", password: "invalid_password"
+      expect(response.status).to eq(401)
+      expect(json['error']).to be_truthy
+    end
+
+    it "should return 401 with error on invalid password for valid user" do
+      post :create, username: "admin", password: "invalid_password"
       expect(response.status).to eq(401)
       expect(json['error']).to be_truthy
     end
@@ -38,6 +45,38 @@ RSpec.describe SessionController, :type => :controller do
       expect(response.status).to eq(200)
       get :show, id: token2
       expect(response.status).to eq(200)
+    end
+  end
+
+  describe "create session for external user" do
+    before :each do
+      User.create(username: 'fake_external_user', name: 'Fake User', email: 'fake.user@example.com', role: "OPERATOR")
+
+      stub_request(:get, Rails.configuration.external_auth_url+"/fake_external_user")
+        .with(query: {password: "fake_valid_password"})
+        .to_return(body: {auth: {yesno: true }}.to_json)
+
+      stub_request(:get, Rails.configuration.external_auth_url+"/fake_external_user")
+        .with(query: {password: "fake_invalid_password"})
+        .to_return(body: {auth: {yesno: false }}.to_json)
+    end
+
+    it "should return access_token for valid external user credentials" do
+      if Rails.configuration.external_auth
+        post :create, username: "fake_external_user", password: "fake_valid_password"
+        user = User.find_by_username("fake_external_user")
+        expect(json['access_token']).to be_truthy
+        expect(json['token_type']).to eq("bearer")
+        expect(json['access_token']).to eq(user.access_tokens.first.token)
+      end
+    end
+
+    it "should return 401 with error on invalid external user credentials" do
+      if Rails.configuration.external_auth
+        post :create, username: "fake_external_user", password: "fake_invalid_password"
+        expect(response.status).to eq(401)
+        expect(json['error']).to be_truthy
+      end
     end
   end
   

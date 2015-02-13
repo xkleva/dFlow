@@ -21,9 +21,6 @@ ActiveRecord::Schema.define(version: 20150212085700) do
     t.datetime "updated_at",   null: false
   end
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "entries", force: :cascade do |t|
     t.integer  "job_id"
     t.integer  "flow_step_id"

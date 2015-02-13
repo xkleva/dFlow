@@ -2,6 +2,15 @@
 class Api::SourcesController < Api::ApiController
 	before_filter :check_key
 
+	def index
+		#@response = {}
+		@response[:sources] = Rails.application.config.sources
+		render_json
+	rescue
+		error_msg(ErrorCodes::OBJECT_ERROR, "Other error occurred while retrieving sources list")
+		render_json
+	end
+
 	# Validates a list of objects with sources, and returns the validated data with a list of unique catalog_ids
 	# valid format is {objects: [{source_name: "String", catalog_id: int, <extra object parameters to be validated>}]}
 	def validate_new_objects

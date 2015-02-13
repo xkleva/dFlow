@@ -89,4 +89,14 @@ describe Api::SourcesController do
     end
   end
 
+  describe "Get a list of sources" do
+    context "there is at least one source available" do
+      it "should return json with available sources" do
+        get :index, api_key: @api_key
+        pp json
+        expect(json['sources']).not_to be nil
+      end
+    end
+  end
+
 end

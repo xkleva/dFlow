@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   namespace :api, :defaults => {:format => :json} do
     get 'check_connection' , to: 'api#check_connection'
-    
+
     # Config API
     get 'config/role_list', to: 'config#role_list'
 
@@ -13,7 +13,7 @@ Rails.application.routes.draw do
     # Treenode API
     resources :treenodes
 
-    
+
     get 'jobs', to: 'jobs#index'
     get 'jobs/job_metadata', to: 'jobs#job_metadata'
     get 'jobs/update_metadata', to: 'jobs#update_metadata'
@@ -25,10 +25,11 @@ Rails.application.routes.draw do
 
     get 'sources/fetch_source_data', to: 'sources#fetch_source_data'
     get 'sources/validate_new_objects', to: 'sources#validate_new_objects'
+    get 'sources', to: 'sources#index'
 
     get 'flows/get_flow', to: 'flows#get_flow'
     post 'flows/update_flow_steps', to: 'flows#update_flow_steps'
-    
+
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

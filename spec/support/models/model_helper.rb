@@ -65,5 +65,20 @@ module ModelHelper
 				values: ["littbank", "lasstod", "GUB"]
 			}
 		]
+
+		Rails.application.config.sources = [
+			{
+				name: 'libris',
+				label: 'Libris'
+			},
+			{
+				name: 'other_source',
+				label: 'Other Source'
+			},
+			{
+				name: 'operakallan',
+				label: 'Operakällan'
+			}
+		]
 	end
 end
