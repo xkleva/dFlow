@@ -37,6 +37,19 @@ class Api::UsersController < Api::ApiController
 
 	end
 
+  # Renders a specific user object
+  def show
+    user = User.find_by_id(params[:id])
+
+    if user
+      @response[:user] = user
+    else
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not find user with id #{params[:id]}")
+    end
+
+    render_json
+  end
+
 	private
 
 	#Kept secret so that admin functionality cannot be ingested

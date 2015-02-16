@@ -57,4 +57,24 @@ describe Api::UsersController do
       end
     end
   end
+
+  describe "GET show" do
+    context "an existing user" do
+      it "should return a single user object" do
+        get :show, api_key: @api_key, id: 1
+        expect(json['user']).to_not be nil
+        expect(json['user']['id']).to be_an(Integer)
+      end
+    end
+    context "a non existing user" do
+      it "should return an error object" do
+        get :show, api_key: @api_key, id: -1
+        expect(json['error']).to_not be nil
+      end
+      it "should return status 404" do
+        get :show, api_key: @api_key, id: -1
+        expect(response.status).to eq 404
+      end
+    end
+  end
 end

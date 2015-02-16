@@ -6,7 +6,8 @@ class SessionController < ApplicationController
     if user
       token = user.authenticate(params[:password])
       if token
-        @response[:user] = user
+        @response[:user] = user.as_json
+        @response[:user][:role] = user.role_object
         @response[:access_token] = token
         @response[:token_type] = "bearer"
         render_json
@@ -22,7 +23,8 @@ class SessionController < ApplicationController
     token = params[:id]
     token_object = AccessToken.find_by_token(token)
     if token_object && token_object.user.validate_token(token)
-      @response[:user] = token_object.user
+      @response[:user] = token_object.user.as_json
+      @response[:user][:role] = token_object.user.role_object
       @response[:access_token] = token
       @response[:token_type] = "bearer"
     else
