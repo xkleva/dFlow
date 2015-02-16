@@ -8,6 +8,9 @@ RSpec.describe SessionController, :type => :controller do
     User.create_missing_users_from_file(passwd_file)
     Rails.cache.write("test_passwd_filename", passwd_file)
   end
+  after :all do
+    WebMock.allow_net_connect!
+  end
 
   describe "create session" do
      it "should return access_token on valid credentials" do

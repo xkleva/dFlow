@@ -10,6 +10,9 @@ describe Api::JobsController do
     config_init
     @api_key = Rails.application.config.api_key
   end
+  after :all do
+    WebMock.allow_net_connect!
+  end
 
   describe "GET index" do
     context "with existing jobs" do
