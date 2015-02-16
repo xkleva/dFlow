@@ -44,8 +44,8 @@ RSpec.describe Treenode, :type => :model do
       end
     end
     context "name is the same as old name" do
-      treenode = Treenode.find(1)
       it "should validate object" do
+        treenode = Treenode.find(1)
         expect(treenode.valid?).to be true
       end
     end
