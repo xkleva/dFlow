@@ -29,6 +29,16 @@ class User < ActiveRecord::Base
     access_tokens.where("token_expire < ?", Time.now).destroy_all
   end
 
+  # Returns role hash from config file
+  def role_object
+    Rails.application.config.user_roles.select{|role| role[:name] == self.role}.first
+  end
+
+  # Checks if users role has given right value
+  def has_right?(right_value)
+    role_object[:rights].include? right_value
+  end
+
   # First clear all invalid tokens. Then look for our provided token.
   # If we find one, we know it is valid, and therefor update its validity
   # further into the future

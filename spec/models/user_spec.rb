@@ -151,5 +151,25 @@ RSpec.describe User, :type => :model do
       end
     end
   end
+
+  describe "role_object" do
+    context "for a valid role" do
+      it "should return a hash object" do
+        user = User.find_by_username("admin_user")
+        expect(user.role_object).to be_a(Hash)
+        expect(user.role_object[:name]).to eq "ADMIN"
+        expect(user.role_object[:rights]).to_not be nil
+      end
+    end
+  end
+
+  describe "has_right?" do
+    context "user has right" do
+      it "should return true" do
+        user = User.find_by_username("admin_user")
+        expect(user.has_right?("manage_users")).to be true
+      end
+    end
+  end
 end
 

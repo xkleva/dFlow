@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 module ModelHelper
+  def login_users
+    @admin_user = User.find_by_username("admin_user")
+    @admin_user_token = @admin_user.generate_token.token
+    @operator_user = User.find_by_username("operator_user")
+    @operator_user_token = @operator_user.generate_token.token
+  end
   def config_init
     Rails.application.config.api_key = "test_key"
     Rails.application.config.external_auth = true
@@ -8,16 +14,21 @@ module ModelHelper
     Rails.application.config.user_roles = [
       {
         name: "ADMIN",
-        rights: []
+        rights: ['manage_users', 'view_tree', 'manage_tree', 'view_users']
       },
       {
         name: "GUEST",
         unassignable: true,
-        rights: []
+        rights: ['view_tree']
       },
       {
         name: "OPERATOR",
-        rights: []
+        rights: ['view_tree', 'manage_tree']
+      },
+      {
+        name: "API_KEY",
+        unassaignable: true,
+        rights: ['view_tree', 'manage_tree', 'manage_users', 'view_users']
       }
     ]
 

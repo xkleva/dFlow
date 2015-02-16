@@ -12,11 +12,17 @@ module ErrorCodes
 		code: "ERROR"
 	}
 
-	# Used for authentication errors (i.e. needs admin rights)
+	# Used for authentication errors (i.e. needs to be logged in)
 	AUTH_ERROR = {
 		http_status: 401,
 		code: "AUTH_ERROR"
 	}
+
+  # Used for authentication errors (i.e. needs specific rights)
+  PERMISSION_ERROR = {
+    http_status: 403,
+    code: "PERMISSION_ERROR"
+  }
 
 	# Used for session validation errors
 	SESSION_ERROR = {

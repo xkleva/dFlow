@@ -1,5 +1,7 @@
 class Api::UsersController < Api::ApiController
 	before_filter :check_key
+	before_filter -> { validate_rights 'manage_users' }, only: [:create, :update, :destroy]
+	before_filter -> { validate_rights 'view_users' }, only: [:index]
 
 	def index
 		@response[:users] = User.all
@@ -19,9 +21,20 @@ class Api::UsersController < Api::ApiController
 			render_json(201)
 		end
 
-	rescue
-		error_msg(ErrorCodes::ERROR, "Something went wrong")
-		render_json
+	end
+
+	# Updates a User
+	def update
+		user = User.find(params[:id])
+
+		if user.update_attributes(user_params)
+			@response[:user] = user
+		else
+			error_msg(ErrorCodes::VALIDATION_ERROR, "Could not update user", user.errors)
+		end
+
+    render_json
+
 	end
 
 	private
@@ -30,4 +43,6 @@ class Api::UsersController < Api::ApiController
 	def user_params
 		params.require(:user).permit(:username, :name, :email, :role)
 	end
+	
+
 end

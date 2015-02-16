@@ -26,13 +26,46 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  # checks if current user has the rights to execute given method
+  def validate_rights(right_value)
+    validate_access if !@current_user
+    if !@current_user.has_right?(right_value)
+      error_msg(ErrorCodes::PERMISSION_ERROR, "You don't have the necessary rights (#{right_value}) to perform this action")
+      render_json
+    end
+  end
+
+  # Sets user according to token or api_key, or guest if none is valid
+  def validate_access
+    if !validate_token && !validate_key
+      @current_user = User.new(username: 'guest', name: 'Guest', role: "GUEST")
+    end
+  end
+
+  # Validates token and sets user if token if valid
   def validate_token
+    return if @current_user
     token = get_token
     token.force_encoding('utf-8') if token
     token_object = AccessToken.find_by_token(token)
-    if !token_object || !token_object.user.validate_token(token)
-      headers['WWW-Authenticate'] = "Token"
-      render json: {error: "Invalid token"}, status: 401
+    if token_object && token_object.user.validate_token(token)
+      @current_user = token_object.user
+      return true
+    else
+      return false
+    end
+  end
+
+  # Validates given api_key against configurated key and sets user to api_key_user
+  def validate_key
+    return if @current_user
+    api_key = params[:api_key]
+    if api_key == Rails.application.config.api_key
+      @current_user = User.new(username: 'api_key_user', name: 'API key user', role: "API_KEY")
+      return true
+    else
+      return false
     end
   end
 

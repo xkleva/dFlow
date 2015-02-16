@@ -52,10 +52,10 @@ class Api::JobsController < Api::ApiController
 
 	  return unless process_startable # Return if process cannot start for some reason
 
-		if !@process.update_state_for_job(@job.id, "STARTED")
-			error_msg(ErrorCodes::DATA_ACCESS_ERROR, "Could not change state for job with id '#{params[:job_id]}'", @process.errors)
-		end
-		render_json
+	  if !@process.update_state_for_job(@job.id, "STARTED")
+	  	error_msg(ErrorCodes::DATA_ACCESS_ERROR, "Could not change state for job with id '#{params[:job_id]}'", @process.errors)
+	  end
+	  render_json
 	end
 
 	# Sets a process for given job and process_method as done
@@ -69,7 +69,7 @@ class Api::JobsController < Api::ApiController
 	# Contains progress information about given job and process
 	def process_progress
 		if !@process.update_progress_for_job(@job.id, params[:progress_info])
-		  error_msg(ErrorCodes::DATA_ACCESS_ERROR, "Could not update progress information for job with id '#{params[:job_id]}", @process.errors)
+			error_msg(ErrorCodes::DATA_ACCESS_ERROR, "Could not update progress information for job with id '#{params[:job_id]}", @process.errors)
 		end
 		render_json
 	end

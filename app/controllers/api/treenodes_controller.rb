@@ -50,6 +50,20 @@ class Api::TreenodesController < Api::ApiController
 
 	end
 
+  # Updates a treenode object
+  def update
+    treenode = Treenode.find(params[:id])
+
+    if treenode.update_attributes(treenode_params)
+      @response[:treenode] = treenode
+    else
+      error_msg(ErrorCodes::VALIDATION_ERROR, "Could not update treenode", treenode.errors)
+    end
+
+    render_json
+
+  end
+
 	private
 
 	def treenode_params
