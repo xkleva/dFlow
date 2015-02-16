@@ -136,4 +136,24 @@ describe Api::TreenodesController do
 			end
 		end
 	end
+
+  describe "PUT update" do
+    context "with valid values" do
+      it "should return an updated treenode" do
+        treenode = Treenode.find(1)
+        treenode.name = "NewName"
+        post :update, api_key: @api_key, id: treenode.id, treenode: treenode.as_json
+        expect(json['treenode']).to_not be nil
+        expect(json['treenode']['name']).to eq 'NewName'
+      end
+    end
+    context "with invalid values" do
+      it "should return an error message" do
+        treenode = Treenode.find(1)
+        treenode.name = ""
+        post :update, api_key: @api_key, id: treenode.id, treenode: treenode.as_json
+        expect(json['error']).to_not be nil
+      end
+    end
+  end
 end
