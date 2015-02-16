@@ -43,6 +43,12 @@ RSpec.describe Treenode, :type => :model do
 				expect(treenode.errors.messages[:name]).to_not be nil
 			end
 		end
+    context "name is the same as old name" do
+      treenode = Treenode.find(1)
+      it "should validate object" do
+        expect(treenode.valid?).to be true
+      end
+    end
 		context "name contains no alphanumerical character" do
 			treenode = Treenode.new(name: "!@#)(", parent_id: 1)
 			it "should invalidate object" do

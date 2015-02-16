@@ -22,7 +22,7 @@ class Treenode < ActiveRecord::Base
   # Checks if name given is unique for current parent scope
   def name_unique_for_parent
     Treenode.where(parent_id: self.parent_id).each do |sibling|
-      if self.name && sibling.name.casecmp(self.name) == 0
+      if self.name && sibling.name.casecmp(self.name) == 0 && self.id != sibling.id
         errors.add(:name, "Name #{self.name} already exists under parent")
       end
     end
