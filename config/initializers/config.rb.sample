@@ -3,21 +3,26 @@ Rails.application.config.api_key = <your_key_here>
 
 ### USER ROLES DEFINITION
 ### Create a new role by adding another hash with a unique name of the role as well as a list of rights. Unassignable states that the role cannot be assigned to users.
-### Available rights are: <None at the moment>
+### Available rights are: 'view_users', 'manage_users', 'view_tree', 'manage_tree', 'manage_tree_root'
 Rails.application.config.user_roles = [
 	{
-		name: "ADMIN",
-		rights: []
-	},
-	{
-		name: "GUEST",
-		unassignable: true,
-		rights: []
-	},
-	{
-		name: "OPERATOR",
-		rights: []
-	}
+    name: "ADMIN",
+    rights: ['view_users', 'manage_users', 'view_tree', 'manage_tree', 'manage_tree_root']
+  },
+  {
+    name: "GUEST",
+    unassignable: true,
+    rights: ['view_tree']
+  },
+  {
+    name: "OPERATOR",
+    rights: ['view_tree', 'manage_tree']
+  },
+  {
+    name: "API_KEY",
+    unassignable: true,
+    rights: ['view_tree', 'manage_tree']
+  }
 ]
 
 # Flags for using external authentication source
