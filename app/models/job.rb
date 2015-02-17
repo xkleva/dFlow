@@ -10,7 +10,7 @@ class Job < ActiveRecord::Base
   validates :title, :presence => true
   validates :catalog_id, :presence => true
   validates :treenode_id, :presence => true
-  validates :source, :presence => true, inclusion: Rails.configuration.sources.map { |x| x[:name] }
+  validates :source, :presence => true, inclusion: Rails.application.config.sources.map { |x| x[:name] }
   validate :xml_validity
 
   def as_json(options = {})
