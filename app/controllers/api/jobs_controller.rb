@@ -32,7 +32,7 @@ class Api::JobsController < Api::ApiController
     metaquery[:query] = params[:query] # Not implemented yet
     metaquery[:total] = jobs.count
 
-    @response[:jobs] = jobs
+    @response[:jobs] = jobs.as_json(list: true)
     @response[:meta] = {query: metaquery, pagination: pagination}
 
     render_json
