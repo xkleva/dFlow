@@ -82,16 +82,19 @@ module ModelHelper
 
     Rails.application.config.sources = [
       {
-        name: 'libris',
-        label: 'Libris'
+      name: 'libris',
+      label: 'Libris',
+      class_name: 'Libris'
       },
       {
-        name: 'other_source',
-        label: 'Other Source'
+      name: 'other_source',
+      label: 'Other Source',
+      class_name: 'OtherSource'
       },
       {
         name: 'operakallan',
-        label: 'Operakällan'
+        label: 'Operakällan',
+        class_name: 'UpperClass'
       }
     ]
   end

@@ -26,7 +26,7 @@ class Api::SourcesController < Api::ApiController
 		objects.each do |object|
 
 			# Validate source name
-			source_object = Source.where(classname: object[:source_name]).first
+			source_object = Source.find_by_class_name(object[:source_name])
 			if !source_object
 				error_msg(ErrorCodes::OBJECT_ERROR, "Could not find a source with name '#{object[:source_name]}")
 				fail += 1
@@ -62,12 +62,12 @@ class Api::SourcesController < Api::ApiController
 	# Returns hash with source data for a given source and catalog_id
 	def fetch_source_data
 		catalog_id = params[:catalog_id]
-		source_id = params[:source_id]
+		source = params[:source]
 
 		# Identify source object
-		source_object = Source.find_by_id(source_id)
+		source_object = Source.find_by_name(source)
 		if !source_object
-			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find a source with id #{source_id}")
+			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find a source with name #{source}")
 			render_json
 			return
 		end
@@ -77,7 +77,7 @@ class Api::SourcesController < Api::ApiController
 		if source_data && !source_data.empty?
 			@response[:data] = source_data
 		else
-			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find source data for source: #{source_id} and catalog_id: #{catalog_id}")
+			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find source data for source: #{source} and catalog_id: #{catalog_id}")
 		end
 		render_json
 	end

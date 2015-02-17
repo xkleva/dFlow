@@ -20,12 +20,13 @@ class Job < ActiveRecord::Base
         name: name,
         title: title,
         display: display,
-        source: source,
+        source_label: source_label,
         catalog_id: catalog_id
       }
     else
       super.merge({
-        display: display
+        display: display,
+        source_label: source_label
       })
     end
   end
@@ -33,6 +34,11 @@ class Job < ActiveRecord::Base
   # Generate preferred display name if name works
   def display
     name ? "#{name} (#{title})" : title
+  end
+
+  # Retrieve source label from config
+  def source_label
+    Source.find_label_by_name(source)
   end
 
   ###VALIDATION METHODS###

@@ -49,14 +49,17 @@ Rails.application.config.process_list = {
 Rails.application.config.sources = [
   {
     name: 'libris',
-    label: 'Libris'
+    label: 'Libris',
+    class_name: 'Libris'
   },
   {
     name: 'other_source',
-    label: 'Other Source'
+    label: 'Other Source',
+    class_name: 'OtherSource'
   },
   {
     name: 'operakallan',
-    label: 'Operakällan'
+    label: 'Operakällan',
+    class_name: 'UpperClass'
   }
 ]

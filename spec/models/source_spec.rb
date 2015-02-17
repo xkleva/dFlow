@@ -1,9 +1,14 @@
 require 'rails_helper'
 
+RSpec.configure do |c|
+  c.include ModelHelper
+end
+
 RSpec.describe Source, :type => :model do
   before :each do
+    config_init
     WebMock.allow_net_connect!
-    @libris = Source.where(classname: "Libris").first
+    @libris = Source.find_by_name('libris')
   end
   describe "fetch_source_id" do
     context "with an existing libris ID" do

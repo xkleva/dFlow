@@ -7,7 +7,7 @@
 
 require 'open-uri'
 
-class Libris
+class Libris < Source
   # There is no schema for libris right now
   XML_SCHEMA = nil
   LIBRIS_XSEARCH_MARC = "http://libris.kb.se/xsearch?format=marcxml&format_level=full&holdings=true&query=ONR:"

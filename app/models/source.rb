@@ -1,14 +1,29 @@
 class Source < ActiveRecord::Base
 
-  def fetch_source_data(catalog_id)
-    class_call(:fetch_source_data, catalog_id)
+  def self.find_by_name(name)
+    classname = Rails.application.config.sources.find{|x| x[:name] == name}
+    if classname.nil?
+      return nil
+    else
+      return Kernel.const_get(classname[:class_name])
+    end
   end
 
-  def validate_job_fields(object)
-    class_call(:validate_job_fields, object)
+  def self.find_by_class_name(name)
+    classname = Rails.application.config.sources.find{|x| x[:class_name] == name}
+    if classname.nil?
+      return nil
+    else
+      return Kernel.const_get(classname[:class_name])
+    end
   end
 
-  def class_call(*args)
-    Kernel.const_get(classname).send(*args)
+  def self.find_label_by_name(name)
+    classname = Rails.application.config.sources.find{|x| x[:name] == name}
+    if classname.nil?
+      return nil
+    else
+      return classname[:label]
+    end
   end
 end
