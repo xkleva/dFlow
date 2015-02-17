@@ -1,4 +1,4 @@
-class Source < ActiveRecord::Base
+class Source
 
   def self.find_by_name(name)
     classname = Rails.application.config.sources.find{|x| x[:name] == name}
