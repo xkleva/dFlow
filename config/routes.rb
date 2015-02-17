@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
 
     get 'jobs', to: 'jobs#index'
+    get 'jobs/:id', to: 'jobs#show'
     get 'jobs/job_metadata', to: 'jobs#job_metadata'
     get 'jobs/update_metadata', to: 'jobs#update_metadata'
     get 'jobs/process_request', to: 'jobs#process_request'

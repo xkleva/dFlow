@@ -24,6 +24,23 @@ describe Api::JobsController do
     end
   end
 
+  describe "GET show" do
+    context "with existing job" do
+      it "should return full job object data" do
+        get :show, api_key: @api_key, id: 1
+        expect(json['job'].size).to be > 0
+        expect(response.status).to eq 200
+      end
+    end
+
+    context "with non-existing job" do
+      it "should return 404" do
+        get :show, api_key: @api_key, id: 9999999
+        expect(response.status).to eq 404
+      end
+    end
+  end
+
   describe "GET job_metadata" do 
     context "with invalid attributes" do 
       it "returns a json message" do 

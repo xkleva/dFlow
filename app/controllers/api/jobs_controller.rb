@@ -10,6 +10,16 @@ class Api::JobsController < Api::ApiController
 		render json: {jobs: jobs}, status: 200
 	end
 
+  def show
+    begin
+      job = Job.find(params[:id])
+      @response[:job] = job
+    rescue
+      error_msg(ErrorCodes::REQUEST_ERROR, "Could not find job '#{params[:id]}'")
+    end
+		render_json
+  end
+
 	# Returns the metadata for a given job
 	def job_metadata
 		begin
