@@ -5,6 +5,9 @@ RSpec.configure do |c|
 end
 
 RSpec.describe Job, :type => :model do
+  before :each do
+    config_init
+  end
 
   describe "create job" do
     it "should save a valid job object" do
@@ -38,9 +41,6 @@ RSpec.describe Job, :type => :model do
     end
   end
 
-	before :each do
-
-	end
 	describe "create job old" do
 		context "from valid libris id" do
 			it "should create a job object" do
