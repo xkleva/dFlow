@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150212085700) do
+ActiveRecord::Schema.define(version: 20150217110121) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.integer  "user_id"
@@ -52,7 +52,6 @@ ActiveRecord::Schema.define(version: 20150212085700) do
 
   create_table "jobs", force: :cascade do |t|
     t.text     "name"
-    t.integer  "source_id"
     t.integer  "catalog_id"
     t.text     "title"
     t.text     "author"
@@ -70,6 +69,8 @@ ActiveRecord::Schema.define(version: 20150212085700) do
     t.text     "progress_state"
     t.integer  "flow_id"
     t.text     "flow_params"
+    t.text     "source"
+    t.integer  "treenode_id"
   end
 
   create_table "sources", force: :cascade do |t|

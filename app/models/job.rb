@@ -4,13 +4,36 @@ class Job < ActiveRecord::Base
   default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
   scope :active, -> {where(quarantined: false, deleted_at: nil)}
 
+  belongs_to :treenode
   has_many :entries
-  belongs_to :source
 
   validates :title, :presence => true
   validates :catalog_id, :presence => true
-  validates :source_id, :presence => true
+  validates :treenode_id, :presence => true
+  validates :source, :presence => true, inclusion: Rails.configuration.sources.map { |x| x[:name] }
   validate :xml_validity
+
+  def as_json(options = {})
+    if options[:list]
+      { 
+        id: id,
+        name: name,
+        title: title,
+        display: display,
+        source: source,
+        catalog_id: catalog_id
+      }
+    else
+      super.merge({
+        display: display
+      })
+    end
+  end
+
+  # Generate preferred display name if name works
+  def display
+    name ? "#{name} (#{title})" : title
+  end
 
   ###VALIDATION METHODS###
   def xml_valid?(xml)

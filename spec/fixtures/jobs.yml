@@ -9,7 +9,8 @@ one:
   deleted_at:
   created_by: 1
   updated_by: 1
-  source: one
+  source: libris
+  treenode_id: 2
   metadata: '{"job":{}, "0001": {}}'
   flow_params: '{"1": true, "2": true, "3": true, "4": "GUB"}'
 
@@ -22,7 +23,8 @@ two:
   deleted_at:
   created_by: 1
   updated_by: 1
-  source: two
+  source: libris
+  treenode_id: 2
   metadata: '{"job":{}, "0001": {}}'
 
 three:
@@ -34,7 +36,8 @@ three:
   deleted_at:
   created_by: 1
   updated_by: 1
-  source: two
+  source: libris
+  treenode_id: 2
   metadata: '{"job":{}, "0001": {}}'
 
 four:
@@ -46,6 +49,7 @@ four:
   deleted_at:
   created_by: 1
   updated_by: 1
-  source: one
+  source: libris
+  treenode_id: 3
   metadata: '{"job":{}, "0001": {}}'
   flow_params: '{"1": true, "2": true, "3": true, "4": "GUB"}'

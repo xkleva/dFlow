@@ -1,6 +1,7 @@
 class Treenode < ActiveRecord::Base
   belongs_to :parent, class_name: "Treenode", foreign_key: "parent_id"
   has_many :children, class_name: "Treenode", foreign_key: "parent_id"
+  has_many :jobs
   validates :name, :presence => :true
   validates_format_of :name, :with => /[a-zA-Z0-9]/
   validate :name_unique_for_parent

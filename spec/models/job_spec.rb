@@ -5,10 +5,43 @@ RSpec.configure do |c|
 end
 
 RSpec.describe Job, :type => :model do
+
+  describe "create job" do
+    it "should save a valid job object" do
+      job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1)
+      expect(job.save).to be_truthy
+    end
+
+    it "should require title" do
+      job = Job.new(catalog_id: 12345, source: "libris", treenode_id: 1)
+      expect(job.save).to be_falsey
+    end
+
+    it "should require catalog_id" do
+      job = Job.new(title: "Test Job", source: "libris", treenode_id: 1)
+      expect(job.save).to be_falsey
+    end
+
+    it "should require source" do
+      job = Job.new(title: "Test Job", catalog_id: 12345, treenode_id: 1)
+      expect(job.save).to be_falsey
+    end
+
+    it "should require valid source" do
+      job = Job.new(title: "Test Job", catalog_id: 12345, source: "no-such-source", treenode_id: 1)
+      expect(job.save).to be_falsey
+    end
+
+    it "should require a valid treenode parent" do
+      job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris")
+      expect(job.save).to be_falsey
+    end
+  end
+
 	before :each do
 
 	end
-	describe "create job" do
+	describe "create job old" do
 		context "from valid libris id" do
 			it "should create a job object" do
 				
@@ -49,7 +82,7 @@ RSpec.describe Job, :type => :model do
 		end
 		context "has no current entry" do
 			it "should return nil" do
-				job = Job.new(id: 1000, catalog_id: 1, source_id: 1)
+				job = Job.new(id: 1000, catalog_id: 1, source: "libris")
 				entry = job.current_entry
 				expect(entry).to be nil
 			end

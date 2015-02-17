@@ -118,22 +118,22 @@ describe Api::JobsController do
       end
     end
   end
-  describe "POST create_job" do
-    context "with valid job parameters" do
-      it "should create job and return success message" do
-        @libris = Source.where(classname: "Libris").first
-        data = @libris.fetch_source_data(1234)
-        post :create_job, api_key: @api_key, data: data
-        expect(json['error']).to be nil
-      end
-    end
-    context "with invalid job parameters" do
-      it "should return an error message" do
-        @libris = Source.where(classname: "Libris").first
-        data = @libris.fetch_source_data(1)
-        post :create_job, api_key: @api_key, data: data
-        expect(json['error']).to_not be nil
-      end
-    end
-  end
+#  describe "POST create_job" do
+#    context "with valid job parameters" do
+#      it "should create job and return success message" do
+#        @libris = Source.where(classname: "Libris").first
+#        data = @libris.fetch_source_data(1234)
+#        post :create_job, api_key: @api_key, data: data
+#        expect(json['error']).to be nil
+#      end
+#    end
+#    context "with invalid job parameters" do
+#      it "should return an error message" do
+#        @libris = Source.where(classname: "Libris").first
+#        data = @libris.fetch_source_data(1)
+#        post :create_job, api_key: @api_key, data: data
+#        expect(json['error']).to_not be nil
+#      end
+#    end
+#  end
 end

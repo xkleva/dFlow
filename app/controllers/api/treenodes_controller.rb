@@ -41,6 +41,11 @@ class Api::TreenodesController < Api::ApiController
 			@response[:treenode][:children] = treenode.children
 		end
 
+		# If flag 'show_jobs' is true, return all jobs in json response, in list format
+		if params[:show_jobs]
+			@response[:treenode][:jobs] = treenode.jobs.as_json(list: true)
+		end
+
 		# If flag 'show_breadcrum' is true, return breadcrumb in json response
 		if params[:show_breadcrumb]
 			@response[:treenode][:breadcrumb] = treenode.breadcrumb
