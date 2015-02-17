@@ -7,6 +7,10 @@ end
 RSpec.describe Job, :type => :model do
 
   describe "create job" do
+    before :each do
+      config_init
+    end
+
     it "should save a valid job object" do
       job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1)
       expect(job.save).to be_truthy
