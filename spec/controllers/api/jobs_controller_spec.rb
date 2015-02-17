@@ -30,6 +30,7 @@ describe Api::JobsController do
         get :show, api_key: @api_key, id: 1
         expect(json['job'].size).to be > 0
         expect(response.status).to eq 200
+        expect(json['job']['breadcrumb']).to be_kind_of(Array)
       end
     end
 

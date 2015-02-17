@@ -27,7 +27,8 @@ class Job < ActiveRecord::Base
     else
       super.merge({
         display: display,
-        source_label: source_label
+        source_label: source_label,
+        breadcrumb: treenode.breadcrumb(include_self: true)
       })
     end
   end
