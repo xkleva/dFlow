@@ -154,4 +154,46 @@ describe Api::JobsController do
 #      end
 #    end
 #  end
+
+  describe "GET index" do
+    context "pagination" do
+      it "should return metadata about pagination" do
+        Job.per_page = 4
+        get :index
+        expect(json['jobs']).to_not be_empty
+        expect(json['jobs'].count).to eq(4)
+        #expect(json['meta']['query']['query']).to eq("Test")
+        expect(json['meta']['query']['total']).to eq(5)
+        expect(json['meta']['pagination']['pages']).to eq(2)
+        expect(json['meta']['pagination']['page']).to eq(1)
+        expect(json['meta']['pagination']['next']).to eq(2)
+        expect(json['meta']['pagination']['previous']).to eq(nil)
+        expect(json['meta']['pagination']['per_page']).to eq(4)
+      end
+      it "should return paginated second page when given page number" do
+        Job.per_page = 4
+        get :index, page: 2
+        expect(json['jobs']).to_not be_empty
+        expect(json['jobs'].count).to eq(1)
+        #expect(json['meta']['query']['query']).to eq("Test")
+        expect(json['meta']['query']['total']).to eq(5)
+        expect(json['meta']['pagination']['pages']).to eq(2)
+        expect(json['meta']['pagination']['page']).to eq(2)
+        expect(json['meta']['pagination']['next']).to eq(nil)
+        expect(json['meta']['pagination']['previous']).to eq(1)
+      end
+      it "should return first page when given out of bounds page number" do
+        Job.per_page = 4
+        get :index, page: 20000000000
+        expect(json['jobs']).to_not be_empty
+        expect(json['jobs'].count).to eq(4)
+        #expect(json['meta']['query']['query']).to eq("Test")
+        expect(json['meta']['query']['total']).to eq(5)
+        expect(json['meta']['pagination']['pages']).to eq(2)
+        expect(json['meta']['pagination']['page']).to eq(1)
+        expect(json['meta']['pagination']['next']).to eq(2)
+        expect(json['meta']['pagination']['previous']).to eq(nil)
+      end
+    end
+  end
 end
