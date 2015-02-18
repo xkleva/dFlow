@@ -16,13 +16,14 @@ Rails.application.routes.draw do
 
     get 'jobs', to: 'jobs#index'
     get 'jobs/:id', to: 'jobs#show'
+    post 'jobs', to: 'jobs#create'
+
     get 'jobs/job_metadata', to: 'jobs#job_metadata'
     get 'jobs/update_metadata', to: 'jobs#update_metadata'
     get 'jobs/process_request', to: 'jobs#process_request'
     get 'jobs/process_initiate', to: 'jobs#process_initiate'
     get 'jobs/process_done', to: 'jobs#process_done'
     get 'jobs/process_progress', to: 'jobs#process_progress'
-    post 'jobs/create_job', to: 'jobs#create_job'
 
     get 'sources/fetch_source_data', to: 'sources#fetch_source_data'
     get 'sources/validate_new_objects', to: 'sources#validate_new_objects'
