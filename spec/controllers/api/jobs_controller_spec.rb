@@ -42,42 +42,42 @@ describe Api::JobsController do
     end
   end
 
-  describe "GET job_metadata" do 
-    context "with invalid attributes" do 
-      it "returns a json message" do 
+  describe "GET job_metadata" do
+    context "with invalid attributes" do
+      it "returns a json message" do
         get :job_metadata, api_key: @api_key, job_id: "wrong"
         expect(json['error']).to_not be nil
-      end 
+      end
     end
-    context "with valid attributes" do 
+    context "with valid attributes" do
       it "Returns metadata" do
         get :job_metadata, api_key: @api_key, job_id: 1
         expect(json['error']).to be nil
       end
     end
   end
-  describe "GET update_metadata" do 
-    context "with invalid attributes" do 
-      it "returns a json message" do 
+  describe "GET update_metadata" do
+    context "with invalid attributes" do
+      it "returns a json message" do
         get :update_metadata, api_key: @api_key, job_id: "wrong", key: "0001", metadata: {}
         expect(json['error']).to_not be nil
-      end 
+      end
     end
-    context "with valid attributes" do 
+    context "with valid attributes" do
       it "Returns success and updates metadata" do
         get :update_metadata, api_key: @api_key, job_id: 1, key: "0001", metadata: {type: "test"}
         expect(json['error']).to be nil
       end
     end
   end
-  describe "GET process_request" do 
-    context "with invalid process_id" do 
-      it "returns a json message" do 
+  describe "GET process_request" do
+    context "with invalid process_id" do
+      it "returns a json message" do
         get :process_request, api_key: @api_key, process_code: "test"
         expect(json['error']).to_not be nil
-      end 
+      end
     end
-    context "with valid attributes and a waiting job" do 
+    context "with valid attributes and a waiting job" do
       it "Returns success and job id" do
         get :process_request, api_key: @api_key, process_code: "scan_job"
         expect(json['error']).to be nil
@@ -85,14 +85,14 @@ describe Api::JobsController do
         job = Job.find(json['data']['job_id'])
       end
     end
-    context "with valid attributes, but too many processes going on" do 
+    context "with valid attributes, but too many processes going on" do
       it "Returns fail and error message" do
         get :process_request, api_key: @api_key, process_code: "rename_files"
         expect(json['error']).to_not be nil
         expect(json['error']['code'] == "QUEUE_ERROR").to be true
       end
     end
-    context "with valid attributes, but no job waiting" do 
+    context "with valid attributes, but no job waiting" do
       it "Returns fail and error message" do
         get :process_request, api_key: @api_key, process_code: "copy_files"
         expect(json['error']).to_not be nil
@@ -136,24 +136,33 @@ describe Api::JobsController do
       end
     end
   end
-#  describe "POST create_job" do
-#    context "with valid job parameters" do
-#      it "should create job and return success message" do
-#        @libris = Source.where(classname: "Libris").first
-#        data = @libris.fetch_source_data(1234)
-#        post :create_job, api_key: @api_key, data: data
-#        expect(json['error']).to be nil
-#      end
-#    end
-#    context "with invalid job parameters" do
-#      it "should return an error message" do
-#        @libris = Source.where(classname: "Libris").first
-#        data = @libris.fetch_source_data(1)
-#        post :create_job, api_key: @api_key, data: data
-#        expect(json['error']).to_not be nil
-#      end
-#    end
-#  end
+
+  describe "Create job" do
+    context "with valid job parameters" do
+      it "should create job and return success message" do
+        @libris = Source.find_by_class_name("Libris")
+        source_data = @libris.fetch_source_data(1234)
+        #job_data = {
+        #  job: {source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', copyright: 'cccc'}
+        #}
+        #post :create, api_key: @api_key, source: source_data['source']['source_name'], treenode_id: '3'
+        #post :create, api_key: @api_key, source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', copyright: 'cccc'
+        #post :create, api_key: @api_key, job: {source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', copyright: 'cccc'}
+        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234'}
+
+        expect(json['error']).to be nil
+      end
+    end
+    context "with invalid job parameters" do
+      it "should return an error message" do
+        #@libris = Source.find_by_class_name("Libris")
+        #source_data = @libris.fetch_source_data(1)
+        post :create, api_key: @api_key, job: {source: 'libris', cataloz_id: '1234', title: 'Bamse och hens vänner', treenode_id: '3', name: 'Bamse-jobbet', comment: 'comment'}
+        #post :create, api_key: @api_key, source: source_data
+        expect(json['error']).to_not be nil
+      end
+    end
+  end
 
   describe "GET index" do
     context "pagination" do
