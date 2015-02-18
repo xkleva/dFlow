@@ -78,20 +78,4 @@ RSpec.describe Job, :type => :model do
 			expect(JSON.parse(job.metadata)["job"]["page_count"] == 89).to be true
 		end
 	end
-	describe "current_entry" do
-		context "current is STARTING and scan_job" do
-			it "should return proper Entry object" do
-				job = Job.find(1)
-				entry = job.current_entry
-				expect(entry.state).to eq("PENDING")
-			end
-		end
-		context "has no current entry" do
-			it "should return nil" do
-				job = Job.new(id: 1000, catalog_id: 1, source: "libris")
-				entry = job.current_entry
-				expect(entry).to be nil
-			end
-		end
-	end
 end

@@ -12,7 +12,6 @@ one:
   source: libris
   treenode_id: 2
   metadata: '{"job":{}, "0001": {}}'
-  flow_params: '{"1": true, "2": true, "3": true, "4": "GUB"}'
 
 two:
   id: 2
@@ -52,7 +51,6 @@ four:
   source: libris
   treenode_id: 3
   metadata: '{"job":{}, "0001": {}}'
-  flow_params: '{"1": true, "2": true, "3": true, "4": "GUB"}'
 
 five:
   id: 5
@@ -66,4 +64,3 @@ five:
   source: libris
   treenode_id: 3
   metadata: '{"job":{}, "0001": {}}'
-  flow_params: '{"1": true, "2": true, "3": true, "4": "GUB"}'

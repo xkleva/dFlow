@@ -6,7 +6,6 @@ class Job < ActiveRecord::Base
   Job.per_page = 4
 
   belongs_to :treenode
-  has_many :entries
   has_many :job_activities
 
   validates :title, :presence => true
@@ -79,10 +78,6 @@ class Job < ActiveRecord::Base
 
   ########################
 
-  # Returns the current workflowStep if any
-  def current_entry
-    entries.most_recent
-  end
 
   # Updates metadata for a specific key
   def update_metadata_key(key, metadata)
@@ -105,7 +100,7 @@ class Job < ActiveRecord::Base
 
   # Returns the source object class for job - located in ./sources/
   def source_object
-    source || Source.find_by_classname("Libris")
+    Source.find_by_classname("Libris")
   end
 
 
