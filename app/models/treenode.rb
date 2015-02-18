@@ -30,8 +30,10 @@ class Treenode < ActiveRecord::Base
   end
 
   # Returns a list of objects containing id and name for parents until root is reached
-  def breadcrumb
+  def breadcrumb(options = {})
+    return breadcrumb_as_string if options[:as_string]
     breadcrumb = []
+    breadcrumb << {id: self.id, name: self.name } if options[:include_self] # Include self if flag is set
     current_parent = self.parent_id
 
     # Loop through entire parent structure
@@ -43,6 +45,12 @@ class Treenode < ActiveRecord::Base
 
     # return breadcrumb starting from top parent
     return breadcrumb.reverse
+  end
+
+  # Returns a breadcrumb string based on breadcrumb array, including
+  def breadcrumb_as_string
+    @@breadcrumb ||= {}
+    @@breadcrumb[self.id] ||= breadcrumb(include_self: true).map{|x| x[:name]}.join(" / ")
   end
 
 end

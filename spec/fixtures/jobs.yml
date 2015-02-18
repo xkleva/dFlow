@@ -53,3 +53,17 @@ four:
   treenode_id: 3
   metadata: '{"job":{}, "0001": {}}'
   flow_params: '{"1": true, "2": true, "3": true, "4": "GUB"}'
+
+five:
+  id: 5
+  name: MyText5
+  catalog_id: 1
+  title: MyTitle5
+  author: MyAuthor5
+  deleted_at:
+  created_by: 1
+  updated_by: 1
+  source: libris
+  treenode_id: 3
+  metadata: '{"job":{}, "0001": {}}'
+  flow_params: '{"1": true, "2": true, "3": true, "4": "GUB"}'

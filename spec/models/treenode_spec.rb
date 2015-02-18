@@ -86,5 +86,13 @@ RSpec.describe Treenode, :type => :model do
         expect(treenode.breadcrumb.empty?).to be true
       end
     end
+    context "as_string flag is set" do
+      it "should return a string object" do
+        treenode = Treenode.find_by_id(3)
+        bc = treenode.breadcrumb(as_string: true)
+        expect(bc).to be_a(String)
+        expect(bc.length > 5).to be true
+      end
+    end
   end
 end

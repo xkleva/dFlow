@@ -3,6 +3,7 @@ require 'nokogiri'
 class Job < ActiveRecord::Base
   default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
   scope :active, -> {where(quarantined: false, deleted_at: nil)}
+  Job.per_page = 4
 
   belongs_to :treenode
   has_many :entries
@@ -22,12 +23,15 @@ class Job < ActiveRecord::Base
         title: title,
         display: display,
         source_label: source_label,
-        catalog_id: catalog_id
+        catalog_id: catalog_id,
+        breadcrumb_string: treenode.breadcrumb(as_string: true),
+        treenode_id: treenode_id
       }
     else
       super.merge({
         display: display,
-        source_label: source_label
+        source_label: source_label,
+        breadcrumb: treenode.breadcrumb(include_self: true)
       })
     end
   end
