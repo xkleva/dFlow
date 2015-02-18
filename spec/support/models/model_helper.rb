@@ -107,5 +107,27 @@ module ModelHelper
         class_name: 'UpperClass'
       }
     ]
+
+    # List of available events (used for job activity entries)
+    Rails.application.config.events = [
+      {
+        name: 'QUARANTINE'
+      },
+      {
+        name: 'UNQUARANTINE'
+      },
+      {
+        name: 'CREATE'
+      },
+      {
+        name: 'UPDATE'
+      },
+      {
+        name: 'CHANGE_STATUS'
+      },
+      {
+        name: 'DELETE'
+      }
+    ]
   end
 end

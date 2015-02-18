@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150217110121) do
+ActiveRecord::Schema.define(version: 20150218100101) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.integer  "user_id"
@@ -48,6 +48,15 @@ ActiveRecord::Schema.define(version: 20150217110121) do
     t.text     "params_info"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "job_activities", force: :cascade do |t|
+    t.integer  "job_id"
+    t.text     "username"
+    t.text     "event"
+    t.text     "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "jobs", force: :cascade do |t|
