@@ -1,5 +1,7 @@
 class Api::StatusesController < Api::ApiController
+  before_filter :check_key
   before_filter :check_job
+  before_filter -> { validate_rights 'manage_jobs' }
 
   # API endpoint to start digitizing
   def digitizing_begin
@@ -12,6 +14,7 @@ class Api::StatusesController < Api::ApiController
 
   def post_processing_begin
     ensure_status('post_processing')
+    render_json
   end
 
   def post_processing_end
@@ -28,6 +31,7 @@ class Api::StatusesController < Api::ApiController
 
   def quality_control_begin
     ensure_status('quality_control')
+    render_json
   end
 
   def quality_control_end
@@ -36,6 +40,7 @@ class Api::StatusesController < Api::ApiController
 
   def waiting_for_mets_control_begin
     ensure_status('waiting_for_mets_control')
+    render_json
   end
 
   def waiting_for_mets_control_end
@@ -44,6 +49,7 @@ class Api::StatusesController < Api::ApiController
 
   def mets_control_begin
     ensure_status('mets_control')
+    render_json
   end
 
   def mets_control_end
@@ -65,14 +71,16 @@ class Api::StatusesController < Api::ApiController
 
   # Changes status
   def new_status(from_status, to_status)
-
-    return if !ensure_status('from_status')
-
+    pp 0
+    return if !ensure_status(from_status)
+    pp 1
     @job.created_by = @current_user.username
     @job.switch_status(to_status)
-
-    if !job.save
-      error_msg(ErrorCodes::VALIDATION_ERROR, "Could not save job", job.errors)
+    pp 2
+    if !@job.save
+      error_msg(ErrorCodes::VALIDATION_ERROR, "Could not save job", @job.errors)
+    else
+      @response[:job] = @job
     end
 
     render_json
@@ -82,12 +90,13 @@ class Api::StatusesController < Api::ApiController
   def ensure_status(status)
 
     if @job.status != status
-      error_msg(ErrorCodes::QUEUE_ERROR, "Job is in wrong status: #{@job.status}")
+      error_msg(ErrorCodes::QUEUE_ERROR, "Job is in wrong status: #{@job.status} instead of #{status}")
       render_json
       return false
+    else
+      return true
     end
-
-    render_json
+    
   end
 
 end

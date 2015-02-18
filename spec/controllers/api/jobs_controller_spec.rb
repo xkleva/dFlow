@@ -131,4 +131,5 @@ describe Api::JobsController do
       end
     end
   end
+
 end
