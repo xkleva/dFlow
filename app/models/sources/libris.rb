@@ -29,7 +29,7 @@ class Libris < Source
     job_data[:catalog_id] = catalog_id if not job_data.blank?
     return job_data
   rescue Exception => e
-    pp "Error in fetch_source_data #{e.message}"
+    #pp "Error in fetch_source_data #{e.message}"
     return {}
   end
 
@@ -47,7 +47,7 @@ class Libris < Source
     end
     return job_data
   rescue Exception => e
-    pp "Error in fetch_from_libris #{e.message}"
+    #pp "Error in fetch_from_libris #{e.message}"
     return {}
   end
 
@@ -61,7 +61,7 @@ class Libris < Source
     job_data[:source_name] = Source.find_name_by_class_name(self.name)
     return job_data
   rescue Exception => e
-    pp "Error in data_from_record #{e.message}"
+    #pp "Error in data_from_record #{e.message}"
     return {}
   end
 
