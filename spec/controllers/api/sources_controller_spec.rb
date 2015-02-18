@@ -109,7 +109,7 @@ describe Api::SourcesController do
       it "should return json with source data" do
         get :fetch_source_data, api_key: @api_key, id: 12345, name: 'libris'
         expect(json['error']).to be nil
-        expect(json['data']['catalog_id']).to eq('12345')
+        expect(json['source']['catalog_id']).to eq('12345')
       end
     end
   end

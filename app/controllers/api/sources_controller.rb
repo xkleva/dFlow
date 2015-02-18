@@ -76,7 +76,7 @@ class Api::SourcesController < Api::ApiController
 		# Fetch source data
 		source_data = source_object.fetch_source_data(catalog_id)
 		if source_data && !source_data.empty?
-			@response[:data] = source_data
+			@response[:source] = source_data
 		else
 			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find source data for source: #{source_name} and catalog_id: #{catalog_id}")
 		end
