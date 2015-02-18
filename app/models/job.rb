@@ -6,7 +6,7 @@ class Job < ActiveRecord::Base
   Job.per_page = 4
 
   belongs_to :treenode
-  has_many :entries
+  has_many :job_activities
 
   validates :title, :presence => true
   validates :catalog_id, :presence => true
@@ -14,6 +14,9 @@ class Job < ActiveRecord::Base
   validates :source, :presence => true
   validate :source_in_list
   validate :xml_validity
+  attr_accessor :created_by
+
+  after_create :create_log_entry
 
   def as_json(options = {})
     if options[:list]
@@ -31,9 +34,24 @@ class Job < ActiveRecord::Base
       super.merge({
         display: display,
         source_label: source_label,
-        breadcrumb: treenode.breadcrumb(include_self: true)
+        breadcrumb: treenode.breadcrumb(include_self: true),
+        activities: job_activities
       })
     end
+  end
+
+  # Creates a JobActivity object for CREATE event
+  def create_log_entry(event="CREATE", message="Activity has been created")
+    entry = JobActivity.new(job_id: id, username: created_by, event: event, message: message)
+    if !entry.save
+      errors.add(:job_activities, "Log entry could not be created")
+    end
+  end
+
+  # Switches status according to given Status object
+  def switch_status(new_status)
+    self.status = new_status.name
+    create_log_entry("STATUS", new_status.name)
   end
 
   # Generate preferred display name if name works
@@ -66,10 +84,6 @@ class Job < ActiveRecord::Base
 
   ########################
 
-  # Returns the current workflowStep if any
-  def current_entry
-    entries.most_recent
-  end
 
   # Updates metadata for a specific key
   def update_metadata_key(key, metadata)
@@ -92,7 +106,7 @@ class Job < ActiveRecord::Base
 
   # Returns the source object class for job - located in ./sources/
   def source_object
-    source || Source.find_by_classname("Libris")
+    Source.find_by_classname("Libris")
   end
 
 

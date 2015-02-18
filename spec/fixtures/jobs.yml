@@ -12,7 +12,7 @@ one:
   source: libris
   treenode_id: 2
   metadata: '{"job":{}, "0001": {}}'
-  flow_params: '{"1": true, "2": true, "3": true, "4": "GUB"}'
+  status: 'waiting_for_digitizing'
 
 two:
   id: 2
@@ -26,6 +26,7 @@ two:
   source: libris
   treenode_id: 2
   metadata: '{"job":{}, "0001": {}}'
+  status: 'waiting_for_digitizing'
 
 three:
   id: 3
@@ -39,6 +40,7 @@ three:
   source: libris
   treenode_id: 2
   metadata: '{"job":{}, "0001": {}}'
+  status: 'digitizing'
 
 four:
   id: 4
@@ -52,7 +54,7 @@ four:
   source: libris
   treenode_id: 3
   metadata: '{"job":{}, "0001": {}}'
-  flow_params: '{"1": true, "2": true, "3": true, "4": "GUB"}'
+  status: 'waiting_for_digitizing'
 
 five:
   id: 5
@@ -66,4 +68,4 @@ five:
   source: libris
   treenode_id: 3
   metadata: '{"job":{}, "0001": {}}'
-  flow_params: '{"1": true, "2": true, "3": true, "4": "GUB"}'
+  status: 'waiting_for_digitizing'

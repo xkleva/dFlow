@@ -39,6 +39,12 @@ RSpec.describe Job, :type => :model do
       job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris")
       expect(job.save).to be_falsey
     end
+
+    it "should create a JobActivity object" do
+      job = Job.create(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1, created_by: "TestUser")
+      expect(job.job_activities.size).to eq 1
+      expect(job.job_activities.first.username).to eq "TestUser"
+    end
   end
 
 	describe "update_metadata_key" do
@@ -62,22 +68,6 @@ RSpec.describe Job, :type => :model do
 			job.update_metadata_key("job",new_data)
 			expect(JSON.parse(job.metadata)["job"]["type"] == "testtype2").to be true
 			expect(JSON.parse(job.metadata)["job"]["page_count"] == 89).to be true
-		end
-	end
-	describe "current_entry" do
-		context "current is STARTING and scan_job" do
-			it "should return proper Entry object" do
-				job = Job.find(1)
-				entry = job.current_entry
-				expect(entry.state).to eq("PENDING")
-			end
-		end
-		context "has no current entry" do
-			it "should return nil" do
-				job = Job.new(id: 1000, catalog_id: 1, source: "libris")
-				entry = job.current_entry
-				expect(entry).to be nil
-			end
 		end
 	end
 end

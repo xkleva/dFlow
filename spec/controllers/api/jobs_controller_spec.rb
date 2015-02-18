@@ -70,72 +70,6 @@ describe Api::JobsController do
       end
     end
   end
-  describe "GET process_request" do
-    context "with invalid process_id" do
-      it "returns a json message" do
-        get :process_request, api_key: @api_key, process_code: "test"
-        expect(json['error']).to_not be nil
-      end
-    end
-    context "with valid attributes and a waiting job" do
-      it "Returns success and job id" do
-        get :process_request, api_key: @api_key, process_code: "scan_job"
-        expect(json['error']).to be nil
-        expect(json['data']['job_id'].nil?).to be false
-        job = Job.find(json['data']['job_id'])
-      end
-    end
-    context "with valid attributes, but too many processes going on" do
-      it "Returns fail and error message" do
-        get :process_request, api_key: @api_key, process_code: "rename_files"
-        expect(json['error']).to_not be nil
-        expect(json['error']['code'] == "QUEUE_ERROR").to be true
-      end
-    end
-    context "with valid attributes, but no job waiting" do
-      it "Returns fail and error message" do
-        get :process_request, api_key: @api_key, process_code: "copy_files"
-        expect(json['error']).to_not be nil
-        expect(json['error']['code'] == "QUEUE_ERROR").to be true
-      end
-    end
-  end
-  describe "GET process_initiate" do
-    context "job exists and is PENDING" do
-      it "should return a success json message" do
-        get :process_initiate, api_key: @api_key, job_id: 1, process_code: "scan_job"
-        expect(json['error']).to be nil
-      end
-    end
-    context "job exist and is STARTED" do
-      it "should return an error message" do
-        get :process_initiate, api_key: @api_key, job_id: 3, process_code: "copy_files"
-        expect(json['error']).to_not be nil
-      end
-    end
-  end
-  describe "GET process_done" do
-    context "job exists and is STARTED" do
-      it "should return a success json message" do
-        get :process_done, api_key: @api_key, job_id: 2, process_code: "rename_files"
-        expect(json['error']).to be nil
-      end
-    end
-    context "job exist and is PENDING" do
-      it "should return a success json message" do
-        get :process_done, api_key: @api_key, job_id: 1, process_code: "scan_job"
-        expect(json['error']).to be nil
-      end
-    end
-  end
-  describe "GET process_progress" do
-    context "job exists and is STARTED" do
-      it "should return a success json message" do
-        get :process_progress, api_key: @api_key, job_id: 2, process_code: "rename_files", progress_info: {total: 10, done: 2, percent_done: 20}
-        expect(json['error']).to be nil
-      end
-    end
-  end
 
   describe "Create job" do
     context "with valid job parameters" do
@@ -205,4 +139,5 @@ describe Api::JobsController do
       end
     end
   end
+
 end

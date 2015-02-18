@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150217110121) do
+ActiveRecord::Schema.define(version: 20150218125634) do
 
   create_table "access_tokens", force: :cascade do |t|
     t.integer  "user_id"
@@ -50,6 +50,15 @@ ActiveRecord::Schema.define(version: 20150217110121) do
     t.datetime "updated_at"
   end
 
+  create_table "job_activities", force: :cascade do |t|
+    t.integer  "job_id"
+    t.text     "username"
+    t.text     "event"
+    t.text     "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "jobs", force: :cascade do |t|
     t.text     "name"
     t.integer  "catalog_id"
@@ -59,18 +68,16 @@ ActiveRecord::Schema.define(version: 20150217110121) do
     t.integer  "created_by"
     t.integer  "updated_by"
     t.text     "xml"
-    t.boolean  "quarantined",    default: false
+    t.boolean  "quarantined",  default: false
     t.text     "comment"
     t.text     "object_info"
     t.text     "search_title"
-    t.text     "metadata",       default: ""
+    t.text     "metadata",     default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "progress_state"
-    t.integer  "flow_id"
-    t.text     "flow_params"
     t.text     "source"
     t.integer  "treenode_id"
+    t.string   "status"
   end
 
   create_table "sources", force: :cascade do |t|
