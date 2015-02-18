@@ -41,11 +41,17 @@ class Job < ActiveRecord::Base
   end
 
   # Creates a JobActivity object for CREATE event
-  def create_log_entry
-    entry = JobActivity.new(job_id: id, username: created_by, event: "CREATE", message: "Activity has been created")
+  def create_log_entry(event="CREATE", message="Activity has been created")
+    entry = JobActivity.new(job_id: id, username: created_by, event: event, message: message)
     if !entry.save
       errors.add(:job_activities, "Log entry could not be created")
     end
+  end
+
+  # Switches status according to given Status object
+  def switch_status(new_status)
+    self.status = new_status.name
+    create_log_entry("STATUS", new_status.name)
   end
 
   # Generate preferred display name if name works
