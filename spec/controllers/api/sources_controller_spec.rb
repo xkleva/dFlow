@@ -93,8 +93,23 @@ describe Api::SourcesController do
     context "there is at least one source available" do
       it "should return json with available sources" do
         get :index, api_key: @api_key
-        pp json
         expect(json['sources']).not_to be nil
+      end
+    end
+    context "there is a specific known source in config" do
+      it "should return json of known source" do
+        get :index, api_key: @api_key
+        expect(json['sources'][3]['class_name']).to eq('TestSource')
+      end
+    end
+  end
+
+  describe "Get data from a source" do
+    context "the source is available and source id is valid" do
+      it "should return json with source data" do
+        get :fetch_source_data, api_key: @api_key, id: 12345, name: 'libris'
+        expect(json['error']).to be nil
+        expect(json['data']['catalog_id']).to eq('12345')
       end
     end
   end

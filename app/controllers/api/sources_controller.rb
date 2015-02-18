@@ -59,15 +59,16 @@ class Api::SourcesController < Api::ApiController
 		render_json
 	end
 
-	# Returns hash with source data for a given source and catalog_id
+	# Renders JSON with source data for an item with the given catalog_id from a source with the given source_name.
 	def fetch_source_data
-		catalog_id = params[:catalog_id]
-		source = params[:source]
+		catalog_id = params[:id]
+		source_name = params[:name]
 
 		# Identify source object
-		source_object = Source.find_by_name(source)
+		source_object = Source.find_by_name(source_name)
+
 		if !source_object
-			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find a source with name #{source}")
+			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find a source with name #{source_name}")
 			render_json
 			return
 		end
@@ -77,7 +78,7 @@ class Api::SourcesController < Api::ApiController
 		if source_data && !source_data.empty?
 			@response[:data] = source_data
 		else
-			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find source data for source: #{source} and catalog_id: #{catalog_id}")
+			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find source data for source: #{source_name} and catalog_id: #{catalog_id}")
 		end
 		render_json
 	end

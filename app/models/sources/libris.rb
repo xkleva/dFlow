@@ -28,7 +28,8 @@ class Libris < Source
     job_data = fetch_from_libris(url)
     job_data[:catalog_id] = catalog_id if not job_data.blank?
     return job_data
-  rescue
+  rescue Exception => e
+    pp "Error in fetch_source_data #{e.message}"
     return {}
   end
 
@@ -45,7 +46,8 @@ class Libris < Source
       job_data[:xml] = librisdata if not job_data.blank?
     end
     return job_data
-  rescue
+  rescue Exception => e
+    pp "Error in fetch_from_libris #{e.message}"
     return {}
   end
 
@@ -56,9 +58,10 @@ class Libris < Source
     job_data[:author] = marc_record['100']['a'] if marc_record['100']
     job_data[:metadata] = {}
     job_data[:metadata][:type_of_record] =  marc_record.leader[6..7]
-    job_data[:source_id] = Source.where(classname: self.name).first.id
+    job_data[:source_name] = Source.find_name_by_class_name(self.name)
     return job_data
-  rescue
+  rescue Exception => e
+    pp "Error in data_from_record #{e.message}"
     return {}
   end
 
