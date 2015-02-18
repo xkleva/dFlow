@@ -39,6 +39,12 @@ RSpec.describe Job, :type => :model do
       job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris")
       expect(job.save).to be_falsey
     end
+
+    it "should create a JobActivity object" do
+      job = Job.create(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1, created_by: "TestUser")
+      expect(job.job_activities.size).to eq 1
+      expect(job.job_activities.first.username).to eq "TestUser"
+    end
   end
 
 	describe "create job old" do

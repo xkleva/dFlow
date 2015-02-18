@@ -7,6 +7,7 @@ class Job < ActiveRecord::Base
 
   belongs_to :treenode
   has_many :entries
+  has_many :job_activities
 
   validates :title, :presence => true
   validates :catalog_id, :presence => true
@@ -14,6 +15,9 @@ class Job < ActiveRecord::Base
   validates :source, :presence => true
   validate :source_in_list
   validate :xml_validity
+  attr_accessor :created_by
+
+  after_create :create_log_entry
 
   def as_json(options = {})
     if options[:list]
@@ -31,8 +35,17 @@ class Job < ActiveRecord::Base
       super.merge({
         display: display,
         source_label: source_label,
-        breadcrumb: treenode.breadcrumb(include_self: true)
+        breadcrumb: treenode.breadcrumb(include_self: true),
+        activities: job_activities
       })
+    end
+  end
+
+  # Creates a JobActivity object for CREATE event
+  def create_log_entry
+    entry = JobActivity.new(job_id: id, username: created_by, event: "CREATE", message: "Activity has been created")
+    if !entry.save
+      errors.add(:job_activities, "Log entry could not be created")
     end
   end
 
