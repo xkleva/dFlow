@@ -14,7 +14,7 @@ module ModelHelper
     Rails.application.config.user_roles = [
       {
         name: "ADMIN",
-        rights: ['manage_users', 'view_tree', 'manage_tree', 'view_users']
+        rights: ['manage_users', 'view_tree', 'manage_tree', 'view_users', 'manage_jobs']
       },
       {
         name: "GUEST",
@@ -23,12 +23,12 @@ module ModelHelper
       },
       {
         name: "OPERATOR",
-        rights: ['view_tree', 'manage_tree']
+        rights: ['view_tree', 'manage_tree', 'manage_jobs']
       },
       {
         name: "API_KEY",
         unassaignable: true,
-        rights: ['view_tree', 'manage_tree', 'manage_users', 'view_users']
+        rights: ['view_tree', 'manage_tree', 'manage_users', 'view_users', 'manage_jobs']
       }
     ]
 
