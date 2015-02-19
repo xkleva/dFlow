@@ -1,4 +1,5 @@
 require 'nokogiri'
+require "prawn/measurement_extensions"
 
 class Job < ActiveRecord::Base
   default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
@@ -120,11 +121,12 @@ class Job < ActiveRecord::Base
     Source.find_by_classname("Libris")
   end
 
-  # returns a legible title string in an illegible manner
+  # Returns a legible title string in an illegible manner
   def title_string
     (title[/^(.*)\s*\/\s*$/,1] || title).strip
   end
 
+  # Generates a display title used in lists primarily
   def display
     title_trunc = title_string.truncate(50, separator: ' ')
     display = name.present? ? name : title_trunc
@@ -138,15 +140,18 @@ class Job < ActiveRecord::Base
     display
   end
 
+  # Returns a specific metadata value from key
   def metadata_value(key)
     metadata_hash[key.to_s]
   end
 
+  # Returns all metadata as a hash
   def metadata_hash
     return {} if metadata.blank? || metadata == "null"
     @metadata_hash ||= JSON.parse(metadata)
   end
 
+  # Returns ordinal data as a string representation
   def ordinals(return_raw = false)
     ordinal_data = []
     ordinal_data << ordinal_num(1) if ordinal_num(1)
@@ -156,11 +161,171 @@ class Job < ActiveRecord::Base
     ordinal_data.map { |x| x.join(" ") }.join(", ")
   end
 
+  # Returns an ordnial array for given key
   def ordinal_num(num)
     key = metadata_value("ordinal_#{num}_key")
     value = metadata_value("ordinal_#{num}_value")
     return nil if key.blank? || value.blank?
     [key, value]
+  end
+
+  # Generates a work order pdf for job
+  def create_pdf
+    md_value = 8
+
+    pdf = Prawn::Document.new :page_size=> 'A4', :margin=>[10.send(:mm), 20.send(:mm), 12.7.send(:mm), 20.send(:mm)]
+
+    pdf.move_down 2.7.send(:mm)
+
+    pdf.text "Fjärrlån", :size=>24, :style=>:bold
+    pdf.move_down md_value*2
+
+    pdf.text "132", :size=>16
+
+    pdf.font_size = 11
+
+    pdf.move_down (15.send(:mm) + md_value)
+
+    pdf.text "Handläggande enhet", :style=>:bold
+    pdf.text " "
+    pdf.move_down md_value*2
+
+    pdf.font_size = 14
+
+    pdf.bounding_box([0, pdf.cursor], :width => (126).send(:mm)) do
+      pdf.text "Titel", :style=>:bold
+      pdf.text "#{self.title} "
+      pdf.move_down md_value
+
+      pdf.text "Författare", :style=>:bold
+      pdf.text "#{self.author} "
+      pdf.move_down md_value
+
+      #pdf.transparent(0.5) { pdf.stroke_bounds}
+    end
+
+    pdf.move_down md_value*2
+    top_line_cursor = pdf.cursor
+
+    pdf.bounding_box([0, pdf.cursor], :width => 82.send(:mm)) do
+
+      #stroke_bounds
+      pdf.font_size = 11
+
+      #my_cursor = pdf.cursor
+      pdf.text "Tidskriftstitel", :style=>:bold
+      pdf.text " "
+      pdf.move_down md_value
+
+      pdf.text "ISSN/ISBN", :style=>:bold
+      pdf.text " "
+      pdf.move_down md_value
+
+      pdf.text "Publiceringsår", :style=>:bold
+      pdf.text " "
+      pdf.move_down md_value
+      #pdf.transparent(0.8) { pdf.stroke_bounds}
+      upper_right_col = pdf.cursor
+    end
+
+    pdf.bounding_box([87.send(:mm), top_line_cursor], :width => 82.send(:mm)) do
+      pdf.text "Volym", :style=>:bold
+      pdf.text " "
+      pdf.move_down md_value
+
+      pdf.text "Nummer", :style=>:bold
+      pdf.text " "
+      pdf.move_down md_value
+
+      pdf.text "Sidor", :style=>:bold
+      pdf.text " "
+      pdf.move_down md_value
+
+      #pdf.transparent(0.5) { pdf.stroke_bounds}
+      upper_left_col = pdf.cursor
+    end
+
+    pdf.move_down md_value*2
+    pdf.line [0, pdf.cursor], [pdf.bounds.right, pdf.cursor]
+    pdf.stroke
+    pdf.move_down md_value*2
+
+    middle_line_cursor = pdf.cursor
+
+    pdf.bounding_box([0, middle_line_cursor], :width => 82.send(:mm)) do
+      pdf.text "Namn", :style=>:bold
+      pdf.text "#{self.name} "
+      pdf.move_down md_value
+
+      pdf.text "Adress", :style=>:bold
+      pdf.text "123 "
+      pdf.text "234 "
+      pdf.text "345 "
+      pdf.move_down md_value
+
+      pdf.text "Telefonnummer", :style=>:bold
+      pdf.text "1232354456 "
+      pdf.move_down md_value
+
+      pdf.text "E-postadress", :style=>:bold
+      pdf.text "awdsefgrdgdrgrdg@.awda "
+      pdf.move_down md_value
+
+      pdf.text "Lånekortsnummer", :style=>:bold
+      pdf.text "123142354245346 "
+      pdf.move_down md_value
+
+      pdf.text "Kundtyp", :style=>:bold
+      pdf.text "type "
+      pdf.move_down md_value
+
+      pdf.text "Faktureringsadress", :style=>:bold
+      pdf.text "awdawdawd "
+      pdf.text "adawdawdawdaw "
+      pdf.text "awdawdawd "
+      pdf.text "awd "
+      pdf.move_down md_value
+
+      #pdf.transparent(0.5) { pdf.stroke_bounds}
+      lower_right_col = pdf.cursor
+    end
+
+    pdf.bounding_box([87.send(:mm), middle_line_cursor], :width => 82.send(:mm)) do
+
+      pdf.text "Ansvarsnummer och beställarid", :style=>:bold
+      pdf.text " "
+      pdf.move_down md_value
+
+      pdf.text "Ej aktuell efter", :style=>:bold
+      pdf.text " "
+      pdf.move_down md_value
+
+      pdf.text "Beställningstyp", :style=>:bold
+      pdf.text " "
+      pdf.move_down md_value
+
+      pdf.text "Leveransalternativ", :style=>:bold
+      pdf.text " "
+      pdf.move_down md_value
+
+      pdf.text "Kommentar", :style=>:bold
+      pdf.text " "
+      pdf.move_down md_value
+
+      #pdf.transparent(0.5) { pdf.stroke_bounds}
+      lower_left_col = pdf.cursor
+    end
+
+    pdf.move_cursor_to (7).send(:mm)
+    pdf.line [0, pdf.cursor], [pdf.bounds.right, pdf.cursor]
+    pdf.stroke
+
+    pdf.move_cursor_to (5).send(:mm)
+
+    pdf.text "Beställare: #{name}"
+    pdf.number_pages "<page>(<total>)", {:at=>[pdf.bounds.right - 20, 12], :size=>10}
+
+    pdf.render
   end
 
 
