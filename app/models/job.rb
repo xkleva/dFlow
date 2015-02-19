@@ -12,6 +12,7 @@ class Job < ActiveRecord::Base
   validates :catalog_id, :presence => true
   validates :treenode_id, :presence => true
   validates :source, :presence => true
+  validates :copyright, :presence => true
   validate :source_in_list
   validate :xml_validity
   attr_accessor :created_by
@@ -20,7 +21,7 @@ class Job < ActiveRecord::Base
 
   def as_json(options = {})
     if options[:list]
-      { 
+      {
         id: id,
         name: name,
         title: title,

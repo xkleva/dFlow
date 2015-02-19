@@ -78,21 +78,9 @@ class Api::JobsController < Api::ApiController
     render_json
   end
 
+
+
   # Creates a job from given parameter data
-  def create_job
-    job_params = params[:data]
-    job_params[:metadata] = job_params[:metadata].to_json
-    job_params[:created_by] = @current_user.username
-    parameters = ActionController::Parameters.new(job_params)
-    job = Job.create(parameters.permit(:name, :title, :author, :metadata, :xml, :source_id, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :created_by))
-
-    if !job.save
-      error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job with name '#{job[:name]}", job.errors)
-    end
-    render_json
-  end
-
-    # Creates a job from given parameter data
   def create
     #   headers['location'] = "/api/jobs/#{obj.id}"
     #   #headers['location'] = "#{:job_url}"
@@ -101,13 +89,15 @@ class Api::JobsController < Api::ApiController
     pp params
     pp "==========================="
     job_params = params['job']
+    #job_params = params[:job]
     job_params[:metadata] = job_params[:metadata].to_json
+    job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
     pp "-+-+-+-+-+-+-+-+"
     pp parameters
     pp "-+-+-+-+-+-+-+-+"
     #job = Job.new()
-    job = Job.create(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id))
+    job = Job.create(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by))
 
     if !job.save
       #error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job with name '#{job[:name]}", job.errors)

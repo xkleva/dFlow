@@ -82,7 +82,7 @@ describe Api::JobsController do
         #post :create, api_key: @api_key, source: source_data['source']['source_name'], treenode_id: '3'
         #post :create, api_key: @api_key, source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', copyright: 'cccc'
         #post :create, api_key: @api_key, job: {source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', copyright: 'cccc'}
-        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234'}
+        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: 'true'}
 
         expect(json['error']).to be nil
       end
