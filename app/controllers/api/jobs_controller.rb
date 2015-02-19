@@ -80,35 +80,26 @@ class Api::JobsController < Api::ApiController
 
 
 
-  # Creates a job from given parameter data
+  # Creates a job from given parameter data.
+  # The created object is returned in JSON as well as a location header.
   def create
-    #   headers['location'] = "/api/jobs/#{obj.id}"
-    #   #headers['location'] = "#{:job_url}"
-    #   status = 201
-    pp "==========================="
-    pp params
-    pp "==========================="
-    job_params = params['job']
-    #job_params = params[:job]
+    job_params = params[:job]
     job_params[:metadata] = job_params[:metadata].to_json
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
-    pp "-+-+-+-+-+-+-+-+"
-    pp parameters
-    pp "-+-+-+-+-+-+-+-+"
-    #job = Job.new()
     job = Job.create(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by))
 
     if !job.save
-      #error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job with name '#{job[:name]}", job.errors)
-      error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job...", job.errors)
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job.", job.errors)
     end
-    render_json
+
+    job_url = url_for(controller: 'jobs', action: 'create', only_path: true)
+    headers['location'] = "job_url/#{job.id}"
+    @response[:job] = job
+    render_json(201)
   rescue Exception => e
-    #pp "Error in fetch_from_libris #{e.message}"
-    pp "A terrible error occurred: '#{e.message}'.    Please try harder!"
-    #error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job with name '#{job[:name]}", job.errors)
-    error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job...")
+    pp "Could not save job, this is why: [#{e.message}]."
+    error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job, this is why: [#{e.message}].")
     render_json
   end
 

@@ -73,26 +73,18 @@ describe Api::JobsController do
 
   describe "Create job" do
     context "with valid job parameters" do
-      it "should create job and return success message" do
-        @libris = Source.find_by_class_name("Libris")
-        source_data = @libris.fetch_source_data(1234)
-        #job_data = {
-        #  job: {source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', copyright: 'cccc'}
-        #}
-        #post :create, api_key: @api_key, source: source_data['source']['source_name'], treenode_id: '3'
-        #post :create, api_key: @api_key, source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', copyright: 'cccc'
-        #post :create, api_key: @api_key, job: {source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', copyright: 'cccc'}
+      it "should create job without errors" do
         post :create, api_key: @api_key, job: {source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: 'true'}
-
         expect(json['error']).to be nil
+      end
+      it "should return the created object" do
+        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: 'true'}
+        expect(json['job']).not_to be nil
       end
     end
     context "with invalid job parameters" do
       it "should return an error message" do
-        #@libris = Source.find_by_class_name("Libris")
-        #source_data = @libris.fetch_source_data(1)
         post :create, api_key: @api_key, job: {source: 'libris', cataloz_id: '1234', title: 'Bamse och hens vänner', treenode_id: '3', name: 'Bamse-jobbet', comment: 'comment'}
-        #post :create, api_key: @api_key, source: source_data
         expect(json['error']).to_not be nil
       end
     end
