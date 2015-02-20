@@ -133,7 +133,7 @@ describe Api::TreenodesController do
 				expect(json['treenode']).to be nil
 			end
 		end
-		context "Exisiting treenode with multi level breadcrumb" do
+		context "Existing treenode with multi level breadcrumb" do
 			before :each do
 				get :show, api_key: @api_key, id: 3, show_breadcrumb: true
 			end
@@ -146,6 +146,16 @@ describe Api::TreenodesController do
 			it "should return breadcrumb nodes with ids" do
 				expect(json['treenode']['breadcrumb'][0]['id']).to be_an(Integer)
 			end
+    end
+		context "Existing treenode with multi level breadcrumb, when requesting breadcrumb as string" do
+      it "should return breadcrumb as string when requested properly" do
+				get :show, api_key: @api_key, id: 3, show_breadcrumb: true, show_breadcrumb_as_string: true
+        expect(json['treenode']['breadcrumb']).to eq("Toppnod / Barn / Barnbarn")
+      end
+      it "should return not breadcrumb at all if show_breadcrumb is missing" do
+				get :show, api_key: @api_key, id: 3, show_breadcrumb_as_string: true
+        expect(json['treenode']['breadcrumb']).to be_nil
+      end
 		end
 		context "Asking for 'root' node" do
 			before :each do

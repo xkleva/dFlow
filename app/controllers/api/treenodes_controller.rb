@@ -6,53 +6,42 @@ class Api::TreenodesController < Api::ApiController
 
 	# Creates a Treenode 
 	def create
-		treenode = Treenode.new(treenode_params)
-		
-		# Save treenode, or return error message
-		if !treenode.save
-			error_msg(ErrorCodes::VALIDATION_ERROR, "Could not create treenode", treenode.errors)
-			render_json
-		else
-			@response[:treenode] = treenode
-			render_json(201)
-		end
+   treenode = Treenode.new(treenode_params)
+   
+   # Save treenode, or return error message
+   if !treenode.save
+     error_msg(ErrorCodes::VALIDATION_ERROR, "Could not create treenode", treenode.errors)
+     render_json
+   else
+     @response[:treenode] = treenode
+     render_json(201)
+   end
 
 	end
 
 	# Returns a Treenode
 	def show
-		if params[:id] == 'root'
-			treenode = RootTreenode.new(name: "root")
-		else
-			treenode = Treenode.find_by_id(params[:id])
-		end
+   if params[:id] == 'root'
+     treenode = RootTreenode.new(name: "root")
+   else
+     treenode = Treenode.find_by_id(params[:id])
+   end
 
-		# If treenode does not exist, return error
-		if treenode.nil?
-			error_msg(ErrorCodes::OBJECT_ERROR, "Could not find Treenode with id #{params[:id]}")
-			render_json
-			return
-		end
+   # If treenode does not exist, return error
+   if treenode.nil?
+     error_msg(ErrorCodes::OBJECT_ERROR, "Could not find Treenode with id #{params[:id]}")
+     render_json
+     return
+   end
 
-		@response[:treenode] = treenode.as_json
+   @response[:treenode] = treenode.as_json({
+     include_children: params[:show_children],
+     include_jobs: params[:show_jobs],
+     include_breadcrumb: params[:show_breadcrumb],
+     include_breadcrumb_string: params[:show_breadcrumb_as_string]
+   })
 
-		# If flag 'show_children' is true, return all children in json response
-		if params[:show_children]
-			@response[:treenode][:children] = treenode.children
-		end
-
-		# If flag 'show_jobs' is true, return all jobs in json response, in list format
-		if params[:show_jobs]
-			@response[:treenode][:jobs] = treenode.jobs.as_json(list: true)
-		end
-
-		# If flag 'show_breadcrum' is true, return breadcrumb in json response
-		if params[:show_breadcrumb]
-			@response[:treenode][:breadcrumb] = treenode.breadcrumb
-		end
-
-		render_json(200)
-
+   render_json(200)
 	end
 
   # Updates a treenode object
@@ -72,6 +61,6 @@ class Api::TreenodesController < Api::ApiController
 	private
 
 	def treenode_params
-		params.require(:treenode).permit(:name, :parent_id)
+   params.require(:treenode).permit(:name, :parent_id)
 	end
 end
