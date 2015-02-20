@@ -88,12 +88,12 @@ class Api::JobsController < Api::ApiController
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
     job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status))
-    
+
     # If ID is given, use it for creation
     if params[:force_id]
       job.id = params[:force_id]
     end
-    
+
     if !job.save
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job.", job.errors)
     end
@@ -103,7 +103,6 @@ class Api::JobsController < Api::ApiController
     @response[:job] = job
     render_json(201)
   rescue Exception => e
-    pp "Could not save job, this is why: [#{e.message}]."
     error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job, this is why: [#{e.message}].")
     render_json
   end
