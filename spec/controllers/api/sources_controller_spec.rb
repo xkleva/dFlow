@@ -11,6 +11,7 @@ describe Api::SourcesController do
     @libris_source = Source.find_by_class_name("Libris")
   end
 
+#########
   # describe "GET validate_new_objects" do
   #   context "one object with valid data" do
   #     it "should return success message and source id" do
@@ -88,6 +89,7 @@ describe Api::SourcesController do
   #     end
   #   end
   # end
+#########
 
   describe "Get a list of sources" do
     context "there is at least one source available" do
