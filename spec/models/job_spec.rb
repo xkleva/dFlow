@@ -7,6 +7,7 @@ end
 RSpec.describe Job, :type => :model do
   before :each do
     config_init
+    login_users
   end
 
   describe "create job" do
@@ -86,4 +87,37 @@ RSpec.describe Job, :type => :model do
 			expect(JSON.parse(job.metadata)["job"]["page_count"] == 89).to be true
 		end
 	end
+
+  describe "switch status" do
+    context "Switch to valid status" do
+      before :each do
+        @job = Job.find(1)
+        @old_count = @job.job_activities.count
+        @job.created_by = "api_key_user"
+        @job.switch_status(Status.find_by_name('digitizing'))
+        @job.save
+        @job2 = Job.find(1)
+      end
+      it "should save new status" do
+        expect(@job2.status).to eq 'digitizing'
+      end
+      it "should generate an activity entry" do
+        expect(@job2.job_activities.count).to eq @old_count+1
+      end
+    end
+  end
+
+  describe "create_log_entry" do
+    context "for valid job when switching status" do
+      it "should generate a JobAtivity object" do
+        job = Job.find(1)
+        job.created_by = @api_user
+        job.create_log_entry("STATUS", "StatusChange")
+        job.save
+        expect(job.job_activities.count).to eq 1
+      end
+    end
+  end
+
+
 end

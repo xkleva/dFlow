@@ -44,7 +44,7 @@ module ErrorCodes
 
 	# Used when a flow process step cannot be completed due to its' current state
 	QUEUE_ERROR = {
-		http_status: 404,
+		http_status: 422,
 		code: "QUEUE_ERROR"
 	}
 

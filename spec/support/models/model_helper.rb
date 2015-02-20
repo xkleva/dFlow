@@ -5,6 +5,7 @@ module ModelHelper
     @admin_user_token = @admin_user.generate_token.token
     @operator_user = User.find_by_username("operator_user")
     @operator_user_token = @operator_user.generate_token.token
+    @api_key_user = User.new(username: "api_key_user", name: "API_KEY", role: "API_KEY")
   end
   def config_init
     Rails.application.config.api_key = "test_key"
@@ -127,6 +128,9 @@ module ModelHelper
       },
       {
         name: 'DELETE'
+      },
+      {
+        name: 'STATUS'
       }
     ]
 
