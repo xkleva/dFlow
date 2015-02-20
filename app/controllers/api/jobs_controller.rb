@@ -47,6 +47,7 @@ class Api::JobsController < Api::ApiController
     rescue
       error_msg(ErrorCodes::REQUEST_ERROR, "Could not find job '#{params[:id]}'")
     end
+    # Handle pdf format
     respond_to do |format|
       format.json { render_json }
       format.pdf { send_data job.create_pdf, :filename => "#{job.id}.pdf", type: "application/pdf", disposition: "inline" }
