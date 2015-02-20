@@ -58,6 +58,24 @@ RSpec.describe Treenode, :type => :model do
         expect(treenode.errors.messages[:name]).to_not be nil
       end
     end
+    context "parent_id is in a valid position" do
+      it "should allow changing parent_id to anywhere outside itself and subnodes of self" do
+        root2 = Treenode.create(name: "Toppnod 2")
+        child = Treenode.find_by_id(3)
+        child.parent_id = root2.id
+        expect(child.save).to be_truthy
+      end
+      it "should deny changing parent_id to self" do
+        child = Treenode.find_by_id(3)
+        child.parent_id = child.id
+        expect(child.save).to be_falsey
+      end
+      it "should deny changing parent_id to subnode of self" do
+        child = Treenode.find_by_id(2)
+        child.parent_id = 3
+        expect(child.save).to be_falsey
+      end
+    end
   end
   describe "children" do
     context "children exists" do
