@@ -82,6 +82,8 @@ describe Api::JobsController do
         expect(json['job']).not_to be nil
         pp json['job']
         expect(json['job']['id']).not_to be nil
+        expect(json['job']['name']).to eq('the jobname')
+        expect(json['job']['copyright']).to eq(false)
       end
     end
     context "with invalid job parameters" do
