@@ -1,5 +1,4 @@
 class Api::StatusesController < Api::ApiController
-  before_filter :check_key
   before_filter :check_job
   before_filter -> { validate_rights 'manage_jobs' }
 

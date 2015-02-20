@@ -1,5 +1,4 @@
 class Api::UsersController < Api::ApiController
-	before_filter :check_key
 	before_filter -> { validate_rights 'manage_users' }, only: [:create, :update, :destroy]
 	before_filter -> { validate_rights 'view_users' }, only: [:index]
 

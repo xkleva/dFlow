@@ -1,6 +1,5 @@
 
 class Api::JobsController < Api::ApiController
-  before_filter :check_key
   before_filter :check_params
   before_filter -> { validate_rights 'manage_jobs' }, only: [:create, :update, :destroy]
   respond_to :json, :pdf

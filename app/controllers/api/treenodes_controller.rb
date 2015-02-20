@@ -1,5 +1,4 @@
 class Api::TreenodesController < Api::ApiController
-	before_filter :check_key
 
 	def index
 	end

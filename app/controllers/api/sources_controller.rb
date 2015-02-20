@@ -1,6 +1,5 @@
 
 class Api::SourcesController < Api::ApiController
-	before_filter :check_key
 
 	def index
 		#@response = {}
