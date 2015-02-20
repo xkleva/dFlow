@@ -20,7 +20,7 @@ class Api::JobsController < Api::ApiController
       else
         jobs = tmp
       end
-      jobs = jobs.order(:id)
+      jobs = jobs.order(:id).reverse_order
       pagination[:pages] = jobs.total_pages
       pagination[:page] = jobs.current_page
       pagination[:next] = jobs.next_page

@@ -105,9 +105,9 @@ class Treenode < ActiveRecord::Base
     else
       job_list = tmp
     end
+    job_list = job_list.order(:id).reverse_order
     data[:jobs] = job_list.as_json(list: true)
     pagination = {}
-    job_list = job_list.order(:id)
     pagination[:pages] = job_list.total_pages
     pagination[:page] = job_list.current_page
     pagination[:next] = job_list.next_page
