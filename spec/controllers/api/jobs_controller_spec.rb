@@ -78,8 +78,10 @@ describe Api::JobsController do
         expect(json['error']).to be nil
       end
       it "should return the created object" do
-        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: 'true'}
+        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: '3', name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: 'false'}
         expect(json['job']).not_to be nil
+        pp json['job']
+        expect(json['job']['id']).not_to be nil
       end
     end
     context "with invalid job parameters" do
