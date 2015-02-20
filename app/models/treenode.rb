@@ -34,7 +34,7 @@ class Treenode < ActiveRecord::Base
   # Check if id is subnode of this node
   def is_subnode?(child_id)
     children.each do |child| 
-      return true if child_id == child.id || is_subnode?(child.id)
+      return true if child_id == child.id || child.is_subnode?(child_id)
     end
     false
   end
