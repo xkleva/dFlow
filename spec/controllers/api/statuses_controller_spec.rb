@@ -17,5 +17,26 @@ describe Api::StatusesController do
         expect(response.status).to eq 200
       end
     end
+    context "job has status digitizing" do
+      it "should return status 422" do
+        get :digitizing_begin, id: 3, api_key: @api_key
+        expect(response.status).to eq 422
+      end
+    end
+  end
+
+  describe "digitizing_end" do
+    context "job has status digitizing" do
+      it "should return status 200" do
+        get :digitizing_end, id: 3, api_key: @api_key
+        expect(response.status).to eq 200
+      end
+    end
+    context "job has status waiting" do
+      it "should return status 422" do
+        get :digitizing_end, id: 1, api_key: @api_key
+        expect(response.status).to eq 422
+      end
+    end
   end
 end

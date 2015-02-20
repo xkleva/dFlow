@@ -119,5 +119,13 @@ RSpec.describe Job, :type => :model do
     end
   end
 
+  describe "create_pdf" do
+    context "for a valid job" do
+      it "should return a pdf object" do
+        job = Job.find(1)
+        expect(job.create_pdf).to_not be nil
+      end
+    end
+  end
 
 end
