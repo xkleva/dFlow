@@ -170,6 +170,42 @@ describe Api::TreenodesController do
 				expect(json['treenode']['children'][0]['parent_id']).to be nil
 			end
 		end
+    context "Job list pagination" do
+      it "should return metadata about pagination" do
+        Job.per_page = 2
+        get :show, api_key: @api_key, id: 2, show_jobs: true
+        expect(json['treenode']['jobs']).to_not be_empty
+        expect(json['treenode']['jobs'].count).to eq(2)
+        expect(json['treenode']['meta']['query']['total']).to eq(3)
+        expect(json['treenode']['meta']['pagination']['pages']).to eq(2)
+        expect(json['treenode']['meta']['pagination']['page']).to eq(1)
+        expect(json['treenode']['meta']['pagination']['next']).to eq(2)
+        expect(json['treenode']['meta']['pagination']['previous']).to eq(nil)
+        expect(json['treenode']['meta']['pagination']['per_page']).to eq(2)
+      end
+      it "should return paginated second page when given page number" do
+        Job.per_page = 2
+        get :show, api_key: @api_key, id: 2, show_jobs: true, page: 2
+        expect(json['treenode']['jobs']).to_not be_empty
+        expect(json['treenode']['jobs'].count).to eq(1)
+        expect(json['treenode']['meta']['query']['total']).to eq(3)
+        expect(json['treenode']['meta']['pagination']['pages']).to eq(2)
+        expect(json['treenode']['meta']['pagination']['page']).to eq(2)
+        expect(json['treenode']['meta']['pagination']['next']).to eq(nil)
+        expect(json['treenode']['meta']['pagination']['previous']).to eq(1)
+      end
+      it "should return first page when given out of bounds page number" do
+        Job.per_page = 2
+        get :show, api_key: @api_key, id: 2, show_jobs: true, page: 2000000000
+        expect(json['treenode']['jobs']).to_not be_empty
+        expect(json['treenode']['jobs'].count).to eq(2)
+        expect(json['treenode']['meta']['query']['total']).to eq(3)
+        expect(json['treenode']['meta']['pagination']['pages']).to eq(2)
+        expect(json['treenode']['meta']['pagination']['page']).to eq(1)
+        expect(json['treenode']['meta']['pagination']['next']).to eq(2)
+        expect(json['treenode']['meta']['pagination']['previous']).to eq(nil)
+      end
+    end
 	end
 
   describe "PUT update" do

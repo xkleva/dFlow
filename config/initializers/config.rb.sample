@@ -83,6 +83,9 @@ Rails.application.config.events = [
   },
   {
     name: 'DELETE'
+  },
+  {
+    name: 'STATUS'
   }
 ]
 

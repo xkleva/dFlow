@@ -10,6 +10,9 @@ class Api::JobsController < Api::ApiController
   def index
     jobs = Job.all
     pagination = {}
+    metaquery = {}
+    metaquery[:query] = params[:query] # Not implemented yet
+    metaquery[:total] = jobs.count
     if !jobs.empty?
       tmp = jobs.paginate(page: params[:page])
       if tmp.current_page > tmp.total_pages
@@ -17,7 +20,7 @@ class Api::JobsController < Api::ApiController
       else
         jobs = tmp
       end
-      jobs = jobs.order(:name)
+      jobs = jobs.order(:id).reverse_order
       pagination[:pages] = jobs.total_pages
       pagination[:page] = jobs.current_page
       pagination[:next] = jobs.next_page
@@ -30,9 +33,6 @@ class Api::JobsController < Api::ApiController
       pagination[:previous] = nil
       pagination[:per_page] = nil
     end
-    metaquery = {}
-    metaquery[:query] = params[:query] # Not implemented yet
-    metaquery[:total] = jobs.count
 
     @response[:jobs] = jobs.as_json(list: true)
     @response[:meta] = {query: metaquery, pagination: pagination}
