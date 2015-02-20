@@ -48,38 +48,6 @@ class Api::JobsController < Api::ApiController
     render_json
   end
 
-  # Returns the metadata for a given job
-  def job_metadata
-    begin
-      @response[:data] = JSON.parse(@job.metadata)
-    rescue
-      error_msg(ErrorCodes::DATA_ACCESS_ERROR, "Could not get metadata for job '#{params[:job_id]}'")
-    end
-    render_json
-  end
-
-  # Returns the metadata for a given job
-  def job_metadata
-    begin
-      @response[:data] = JSON.parse(@job.metadata)
-    rescue
-      error_msg(ErrorCodes::DATA_ACCESS_ERROR, "Could not get metadata for job '#{params[:job_id]}'")
-    end
-    render_json
-  end
-
-  # Updates metadata for a specific key
-  def update_metadata
-    begin
-      @job.update_metadata_key(params[:key], params[:metadata])
-    rescue
-      error_msg(ErrorCodes::DATA_ACCESS_ERROR, "Could not update metadata for job '#{params[:job_id]}'")
-    end
-    render_json
-  end
-
-
-
   # Creates a job from given parameter data.
   # The created object is returned in JSON as well as a location header.
   def create

@@ -42,35 +42,6 @@ describe Api::JobsController do
     end
   end
 
-  describe "GET job_metadata" do
-    context "with invalid attributes" do
-      it "returns a json message" do
-        get :job_metadata, api_key: @api_key, job_id: "wrong"
-        expect(json['error']).to_not be nil
-      end
-    end
-    context "with valid attributes" do
-      it "Returns metadata" do
-        get :job_metadata, api_key: @api_key, job_id: 1
-        expect(json['error']).to be nil
-      end
-    end
-  end
-  describe "GET update_metadata" do
-    context "with invalid attributes" do
-      it "returns a json message" do
-        get :update_metadata, api_key: @api_key, job_id: "wrong", key: "0001", metadata: {}
-        expect(json['error']).to_not be nil
-      end
-    end
-    context "with valid attributes" do
-      it "Returns success and updates metadata" do
-        get :update_metadata, api_key: @api_key, job_id: 1, key: "0001", metadata: {type: "test"}
-        expect(json['error']).to be nil
-      end
-    end
-  end
-
   describe "Create job" do
     context "with valid job parameters" do
       it "should create job without errors" do
@@ -89,6 +60,18 @@ describe Api::JobsController do
       it "should return an error message" do
         post :create, api_key: @api_key, job: {source: 'libris', cataloz_id: '1234', title: 'Bamse och hens vänner', treenode_id: '3', name: 'Bamse-jobbet', comment: 'comment'}
         expect(json['error']).to_not be nil
+      end
+    end
+
+    context "with a provided ID" do
+      it "should create job and return JSON representation of that job" do
+        job_id = 90000
+        job_name = "The Jobb with the custom ID"
+        post :create, api_key: @api_key, force_id: "#{job_id}", job: {source: 'libris', treenode_id: '3', name: job_name, comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: 'false', status: 'waiting_for_digitizing'}
+        expect(json['error']).to be nil
+        expect(json['job']).not_to be nil
+        expect(json['job']['id']).to eq(job_id)
+        expect(json['job']['name']).to eq(job_name)
       end
     end
   end

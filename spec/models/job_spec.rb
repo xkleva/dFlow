@@ -13,7 +13,6 @@ RSpec.describe Job, :type => :model do
     it "should save a valid job object" do
       job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1, copyright: true)
       job.valid?
-      pp job.errors
       expect(job.save).to be_truthy
     end
 
