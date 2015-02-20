@@ -71,13 +71,13 @@ class Api::StatusesController < Api::ApiController
 
   # Changes status
   def new_status(from_status, to_status)
-    pp 0
+
     return if !ensure_status(from_status)
-    pp 1
+
     @job.created_by = @current_user.username
     @job.switch_status(to_status)
-    pp 2
-    if !@job.save
+
+    if !@job.valid? || !@job.save
       error_msg(ErrorCodes::VALIDATION_ERROR, "Could not save job", @job.errors)
     else
       @response[:job] = @job
