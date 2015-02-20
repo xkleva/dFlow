@@ -1,4 +1,5 @@
 require 'nokogiri'
+require "prawn/measurement_extensions"
 
 class Job < ActiveRecord::Base
   default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
@@ -120,11 +121,12 @@ class Job < ActiveRecord::Base
     Source.find_by_classname("Libris")
   end
 
-  # returns a legible title string in an illegible manner
+  # Returns a legible title string in an illegible manner
   def title_string
     (title[/^(.*)\s*\/\s*$/,1] || title).strip
   end
 
+  # Generates a display title used in lists primarily
   def display
     title_trunc = title_string.truncate(50, separator: ' ')
     display = name.present? ? name : title_trunc
@@ -138,15 +140,18 @@ class Job < ActiveRecord::Base
     display
   end
 
+  # Returns a specific metadata value from key
   def metadata_value(key)
     metadata_hash[key.to_s]
   end
 
+  # Returns all metadata as a hash
   def metadata_hash
     return {} if metadata.blank? || metadata == "null"
     @metadata_hash ||= JSON.parse(metadata)
   end
 
+  # Returns ordinal data as a string representation
   def ordinals(return_raw = false)
     ordinal_data = []
     ordinal_data << ordinal_num(1) if ordinal_num(1)
@@ -156,11 +161,17 @@ class Job < ActiveRecord::Base
     ordinal_data.map { |x| x.join(" ") }.join(", ")
   end
 
+  # Returns an ordnial array for given key
   def ordinal_num(num)
     key = metadata_value("ordinal_#{num}_key")
     value = metadata_value("ordinal_#{num}_value")
     return nil if key.blank? || value.blank?
     [key, value]
+  end
+
+  # Generates a work order pdf
+  def create_pdf
+    PdfHelper.create_work_order(self)
   end
 
 

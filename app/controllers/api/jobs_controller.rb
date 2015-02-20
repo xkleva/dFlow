@@ -3,6 +3,8 @@ class Api::JobsController < Api::ApiController
   before_filter :check_key
   before_filter :check_params
   before_filter -> { validate_rights 'manage_jobs' }, only: [:create, :update, :destroy]
+  respond_to :json, :pdf
+  
 
   # Returns all jobs
   def index
@@ -45,7 +47,11 @@ class Api::JobsController < Api::ApiController
     rescue
       error_msg(ErrorCodes::REQUEST_ERROR, "Could not find job '#{params[:id]}'")
     end
-    render_json
+    # Handle pdf format
+    respond_to do |format|
+      format.json { render_json }
+      format.pdf { send_data job.create_pdf, :filename => "#{job.id}.pdf", type: "application/pdf", disposition: "inline" }
+    end
   end
 
   # Creates a job from given parameter data.

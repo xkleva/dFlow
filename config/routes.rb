@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   resources :session
 
+  # Assets routes
+  get 'assets/:asset_type/:asset_id', to: 'assets#show'
+
   namespace :api, :defaults => {:format => :json} do
     get 'check_connection' , to: 'api#check_connection'
 
@@ -12,6 +15,8 @@ Rails.application.routes.draw do
 
     # Treenode API
     resources :treenodes
+
+
 
     # Statuses API
     get 'jobs/:id/digitizing_begin', to: 'statuses#digitizing_begin'
@@ -48,6 +53,9 @@ Rails.application.routes.draw do
     post 'flows/update_flow_steps', to: 'flows#update_flow_steps'
 
   end
+
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
