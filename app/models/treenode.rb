@@ -53,4 +53,25 @@ class Treenode < ActiveRecord::Base
     @@breadcrumb[self.id] ||= breadcrumb(include_self: true).map{|x| x[:name]}.join(" / ")
   end
 
+  def as_json(options = {})
+    base_json = super
+
+    if options[:include_children]
+      base_json[:children] = self.children
+    end
+
+    if options[:include_jobs]
+      base_json[:jobs] = self.jobs.as_json(list: true)
+    end
+
+    if options[:include_breadcrumb]
+      if options[:include_breadcrumb_string]
+      base_json[:breadcrumb] = self.breadcrumb(as_string: true)
+      else
+        base_json[:breadcrumb] = self.breadcrumb
+      end
+    end
+
+    base_json
+  end
 end
