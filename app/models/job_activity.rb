@@ -1,5 +1,5 @@
 class JobActivity < ActiveRecord::Base
-  belongs_to :job, :dependent => :destroy
+  belongs_to :job
   validates :job, :presence => true
   validates :username, :presence => true
   validates :event, :presence => true
