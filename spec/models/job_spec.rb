@@ -47,19 +47,18 @@ RSpec.describe Job, :type => :model do
       expect(job.save).to be_falsey
     end
 
-    it "should require copyright" do
-      job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1, copyright: 'true')
-      expect(job.save).to be_falsey
+    it "should accept copyright true" do
+      job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1, copyright: true)
+      expect(job.save).to be_truthy
     end
 
-    it "should require copyright" do
-      job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1, copyright: 'false')
-      expect(job.save).to be_falsey
+    it "should accept copyright false" do
+      job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1, copyright: false)
+      expect(job.save).to be_truthy
     end
-
 
     it "should create a JobActivity object" do
-      job = Job.create(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1, created_by: "TestUser", copyright: 'true')
+      job = Job.create(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1, created_by: "TestUser", copyright: true)
       expect(job.job_activities.size).to eq 1
       expect(job.job_activities.first.username).to eq "TestUser"
     end
