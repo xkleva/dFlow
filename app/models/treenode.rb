@@ -80,7 +80,8 @@ class Treenode < ActiveRecord::Base
     end
 
     if options[:include_jobs]
-      base_json[:jobs] = self.jobs.as_json(list: true)
+      page = options[:job_pagination_page] || 1
+      base_json.merge!(paginated_job_list(page))
     end
 
     if options[:include_breadcrumb]
@@ -92,5 +93,31 @@ class Treenode < ActiveRecord::Base
     end
 
     base_json
+  end
+
+  def paginated_job_list(page)
+    data = {}
+    job_list = self.jobs
+    job_count = job_list.count
+    tmp = job_list.paginate(page: page)
+    if tmp.current_page > tmp.total_pages
+      job_list = job_list.paginate(page: 1)
+    else
+      job_list = tmp
+    end
+    data[:jobs] = job_list.as_json(list: true)
+    pagination = {}
+    job_list = job_list.order(:id)
+    pagination[:pages] = job_list.total_pages
+    pagination[:page] = job_list.current_page
+    pagination[:next] = job_list.next_page
+    pagination[:previous] = job_list.previous_page
+    pagination[:per_page] = job_list.per_page
+
+    data[:meta] = {
+      pagination: pagination,
+      query: {total: job_count}
+    }
+    data
   end
 end

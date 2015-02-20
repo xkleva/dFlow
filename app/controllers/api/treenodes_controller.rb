@@ -37,6 +37,7 @@ class Api::TreenodesController < Api::ApiController
    @response[:treenode] = treenode.as_json({
      include_children: params[:show_children],
      include_jobs: params[:show_jobs],
+     job_pagination_page: params[:page],
      include_breadcrumb: params[:show_breadcrumb],
      include_breadcrumb_string: params[:show_breadcrumb_as_string]
    })
