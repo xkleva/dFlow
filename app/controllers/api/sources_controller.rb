@@ -7,11 +7,11 @@ class Api::SourcesController < Api::ApiController
 
   api!
 	def index
-		#@response = {}
 		@response[:sources] = Rails.application.config.sources
-		render_json
-	rescue
-		error_msg(ErrorCodes::OBJECT_ERROR, "Other error occurred while retrieving sources list")
+
+		if @response[:sources].nil?
+			error_msg(ErrorCodes::REQUEST_ERROR, "Could not find any sources")
+		end
 		render_json
 	end
 

@@ -104,6 +104,14 @@ describe Api::SourcesController do
         expect(json['sources'][3]['class_name']).to eq('TestSource')
       end
     end
+    context "there are no sources available" do
+      it "should return json with error" do
+        Rails.application.config.sources = nil
+        get :index, api_key: @api_key
+        #pp json
+        expect(json['error']).not_to be nil
+      end
+    end
   end
 
   describe "Get data from a source" do
@@ -112,6 +120,25 @@ describe Api::SourcesController do
         get :fetch_source_data, api_key: @api_key, id: 12345, name: 'libris'
         expect(json['error']).to be nil
         expect(json['source']['catalog_id']).to eq('12345')
+      end
+    end
+
+    context "the source is not available" do
+      it "should return json with error data" do
+        source_name = 'tjottabengtsson'
+        get :fetch_source_data, api_key: @api_key, id: 12345, name: source_name
+        expect(json['error']).not_to be nil
+        expect(json['error']['msg']).to eq("Could not find a source with name #{source_name}")
+      end
+    end
+
+    context "the source is not available but source data is empty" do
+      it "should return json with error data" do
+        source_name = 'libris'
+        catalog_id = 0
+        get :fetch_source_data, api_key: @api_key, id: catalog_id, name: source_name
+        expect(json['error']).not_to be nil
+        expect(json['error']['msg']).to eq("Could not find source data for source: #{source_name} and catalog_id: #{catalog_id}")
       end
     end
   end

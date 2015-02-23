@@ -8,7 +8,7 @@ end
 module ErrorCodes
 	# Generic error code
 	ERROR = {
-		http_status: 404,
+		http_status: 400,
 		code: "ERROR"
 	}
 
