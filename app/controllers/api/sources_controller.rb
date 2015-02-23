@@ -1,6 +1,11 @@
 
 class Api::SourcesController < Api::ApiController
 
+  resource_description do
+    short 'Source object manager - Objects responsible for fetching data as basis for Job creation'
+  end
+
+  api!
 	def index
 		#@response = {}
 		@response[:sources] = Rails.application.config.sources

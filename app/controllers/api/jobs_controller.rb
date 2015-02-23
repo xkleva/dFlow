@@ -3,9 +3,18 @@ class Api::JobsController < Api::ApiController
   before_filter :check_params
   before_filter -> { validate_rights 'manage_jobs' }, only: [:create, :update, :destroy]
   respond_to :json, :pdf
+  require 'pp'
   
 
-  # Returns all jobs
+  resource_description do
+    short 'Job object manager'
+  end
+
+  api :GET, '/jobs', 'Returns a list of jobs'
+  formats [:json]
+  param :page, String, :desc => "Decides which page of pagination should be returned"
+  description "Returns a list of all jobs"
+  example '{"jobs":[{"id":1001002,"name":null,"title":"Water and water pollution handbook.","display":"Water and water pollution handbook.","source_label":"Libris","catalog_id":1234,"breadcrumb_string":"Projekt / OCR-projektet","treenode_id":6}]}'.pretty_json
   def index
     jobs = Job.all
     pagination = {}
@@ -38,7 +47,11 @@ class Api::JobsController < Api::ApiController
 
     render_json
   end
-
+  
+  api :GET, '/jobs/id', 'Returns a single Job object'
+  formats [:json]
+  description 'Returns a job object'
+  example '{"job":{"status":"waiting_for_digitizing","id":1001002,"name":null,"catalog_id":1234,"title":"Water and water pollution handbook.","author":null,"deleted_at":null,"created_by":null,"updated_by":null,"xml":"\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003cxsearch xmlns:marc=\"http://www.loc.gov/MARC21/slim\" to=\"1\" ...","quarantined":false,"comment":null,"object_info":null,"search_title":null,"metadata":"{\"type_of_record\":\"am\"}","created_at":"2015-02-20T15:14:12.254Z","updated_at":"2015-02-20T15:14:12.254Z","source":"libris","treenode_id":6,"copyright":false,"display":"Water and water pollution handbook.","source_label":"Libris","breadcrumb":[{"id":1,"name":"Projekt"},{"id":6,"name":"OCR-projektet"}],"activities":[{"job_id":1001002,"id":7276,"username":"admin","event":"CREATE","message":"Activity has been created","created_at":"2015-02-20T15:14:12.259Z","updated_at":"2015-02-20T15:14:12.259Z"}]}}'.pretty_json
   def show
     begin
       job = Job.find(params[:id])
@@ -51,6 +64,9 @@ class Api::JobsController < Api::ApiController
 
   # Creates a job from given parameter data.
   # The created object is returned in JSON as well as a location header.
+  api :POST, '/jobs/', 'Creates a Job object'
+  formats [:json]
+  description 'Creates a Job object'
   def create
     job_params = params[:job]
     job_params[:metadata] = job_params[:metadata].to_json

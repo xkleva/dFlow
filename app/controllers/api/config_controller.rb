@@ -1,9 +1,14 @@
 class Api::ConfigController < Api::ApiController
 
+  resource_description do
+    short 'Config manager - Data specified in application configuration'
+  end
+
   def index
   end
 
 	# Returns a list of assignable roles on format {roles: ["ROLE1", "ROLE2", ...]}
+  api!
   def role_list
     role_list = []
 

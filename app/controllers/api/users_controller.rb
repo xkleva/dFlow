@@ -2,12 +2,18 @@ class Api::UsersController < Api::ApiController
 	before_filter -> { validate_rights 'manage_users' }, only: [:create, :update, :destroy]
 	before_filter -> { validate_rights 'view_users' }, only: [:index]
 
+  resource_description do
+    short 'User manager'
+  end
+
+  api!
 	def index
-		@response[:users] = User.all
+		@response[:users] = User.all.order(:username)
 		render_json
 	end
 
 	# Creates a User 
+  api!
 	def create
 		user = User.new(user_params)
 		
@@ -23,6 +29,7 @@ class Api::UsersController < Api::ApiController
 	end
 
 	# Updates a User
+  api!
 	def update
 		user = User.find(params[:id])
 
@@ -37,6 +44,7 @@ class Api::UsersController < Api::ApiController
 	end
 
   # Renders a specific user object
+  api!
   def show
     user = User.find_by_id(params[:id])
 

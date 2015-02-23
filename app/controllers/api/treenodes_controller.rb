@@ -1,9 +1,16 @@
 class Api::TreenodesController < Api::ApiController
 
+  before_filter -> { validate_rights 'manage_tree' }, only: [:create, :update, :destroy]
+
+  resource_description do
+    short 'Tree object manager - Tree structure objects and children management'
+  end
+
 	def index
 	end
 
 	# Creates a Treenode 
+  api!
 	def create
    treenode = Treenode.new(treenode_params)
    
@@ -19,6 +26,7 @@ class Api::TreenodesController < Api::ApiController
 	end
 
 	# Returns a Treenode
+  api!
 	def show
    if params[:id] == 'root'
      treenode = RootTreenode.new(name: "root")
@@ -45,6 +53,7 @@ class Api::TreenodesController < Api::ApiController
 	end
 
   # Updates a treenode object
+  api!
   def update
     treenode = Treenode.find(params[:id])
 
