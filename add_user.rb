@@ -14,7 +14,7 @@ def read_credentials
   fullname = gets.chomp
   print "Email: "
   email = gets.chomp
-  roles = Rails.application.config.user_roles.map {|x| x[:name]}
+  roles = Rails.application.config.user_roles.reject {|x| x[:unassignable]}.map {|x| x[:name]}
   print "Role (#{roles.join(", ")}): "
   role = gets.chomp
   encrypted_password = BCrypt::Password.create(password)
