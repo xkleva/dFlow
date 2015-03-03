@@ -17,45 +17,21 @@ RSpec.describe Job, :type => :model do
       expect(job.save).to be_truthy
     end
 
-    it "should require title" do
-      job = Job.new(catalog_id: 12345, source: "libris", treenode_id: 1)
-      expect(job.save).to be_falsey
-    end
+    it {should validate_presence_of(:title)}
 
-    it "should require catalog_id" do
-      job = Job.new(title: "Test Job", source: "libris", treenode_id: 1)
-      expect(job.save).to be_falsey
-    end
+    it {should validate_presence_of(:catalog_id)}
 
-    it "should require source" do
-      job = Job.new(title: "Test Job", catalog_id: 12345, treenode_id: 1)
-      expect(job.save).to be_falsey
-    end
+    it {should validate_presence_of(:source)}
 
-    it "should require valid source" do
-      job = Job.new(title: "Test Job", catalog_id: 12345, source: "no-such-source", treenode_id: 1)
-      expect(job.save).to be_falsey
-    end
+    it {should_not allow_value("no-such-source").for(:source)}
 
-    it "should require a valid treenode parent" do
-      job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris")
-      expect(job.save).to be_falsey
-    end
+    it {should validate_presence_of(:treenode_id)}
 
-    it "should require copyright" do
-      job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1)
-      expect(job.save).to be_falsey
-    end
+    it {should allow_value(true).for(:copyright)}
 
-    it "should accept copyright true" do
-      job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1, copyright: true)
-      expect(job.save).to be_truthy
-    end
+    it {should allow_value(false).for(:copyright)}
 
-    it "should accept copyright false" do
-      job = Job.new(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1, copyright: false)
-      expect(job.save).to be_truthy
-    end
+    it {should_not allow_value(nil).for(:copyright)}
 
     it "should create a JobActivity object" do
       job = Job.create(title: "Test Job", catalog_id: 12345, source: "libris", treenode_id: 1, created_by: "TestUser", copyright: true)
