@@ -1,6 +1,6 @@
-if Rails.env != 'test'
+if Rails.env == 'test'
 ### Assign your API-key here (must be aplpha-numerical)
-Rails.application.config.api_key = <your_key_here>
+Rails.application.config.api_key = 'test_key'
 
 ### USER ROLES DEFINITION
 ### Create a new role by adding another hash with a unique name of the role as well as a list of rights. Unassignable states that the role cannot be assigned to users.
@@ -8,7 +8,7 @@ Rails.application.config.api_key = <your_key_here>
 Rails.application.config.user_roles = [
 	{
     name: "ADMIN",
-    rights: ['view_users', 'manage_users', 'view_tree', 'manage_tree', 'manage_tree_root']
+    rights: ['view_users', 'manage_users', 'view_tree', 'manage_tree', 'manage_tree_root', 'manage_jobs']
   },
   {
     name: "GUEST",
@@ -17,17 +17,17 @@ Rails.application.config.user_roles = [
   },
   {
     name: "OPERATOR",
-    rights: ['view_tree', 'manage_tree']
+    rights: ['view_tree', 'manage_tree', 'manage_jobs']
   },
   {
     name: "API_KEY",
     unassignable: true,
-    rights: ['view_tree', 'manage_tree']
+    rights: ['view_tree', 'manage_tree', 'manage_jobs']
   }
 ]
 
 # Flags for using external authentication source
-Rails.application.config.external_auth = false
+Rails.application.config.external_auth = true
 Rails.application.config.external_auth_url = "https://login-server.example.com/auth"
 
 # List of all available processes, the id is what identifies the process in the flow.

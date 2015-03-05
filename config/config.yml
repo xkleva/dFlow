@@ -1,0 +1,32 @@
+---
+### USER ROLES DEFINITION
+### Create a new role by adding another hash with a unique name of the role as well as a list of rights. Unassignable states that the role cannot be assigned to users.
+### Available rights are: 'view_users', 'manage_users', 'view_tree', 'manage_tree', 'manage_tree_root'
+user_roles:
+  -
+    name: ADMIN
+    rights: 
+      - view_users
+      - manage_users
+      - view_tree
+      - manage_tree
+      - manage_tree_root
+      - manage_jobs
+  -
+    name: GUEST
+    rights: 
+      - view_tree
+    unassignable: true
+  -
+    name: OPERATOR
+    rights: 
+      - view_tree
+      - manage_tree
+      - manage_jobs
+  -
+    name: API_KEY
+    rights: 
+      - view_tree
+      - manage_tree
+      - manage_jobs
+    unassignable: true

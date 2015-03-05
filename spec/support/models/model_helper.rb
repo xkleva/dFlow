@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
 module ModelHelper
-  def login_users
-    @admin_user = create(:admin_user)
-    @admin_user_token = @admin_user.generate_token.token
-    @operator_user = create(:operator_user)
-    @operator_user_token = @operator_user.generate_token.token
-    @api_key_user = create(:api_key_user)
-  end
+  
   def config_init
+
     Rails.application.config.api_key = "test_key"
     Rails.application.config.external_auth = true
     Rails.application.config.external_auth_url = "https://login-server.example.com/auth"
