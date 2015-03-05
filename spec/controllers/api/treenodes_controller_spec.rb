@@ -13,7 +13,8 @@ describe Api::TreenodesController do
 	describe "POST create" do
 		context "With valid parameters" do
 			before :each do 
-				post :create, api_key: @api_key, treenode: {name: "Tree node", parent_id: 1}
+        treenode = create(:treenode)
+				post :create, api_key: @api_key, treenode: {name: "Tree node", parent_id: treenode.id}
 			end
 			it "should return a treenode object with id" do
 				expect(json['treenode']['id']).to_not be nil
@@ -42,7 +43,8 @@ describe Api::TreenodesController do
 
 		context "With the same name as a sibling" do
 			before :each do
-				post :create, api_key: @api_key, treenode: {name: "Barn", parent_id: 1}
+        treenode = create(:child_treenode)
+				post :create, api_key: @api_key, treenode: {name: treenode.name, parent_id: treenode.parent_id}
 			end
 			it "should return an error object" do
 				expect(json['error']).to_not be nil
@@ -57,7 +59,8 @@ describe Api::TreenodesController do
 
 		context "With invalid name" do
 			before :each do
-				post :create, api_key: @api_key, treenode: {name: nil, parent_id: 1}
+        treenode = create(:treenode)
+				post :create, api_key: @api_key, treenode: {name: nil, parent_id: treenode.id}
 			end
 			it "should return an error object" do
 				expect(json['error']).to_not be nil
@@ -74,7 +77,8 @@ describe Api::TreenodesController do
 	describe "GET show" do
 		context "Existing treenode without children" do
 			before :each do
-				get :show, api_key: @api_key, id: 1
+        treenode = create(:treenode)
+				get :show, api_key: @api_key, id: treenode.id
 			end
 			it "should return treenode object" do
 				expect(json['treenode']).to_not be nil
@@ -85,7 +89,9 @@ describe Api::TreenodesController do
 		end
 		context "Exisiting treenode with children" do
 			before :each do
-				get :show, api_key: @api_key, id: 1, show_children: true
+        treenode = create(:treenode)
+        create_list(:treenode, 10, parent_id: treenode.id)
+				get :show, api_key: @api_key, id: treenode.id, show_children: true
 			end
 			it "should return a treenode object" do
 				expect(json['treenode']).to_not be nil
@@ -99,7 +105,8 @@ describe Api::TreenodesController do
 		end
 		context "Existing treenode without jobs" do
 			before :each do
-				get :show, api_key: @api_key, id: 1
+        treenode = create(:treenode)
+				get :show, api_key: @api_key, id: treenode.id
 			end
 			it "should return treenode object" do
 				expect(json['treenode']).to_not be nil
@@ -110,7 +117,9 @@ describe Api::TreenodesController do
 		end
 		context "Exisiting treenode with jobs" do
 			before :each do
-				get :show, api_key: @api_key, id: 2, show_jobs: true
+        treenode = create(:treenode)
+        create_list(:job, 20, treenode_id: treenode.id)
+				get :show, api_key: @api_key, id: treenode.id, show_jobs: true
 			end
 			it "should return a treenode object" do
 				expect(json['treenode']).to_not be nil
@@ -135,7 +144,8 @@ describe Api::TreenodesController do
 		end
 		context "Existing treenode with multi level breadcrumb" do
 			before :each do
-				get :show, api_key: @api_key, id: 3, show_breadcrumb: true
+        treenode = create(:grandchild_treenode)
+				get :show, api_key: @api_key, id: treenode.id, show_breadcrumb: true
 			end
 			it "should return a treenode object" do
 				expect(json['treenode']).to_not be nil
@@ -148,17 +158,22 @@ describe Api::TreenodesController do
 			end
     end
 		context "Existing treenode with multi level breadcrumb, when requesting breadcrumb as string" do
+      before :each do
+        @treenode = create(:grandchild_treenode)
+      end
       it "should return breadcrumb as string when requested properly" do
-				get :show, api_key: @api_key, id: 3, show_breadcrumb: true, show_breadcrumb_as_string: true
-        expect(json['treenode']['breadcrumb']).to eq("Toppnod / Barn / Barnbarn")
+				get :show, api_key: @api_key, id: @treenode.id, show_breadcrumb: true, show_breadcrumb_as_string: true
+        expect(json['treenode']['breadcrumb']).to eq(@treenode.breadcrumb_as_string)
       end
       it "should return not breadcrumb at all if show_breadcrumb is missing" do
-				get :show, api_key: @api_key, id: 3, show_breadcrumb_as_string: true
+				get :show, api_key: @api_key, id: @treenode.id, show_breadcrumb_as_string: true
         expect(json['treenode']['breadcrumb']).to be_nil
       end
 		end
 		context "Asking for 'root' node" do
 			before :each do
+        treenode = create(:top_treenode)
+        create_list(:treenode, 10, parent: treenode)
 				get :show, api_key: @api_key, id: 'root', show_children: true
 			end
 			it "should return a treenode without id" do
@@ -173,7 +188,9 @@ describe Api::TreenodesController do
     context "Job list pagination" do
       it "should return metadata about pagination" do
         Job.per_page = 2
-        get :show, api_key: @api_key, id: 2, show_jobs: true
+        treenode = create(:treenode)
+        create_list(:job, 3, treenode: treenode)
+        get :show, api_key: @api_key, id: treenode.id, show_jobs: true
         expect(json['treenode']['jobs']).to_not be_empty
         expect(json['treenode']['jobs'].count).to eq(2)
         expect(json['treenode']['meta']['query']['total']).to eq(3)
@@ -185,7 +202,9 @@ describe Api::TreenodesController do
       end
       it "should return paginated second page when given page number" do
         Job.per_page = 2
-        get :show, api_key: @api_key, id: 2, show_jobs: true, page: 2
+        treenode = create(:treenode)
+        create_list(:job, 3, treenode: treenode)
+        get :show, api_key: @api_key, id: treenode.id, show_jobs: true, page: 2
         expect(json['treenode']['jobs']).to_not be_empty
         expect(json['treenode']['jobs'].count).to eq(1)
         expect(json['treenode']['meta']['query']['total']).to eq(3)
@@ -196,7 +215,9 @@ describe Api::TreenodesController do
       end
       it "should return first page when given out of bounds page number" do
         Job.per_page = 2
-        get :show, api_key: @api_key, id: 2, show_jobs: true, page: 2000000000
+        treenode = create(:treenode)
+        create_list(:job, 3, treenode: treenode)
+        get :show, api_key: @api_key, id: treenode.id, show_jobs: true, page: 2000000000
         expect(json['treenode']['jobs']).to_not be_empty
         expect(json['treenode']['jobs'].count).to eq(2)
         expect(json['treenode']['meta']['query']['total']).to eq(3)
@@ -211,7 +232,7 @@ describe Api::TreenodesController do
   describe "PUT update" do
     context "with valid values" do
       it "should return an updated treenode" do
-        treenode = Treenode.find(1)
+        treenode = create(:treenode)
         treenode.name = "NewName"
         post :update, api_key: @api_key, id: treenode.id, treenode: treenode.as_json
         expect(json['treenode']).to_not be nil
@@ -220,7 +241,7 @@ describe Api::TreenodesController do
     end
     context "with invalid values" do
       it "should return an error message" do
-        treenode = Treenode.find(1)
+        treenode = create(:treenode)
         treenode.name = ""
         post :update, api_key: @api_key, id: treenode.id, treenode: treenode.as_json
         expect(json['error']).to_not be nil

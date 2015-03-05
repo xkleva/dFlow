@@ -15,22 +15,18 @@ FactoryGirl.define do
 
     # Defines reusable traits which can be combined later into specific factories
     trait :guest do
-      username "guest"
       role "GUEST"
     end
 
     trait :admin do
-      username "admin"
       role "ADMIN"
     end
 
     trait :operator do
-      username "operator"
       role "OPERATOR"
     end
 
     trait :api_key do
-      username "api_key"
       role "API_KEY"
     end
 

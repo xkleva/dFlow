@@ -13,13 +13,15 @@ describe Api::StatusesController do
   describe "digitizing_begin" do
     context "job has status waiting" do
       it "should return status 200" do
-        get :digitizing_begin, id: 1, api_key: @api_key
+        job = create(:job, status: 'waiting_for_digitizing')
+        get :digitizing_begin, id: job.id, api_key: @api_key
         expect(response.status).to eq 200
       end
     end
     context "job has status digitizing" do
       it "should return status 422" do
-        get :digitizing_begin, id: 3, api_key: @api_key
+        job = create(:job, status: 'digitizing')
+        get :digitizing_begin, id: job.id, api_key: @api_key
         expect(response.status).to eq 422
       end
     end
@@ -28,13 +30,15 @@ describe Api::StatusesController do
   describe "digitizing_end" do
     context "job has status digitizing" do
       it "should return status 200" do
-        get :digitizing_end, id: 3, api_key: @api_key
+        job = create(:job, status: 'digitizing')
+        get :digitizing_end, id: job.id, api_key: @api_key
         expect(response.status).to eq 200
       end
     end
     context "job has status waiting" do
       it "should return status 422" do
-        get :digitizing_end, id: 1, api_key: @api_key
+        job = create(:job, status: 'waiting_for_digitizing')
+        get :digitizing_end, id: job.id, api_key: @api_key
         expect(response.status).to eq 422
       end
     end

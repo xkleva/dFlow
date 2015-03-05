@@ -5,10 +5,9 @@ RSpec.configure do |c|
 end
 
 describe Api::UsersController do
-  before :all do
-    login_users
-  end
+
   before :each do
+    login_users
     config_init
     @api_key = Rails.application.config.api_key
   end
@@ -61,7 +60,8 @@ describe Api::UsersController do
   describe "GET show" do
     context "an existing user" do
       it "should return a single user object" do
-        get :show, api_key: @api_key, id: 1
+        user = create(:admin_user)
+        get :show, api_key: @api_key, id: user.id
         expect(json['user']).to_not be nil
         expect(json['user']['id']).to be_an(Integer)
       end
