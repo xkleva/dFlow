@@ -9,90 +9,25 @@ RSpec.describe User, :type => :model do
     config_init
   end
   
-  describe "role_valid" do
-    context "role exists in config" do
-      it "should not contain an error" do
-        user = User.new(username: "hej", name: "svej", role: "ADMIN")
-        expect(user.errors.size).to be 0
-      end
-    end
-    context "role does not exist in config" do
-      user = User.new(username: "awd", name: "svej", role: "FOO")
-      it "should render user object invalid" do
-        expect(user.valid?).to be false
-        expect(user.errors.size).to_not eq 0
-        expect(user.errors.messages[:role]).not_to be nil
-      end
-    end
+  describe "role" do
+    it {should validate_inclusion_of(:role).in_array(Rails.application.config.user_roles.map{|x| x[:name]})}
+    it {should validate_presence_of(:role)}
   end
 
   describe "email" do
-    context "email is written in wrong format" do
-      user = User.new(username: "awd", name: "svej", role: "ADMIN", email: "test@.com")
-      it "should invalidate object" do
-        expect(user.valid?).to be false
-      end
-      it "should return an error message for field email" do
-        expect(user.errors.messages[:email]).to_not be nil
-      end
-    end
-    context "email is nil" do
-      user = User.new(username: "awd", name: "svej", role: "ADMIN", email: nil)
-      it "should validate object" do
-        expect(user.valid?).to be true
-      end
-    end
-    context "email is written in proper format" do
-      user = User.new(username: "awd", name: "svej", role: "ADMIN", email: "test@test.com")
-      it "should validate object" do
-        expect(user.valid?).to be true
-      end
-    end
+    it {should allow_value(nil).for(:email)}
+    it {should allow_value('test@test.com').for(:email)}
+    it {should_not allow_value('test@.com').for(:email)}
   end
 
   describe "username" do
-    context "username is nil" do
-      user = User.new(username: nil, name: "svej", role: "ADMIN", email: "test@test.com")
-      it "should invalidate object" do
-        expect(user.valid?).to be false
-      end
-      it "should return an error message for field username" do
-        expect(user.errors.messages[:username]).to_not be nil
-      end
-    end
-    context "username is not unique" do
-      user = User.new(username: "admin_user", name: "svej", role: "ADMIN", email: "test@test.com")
-      it "should invalidate object" do
-        expect(user.valid?).to be false
-      end
-      it "should return an error message for field username" do
-        expect(user.errors.messages[:username]).to_not be nil
-      end
-    end
-    context "username is properly formatted and unique" do
-      user = User.new(username: "123user456", name: "svej", role: "ADMIN", email: "test@test.com")
-      it "should validate object" do
-        expect(user.valid?).to be true
-      end
-    end
+    it {should validate_presence_of(:username)}
+    it {should validate_uniqueness_of(:username)}
+    
   end
 
   describe "name" do
-    context "name is nil" do
-      user = User.new(username: "123user456", name: nil, role: "ADMIN", email: "test@test.com")
-      it "should invalidate object" do
-        expect(user.valid?).to be false
-      end
-      it "should return an error message for field name" do
-        expect(user.errors.messages[:name]).to_not be nil
-      end
-    end
-    context "name is properly formatted" do
-      user = User.new(username: "123user456", name: "My Name", role: "ADMIN", email: "test@test.com")
-      it "should validate object" do
-        expect(user.valid?).to be true
-      end
-    end
+    it {should validate_presence_of(:name)}
   end
 
   describe "user create_missing_users_from_file" do
@@ -155,7 +90,7 @@ RSpec.describe User, :type => :model do
   describe "role_object" do
     context "for a valid role" do
       it "should return a hash object" do
-        user = User.find_by_username("admin_user")
+        user = build(:admin_user)
         expect(user.role_object).to be_a(Hash)
         expect(user.role_object[:name]).to eq "ADMIN"
         expect(user.role_object[:rights]).to_not be nil
@@ -166,7 +101,7 @@ RSpec.describe User, :type => :model do
   describe "has_right?" do
     context "user has right" do
       it "should return true" do
-        user = User.find_by_username("admin_user")
+        user = build(:admin_user)
         expect(user.has_right?("manage_users")).to be true
       end
     end
