@@ -23,7 +23,7 @@ class Treenode < ActiveRecord::Base
 
   # Check that new parent_id is not self or subnode of self
   def parent_id_change_destination
-    if parent_id == id
+    if parent_id == id && id
       errors.add(:parent, "Parent node cannot be itself")
     end
     if parent_id && is_subnode?(parent_id)

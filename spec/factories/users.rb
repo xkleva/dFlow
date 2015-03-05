@@ -3,8 +3,12 @@ FactoryGirl.define do
     "person#{n}@example.com"
   end
 
+  sequence :username do |n|
+    "user#{n}"
+  end
+
   factory :user, class: User do
-    username "user"
+    username {generate :username}
     name "John Doe"
     guest
     email {generate :email}
@@ -40,5 +44,11 @@ FactoryGirl.define do
     after(:create) do |user, evaluator|
       user.generate_token
     end
+  end
+
+  factory :access_token do |n|
+    association :user, factory: :user
+    token SecureRandom.hex
+    token_expire Time.now+1.day
   end
 end
