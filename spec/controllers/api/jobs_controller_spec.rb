@@ -3,7 +3,6 @@ require "rails_helper"
 describe Api::JobsController do
   before :each do
     WebMock.allow_net_connect!
-    #config_init
     @api_key = APP_CONFIG["api_key"]
   end
   after :each do

@@ -1,9 +1,5 @@
 require "rails_helper"
 
-RSpec.configure do |c|
-  c.include ModelHelper
-end
-
 describe Api::UsersController do
 
   before :each do

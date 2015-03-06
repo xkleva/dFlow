@@ -1,9 +1,5 @@
 require 'rails_helper'
 
-RSpec.configure do |c|
-  c.include ModelHelper
-end
-
 RSpec.describe Source, :type => :model do
   before :each do
     #config_init

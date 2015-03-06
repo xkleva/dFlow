@@ -1,13 +1,6 @@
 require 'rails_helper'
 
-RSpec.configure do |c|
-  c.include ModelHelper
-end
-
 RSpec.describe JobActivity, :type => :model do
-  before :each do
-    config_init
-  end
 
   describe "event" do
     it {should validate_inclusion_of(:event).in_array(APP_CONFIG["events"].map {|x| x["name"]})}

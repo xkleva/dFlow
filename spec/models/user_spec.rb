@@ -1,13 +1,6 @@
 require 'rails_helper'
 
-RSpec.configure do |c|
-  c.include ModelHelper
-end
-
 RSpec.describe User, :type => :model do
-  before :each do
-    config_init
-  end
   
   describe "role" do
     it {should validate_inclusion_of(:role).in_array(APP_CONFIG["user_roles"].map{|x| x["name"]})}

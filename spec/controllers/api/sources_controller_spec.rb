@@ -1,12 +1,7 @@
 require 'rails_helper'
 
-RSpec.configure do |c|
-  c.include ModelHelper
-end
-
 describe Api::SourcesController do
   before :each do
-    config_init
     @api_key = APP_CONFIG["api_key"]
     @libris_source = Source.find_by_class_name("Libris")
   end

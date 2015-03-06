@@ -1,13 +1,6 @@
 require 'rails_helper'
 
-RSpec.configure do |c|
-	c.include ModelHelper
-end
-
 RSpec.describe Treenode, :type => :model do
-  before :each do
-    config_init
-  end
 
   describe "name" do
     it {should validate_presence_of(:name)}

@@ -1,12 +1,7 @@
 require 'rails_helper'
 
-RSpec.configure do |c|
-	c.include ModelHelper
-end
-
 RSpec.describe Job, :type => :model do
   before :each do
-    config_init
     login_users
   end
 
