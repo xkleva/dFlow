@@ -29,7 +29,7 @@ gem 'spring',        group: :development
 
 group :test, :development do
   # Use rspec for testing
-  gem 'rspec-rails', '~> 3.0.0'
+  gem 'rspec-rails', '~> 3.1'
   gem "factory_girl_rails", "~> 4.0"
   gem 'database_cleaner'
 end

@@ -8,7 +8,7 @@ class JobActivity < ActiveRecord::Base
 
   # Check if event is in list of configured events
   def event_in_list
-    if !Rails.application.config.events.map { |x| x[:name] }.include?(event)
+    if !APP_CONFIG["events"].map { |x| x["name"] }.include?(event)
       errors.add(:event, "not included in list of valid events")
     end
   end

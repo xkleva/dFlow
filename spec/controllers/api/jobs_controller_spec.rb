@@ -1,14 +1,10 @@
 require "rails_helper"
 
-RSpec.configure do |c|
-  c.include ModelHelper
-end
-
 describe Api::JobsController do
   before :each do
     WebMock.allow_net_connect!
-    config_init
-    @api_key = Rails.application.config.api_key
+    #config_init
+    @api_key = APP_CONFIG["api_key"]
   end
   after :each do
     WebMock.allow_net_connect!
@@ -28,6 +24,7 @@ describe Api::JobsController do
   describe "GET show" do
     context "with existing job" do
       it "should return full job object data" do
+
         job = create(:job)
         get :show, api_key: @api_key, id: job.id
         expect(json['job'].size).to be > 0
@@ -47,7 +44,7 @@ describe Api::JobsController do
   describe "Create job" do
     context "with valid job parameters" do
       it "should create job without errors" do
-        treenode = create(:treenode)
+        treenode = create(:child_treenode)
         post :create, api_key: @api_key, job: {source: 'libris', treenode_id: treenode.id, name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: true, status: 'waiting_for_digitizing'}
         expect(json['error']).to be nil
       end

@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
 
   # Validates that role exists in config file
   def role_valid
-    if Rails.application.config.user_roles.select{|role| role[:name] == self.role}.empty?
+    if APP_CONFIG["user_roles"].select{|role| role["name"] == self.role}.empty?
       errors.add(:role, "Role does not exist in config")
     end
   end
@@ -31,12 +31,12 @@ class User < ActiveRecord::Base
 
   # Returns role hash from config file
   def role_object
-    Rails.application.config.user_roles.select{|role| role[:name] == self.role}.first
+    APP_CONFIG["user_roles"].select{|role| role["name"] == self.role}.first
   end
 
   # Checks if users role has given right value
   def has_right?(right_value)
-    role_object[:rights].include? right_value
+    role_object["rights"].include? right_value
   end
 
   # First clear all invalid tokens. Then look for our provided token.
@@ -57,7 +57,7 @@ class User < ActiveRecord::Base
     if user_file_data
       auth_status = authenticate_local(user_file_data, provided_password)
     else
-      if Rails.configuration.external_auth
+      if APP_CONFIG["external_auth"]
         auth_status = authenticate_external(provided_password)
       end
     end
@@ -66,7 +66,7 @@ class User < ActiveRecord::Base
 
   # Authenticate against external server
   def authenticate_external(provided_password)
-    uri = URI(Rails.configuration.external_auth_url + "/" + self.username)
+    uri = URI(APP_CONFIG["external_auth_url"] + "/" + self.username)
     params = { :password => provided_password}
     uri.query = URI.encode_www_form(params)
     res = Net::HTTP.get_response(uri)

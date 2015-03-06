@@ -6,7 +6,7 @@ end
 
 RSpec.describe Source, :type => :model do
   before :each do
-    config_init
+    #config_init
     #WebMock.allow_net_connect!
     @libris = Source.find_by_name('libris')
   end
@@ -34,6 +34,7 @@ RSpec.describe Source, :type => :model do
       it "should find a class" do
         my_source = Source.find_by_name('libris')
         expect(my_source).not_to be nil
+        expect(my_source).to be Libris
       end
     end
     context "when using a nonsense source name" do

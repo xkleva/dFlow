@@ -55,11 +55,11 @@ RSpec.describe SessionController, :type => :controller do
     before :each do
       User.create(username: 'fake_external_user', name: 'Fake User', email: 'fake.user@example.com', role: "OPERATOR")
 
-      stub_request(:get, Rails.configuration.external_auth_url+"/fake_external_user")
+      stub_request(:get, APP_CONFIG["external_auth_url"]+"/fake_external_user")
         .with(query: {password: "fake_valid_password"})
         .to_return(body: {auth: {yesno: true }}.to_json)
 
-      stub_request(:get, Rails.configuration.external_auth_url+"/fake_external_user")
+      stub_request(:get, APP_CONFIG["external_auth_url"]+"/fake_external_user")
         .with(query: {password: "fake_invalid_password"})
         .to_return(body: {auth: {yesno: false }}.to_json)
     end

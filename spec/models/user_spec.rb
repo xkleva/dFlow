@@ -10,7 +10,7 @@ RSpec.describe User, :type => :model do
   end
   
   describe "role" do
-    it {should validate_inclusion_of(:role).in_array(Rails.application.config.user_roles.map{|x| x[:name]})}
+    it {should validate_inclusion_of(:role).in_array(APP_CONFIG["user_roles"].map{|x| x["name"]})}
     it {should validate_presence_of(:role)}
   end
 
@@ -92,8 +92,8 @@ RSpec.describe User, :type => :model do
       it "should return a hash object" do
         user = build(:admin_user)
         expect(user.role_object).to be_a(Hash)
-        expect(user.role_object[:name]).to eq "ADMIN"
-        expect(user.role_object[:rights]).to_not be nil
+        expect(user.role_object["name"]).to eq "ADMIN"
+        expect(user.role_object["rights"]).to_not be nil
       end
     end
   end

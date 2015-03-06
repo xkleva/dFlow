@@ -7,7 +7,7 @@ class Api::SourcesController < Api::ApiController
 
   api!
 	def index
-		@response[:sources] = Rails.application.config.sources
+		@response[:sources] = APP_CONFIG["sources"]
 
 		if @response[:sources].nil?
 			error_msg(ErrorCodes::REQUEST_ERROR, "Could not find any sources")

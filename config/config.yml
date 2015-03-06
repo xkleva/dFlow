@@ -1,11 +1,14 @@
 ---
+### API KEY USED FOR API-CALLS
+api_key: test_key
+
 ### USER ROLES DEFINITION
 ### Create a new role by adding another hash with a unique name of the role as well as a list of rights. Unassignable states that the role cannot be assigned to users.
 ### Available rights are: 'view_users', 'manage_users', 'view_tree', 'manage_tree', 'manage_tree_root'
 user_roles:
   -
     name: ADMIN
-    rights: 
+    rights:
       - view_users
       - manage_users
       - view_tree
@@ -29,4 +32,69 @@ user_roles:
       - view_tree
       - manage_tree
       - manage_jobs
+      - manage_users
+      - view_users
     unassignable: true
+
+# Flags for using external authentication source
+external_auth: true
+external_auth_url: "https://login-server.ub.gu.se/auth"
+
+# List of available sources
+sources:
+  -
+    name: libris
+    label: Libris
+    class_name: Libris
+  -
+    name: other_source
+    label: Other Source
+    class_name: OtherSource
+  -
+    name: operakallan
+    label: Operakällan
+    class_name: UpperClass
+
+# List of available events (used for job activity entries)
+events:
+  -
+    name: QUARANTINE
+  -
+    name: UNQUARANTINE
+  -
+    name: CREATE
+  -
+    name: UPDATE
+  -
+    name: CHANGE_STATUS
+  -
+    name: DELETE
+  -
+    name: STATUS
+
+# List of available statuses
+statuses:
+  -
+    name: waiting_for_digitizing
+    next_status: digitizing
+  -
+    name: digitizing
+    next_status: post_processing
+  -
+    name: post_processing
+    next_status: quality_control
+  -
+    name: post_processing_user_input
+    next_status: post_processing
+  -
+    name: quality_control
+    next_status: waiting_for_mets_control
+  -
+    name: waiting_for_mets_control
+    next_status: mets_control
+  -
+    name: mets_control
+    next_status: done
+  -
+    name: done
+    next_status: nil

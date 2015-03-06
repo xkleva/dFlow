@@ -10,7 +10,7 @@ RSpec.describe JobActivity, :type => :model do
   end
 
   describe "event" do
-    it {should validate_inclusion_of(:event).in_array(Rails.application.config.events.map {|x| x[:name]})}
+    it {should validate_inclusion_of(:event).in_array(APP_CONFIG["events"].map {|x| x["name"]})}
   end
 
   describe "job" do

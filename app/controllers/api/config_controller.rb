@@ -11,10 +11,9 @@ class Api::ConfigController < Api::ApiController
   api!
   def role_list
     role_list = []
-
 		# Select role name from config list of roles
-    roles = Rails.application.config.user_roles.select{|role| !role[:unassignable]}
-    roles.each {|role| role_list << {name: role[:name]}}
+    roles = APP_CONFIG["user_roles"].select{|role| !role["unassignable"]}
+    roles.each {|role| role_list << {name: role["name"]}}
 
 		# Set response
     if role_list.empty?

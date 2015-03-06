@@ -7,7 +7,7 @@ end
 describe Api::StatusesController do
   before :each do
     config_init
-    @api_key = Rails.application.config.api_key
+    @api_key = APP_CONFIG["api_key"]
   end
 
   describe "digitizing_begin" do

@@ -61,7 +61,7 @@ class ApplicationController < ActionController::Base
   def validate_key
     return if @current_user
     api_key = params[:api_key]
-    if api_key == Rails.application.config.api_key
+    if api_key == APP_CONFIG["api_key"]
       @current_user = User.new(username: 'api_key_user', name: 'API key user', role: "API_KEY")
       return true
     else

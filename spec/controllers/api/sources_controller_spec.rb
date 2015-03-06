@@ -7,7 +7,7 @@ end
 describe Api::SourcesController do
   before :each do
     config_init
-    @api_key = Rails.application.config.api_key
+    @api_key = APP_CONFIG["api_key"]
     @libris_source = Source.find_by_class_name("Libris")
   end
 
@@ -101,15 +101,7 @@ describe Api::SourcesController do
     context "there is a specific known source in config" do
       it "should return json of known source" do
         get :index, api_key: @api_key
-        expect(json['sources'][3]['class_name']).to eq('TestSource')
-      end
-    end
-    context "there are no sources available" do
-      it "should return json with error" do
-        Rails.application.config.sources = nil
-        get :index, api_key: @api_key
-        #pp json
-        expect(json['error']).not_to be nil
+        expect(json['sources'][0]['class_name']).to eq('Libris')
       end
     end
   end

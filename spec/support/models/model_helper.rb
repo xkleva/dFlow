@@ -2,31 +2,31 @@
 module ModelHelper
   
   def config_init
-
+    return
     Rails.application.config.api_key = "test_key"
     Rails.application.config.external_auth = true
     Rails.application.config.external_auth_url = "https://login-server.example.com/auth"
 
-    Rails.application.config.user_roles = [
-      {
-        name: "ADMIN",
-        rights: ['manage_users', 'view_tree', 'manage_tree', 'view_users', 'manage_jobs']
-      },
-      {
-        name: "GUEST",
-        unassignable: true,
-        rights: ['view_tree']
-      },
-      {
-        name: "OPERATOR",
-        rights: ['view_tree', 'manage_tree', 'manage_jobs']
-      },
-      {
-        name: "API_KEY",
-        unassaignable: true,
-        rights: ['view_tree', 'manage_tree', 'manage_users', 'view_users', 'manage_jobs']
-      }
-    ]
+    # Rails.application.config.user_roles = [
+    #   {
+    #     name: "ADMIN",
+    #     rights: ['manage_users', 'view_tree', 'manage_tree', 'view_users', 'manage_jobs']
+    #   },
+    #   {
+    #     name: "GUEST",
+    #     unassignable: true,
+    #     rights: ['view_tree']
+    #   },
+    #   {
+    #     name: "OPERATOR",
+    #     rights: ['view_tree', 'manage_tree', 'manage_jobs']
+    #   },
+    #   {
+    #     name: "API_KEY",
+    #     unassaignable: true,
+    #     rights: ['view_tree', 'manage_tree', 'manage_users', 'view_users', 'manage_jobs']
+    #   }
+    # ]
 
     Rails.application.config.process_list = [
       {

@@ -8,8 +8,7 @@ describe Api::UsersController do
 
   before :each do
     login_users
-    config_init
-    @api_key = Rails.application.config.api_key
+    @api_key = APP_CONFIG["api_key"]
   end
 
   describe "POST create" do

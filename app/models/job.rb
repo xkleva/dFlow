@@ -85,14 +85,14 @@ class Job < ActiveRecord::Base
 
   # Check if source is in list of configured sources
   def source_in_list
-    if !Rails.application.config.sources.map { |x| x[:name] }.include?(source)
+    if !APP_CONFIG["sources"].map { |x| x["name"] }.include?(source)
       errors.add(:source, "not included in list of valid sources")
     end
   end
 
   # Check if status is in list of configured sources
   def status_in_list
-    if !Rails.application.config.statuses.map { |x| x[:name] }.include?(status)
+    if !APP_CONFIG["statuses"].map { |x| x["name"] }.include?(status)
       errors.add(:status, "#{status} not included in list of valid statuses")
     end
   end
