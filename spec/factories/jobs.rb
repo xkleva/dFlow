@@ -23,6 +23,12 @@ FactoryGirl.define do
     copyright false
     created_by 'TestUser'
     metadata "{}"
+
+    trait :deleted do
+      deleted_at Time.now
+    end
+
+    factory :deleted_job, traits: [:deleted]
   end
 
   factory :job_activity do |n|

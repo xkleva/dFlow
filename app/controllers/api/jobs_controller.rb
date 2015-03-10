@@ -108,6 +108,19 @@ class Api::JobsController < Api::ApiController
     render_json
   end
 
+  api!
+  def destroy
+    job = Job.find_by_id(params[:id])
+    
+    if job.delete
+      @response[:job] = job
+    else
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not delete job with id #{params[:id]}")
+    end
+
+    render_json
+  end
+
 
   # Checks if job exists, and sets @job variable. Otherwise, return error.
   private

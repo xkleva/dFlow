@@ -27,6 +27,26 @@ RSpec.describe Job, :type => :model do
     it {should_not allow_value(nil).for(:copyright)}
   end
 
+  describe "deleted_at" do
+    it {should allow_value(nil).for(:deleted_at)}
+    it {should allow_value(Time.now).for(:deleted_at)}
+  end
+
+  describe "deleted?" do
+    context "deleted_at is set" do
+      it "should return true" do
+        job = create(:deleted_job)
+        expect(job.deleted?).to be_truthy
+      end
+    end
+    context "deleted_at is nil" do
+      it "should return false" do
+        job = create(:job)
+        expect(job.deleted?).to be_falsy
+      end
+    end
+  end
+
 
   describe "job_activities" do
     context "on create" do

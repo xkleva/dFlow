@@ -148,4 +148,17 @@ describe Api::JobsController do
     end
   end
 
+  describe "DELETE delete" do
+    context "an existing user" do
+      it "should return 200" do
+        job = create(:job)
+        delete :destroy, api_key: @api_key, id: job.id
+        expect(response.status).to eq 200
+
+        job2 = Job.find_by_id(job.id)
+        expect(job2).to be nil
+      end
+    end
+  end
+
 end

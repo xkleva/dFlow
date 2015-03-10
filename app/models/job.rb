@@ -47,6 +47,14 @@ class Job < ActiveRecord::Base
     end
   end
 
+  def delete
+    update_attribute(:deleted_at, Time.now)
+  end
+
+  def deleted?
+    deleted_at.present?
+  end
+
   def default_values
     self.status ||= 'waiting_for_digitizing'
   end
