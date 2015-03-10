@@ -79,9 +79,9 @@ describe Api::UsersController do
         user = create(:admin_user)
         delete :destroy, api_key: @api_key, id: user.id
         expect(response.status).to eq 200
-        
-        user2 = User.find(user.id)
-        expect(user2.deleted?).to be_truthy
+
+        user2 = User.find_by_id(user.id)
+        expect(user2).to be nil
       end
     end
   end

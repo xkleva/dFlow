@@ -1,7 +1,8 @@
 class User < ActiveRecord::Base
+  default_scope {where( :deleted_at => nil )}
   validates :email, :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }, :if => :email_present?
   validates :username, :presence => true
-  validates :username, :uniqueness => true
+  validates :username, :uniqueness => {:scope => :deleted_at, :case_sensitive => false}
   validates :name, :presence => true
   validates :role, :presence => true
   validate :role_valid
