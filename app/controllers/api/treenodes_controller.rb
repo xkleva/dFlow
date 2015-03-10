@@ -67,6 +67,19 @@ class Api::TreenodesController < Api::ApiController
 
   end
 
+  api!
+  def destroy
+    treenode = Treenode.find(params[:id])
+
+    if treenode.delete
+      @response[:treenode] = treenode
+    else
+      error_msg(ErrorCodes::VALIDATION_ERROR, "Could not delete treenode", treenode.errors)
+    end
+
+    render_json
+  end
+
 	private
 
 	def treenode_params

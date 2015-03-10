@@ -1,4 +1,5 @@
 class Treenode < ActiveRecord::Base
+  default_scope {where( :deleted_at => nil )}
   belongs_to :parent, class_name: "Treenode", foreign_key: "parent_id"
   has_many :children, class_name: "Treenode", foreign_key: "parent_id"
   has_many :jobs
@@ -8,6 +9,16 @@ class Treenode < ActiveRecord::Base
 
   validate :parent_id_exists, :if => :has_parent_id?
   validate :parent_id_change_destination
+
+  def delete
+    update_attribute(:deleted_at, Time.now)
+    children.each {|child| child.delete}
+    jobs.each {|job| job.delete}
+  end
+
+  def deleted?
+    deleted_at.present?
+  end
 
 	# Checks if parent_id exists
   def has_parent_id?

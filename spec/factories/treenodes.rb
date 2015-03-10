@@ -12,7 +12,12 @@ FactoryGirl.define do
       parent nil
     end
 
+    trait :deleted do
+      deleted_at Time.now
+    end
+
     factory :top_treenode, traits: [:topnode]
+    factory :deleted_treenode, traits: [:deleted]
   end
 
   factory :child_treenode, parent: :treenode do

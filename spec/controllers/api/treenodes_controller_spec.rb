@@ -245,4 +245,17 @@ describe Api::TreenodesController do
       end
     end
   end
+
+  describe "DELETE delete" do
+    context "an existing treenode" do
+      it "should return 200" do
+        treenode = create(:treenode)
+        delete :destroy, api_key: @api_key, id: treenode.id
+        expect(response.status).to eq 200
+
+        treenode2 = Treenode.unscoped.find(treenode.id)
+        expect(treenode2.deleted?).to be true
+      end
+    end
+  end
 end

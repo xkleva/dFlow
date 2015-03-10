@@ -2,6 +2,45 @@ require 'rails_helper'
 
 RSpec.describe Treenode, :type => :model do
 
+  describe "deleted_at" do
+    it {should allow_value(nil).for(:deleted_at)}
+    it {should allow_value(Time.now).for(:deleted_at)}
+  end
+
+  describe "deleted?" do
+    context "deleted_at is set" do
+      it "should return true" do
+        treenode = create(:deleted_treenode)
+        expect(treenode.deleted?).to be_truthy
+      end
+    end
+    context "deleted_at is nil" do
+      it "should return false" do
+        treenode = create(:treenode)
+        expect(treenode.deleted?).to be_falsy
+      end
+    end
+  end
+
+  describe "delete" do
+    context "a treenode with children" do
+      it "should delete all nodes" do
+        node = create(:treenode) # Parent node to be deleted
+        child = create(:treenode, parent: node) # Child node
+        job = create(:job, treenode: child) # Child job
+
+        node.delete
+
+        child = Treenode.unscoped.find(child.id) # Reload child object
+        job = Job.unscoped.find(job.id) # Reload job object
+
+        expect(node.deleted?).to be true 
+        expect(child.deleted?).to be true
+        expect(job.deleted?).to be true
+      end
+    end
+  end
+
   describe "name" do
     it {should validate_presence_of(:name)}
     it {should allow_value('a').for(:name)}
