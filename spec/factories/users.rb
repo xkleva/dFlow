@@ -30,11 +30,16 @@ FactoryGirl.define do
       role "API_KEY"
     end
 
+    trait :deleted do
+      deleted_at Time.now
+    end
+
     # Nested factories using traits, as class i already given on parent factory it is unnecessary here
     factory :guest_user, traits: [:guest]
     factory :admin_user, traits: [:admin]
     factory :operator_user, traits: [:operator]
     factory :api_key_user, traits: [:api_key]
+    factory :deleted_user, traits: [:deleted]
 
     # Generate token for validation testing
     after(:create) do |user, evaluator|

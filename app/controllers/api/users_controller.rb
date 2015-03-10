@@ -57,6 +57,19 @@ class Api::UsersController < Api::ApiController
     render_json
   end
 
+  api!
+  def destroy
+    user = User.find_by_id(params[:id])
+    
+    if user.delete
+      @response[:user] = user
+    else
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not delete user with id #{params[:id]}")
+    end
+
+    render_json
+  end
+
 	private
 
 	#Kept secret so that admin functionality cannot be ingested

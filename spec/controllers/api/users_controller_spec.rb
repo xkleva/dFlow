@@ -72,4 +72,17 @@ describe Api::UsersController do
       end
     end
   end
+
+  describe "DELETE delete" do
+    context "an existing user" do
+      it "should return 200" do
+        user = create(:admin_user)
+        delete :destroy, api_key: @api_key, id: user.id
+        expect(response.status).to eq 200
+        
+        user2 = User.find(user.id)
+        expect(user2.deleted?).to be_truthy
+      end
+    end
+  end
 end

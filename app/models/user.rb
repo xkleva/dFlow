@@ -24,6 +24,10 @@ class User < ActiveRecord::Base
     update_attribute(:deleted_at, Time.now)
   end
 
+  def deleted?
+    deleted_at.present?
+  end
+
   # Clear all tokens that have expired
   def clear_expired_tokens
     access_tokens.where("token_expire < ?", Time.now).destroy_all

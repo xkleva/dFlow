@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe User, :type => :model do
-  
+
   describe "role" do
     it {should validate_inclusion_of(:role).in_array(APP_CONFIG["user_roles"].map{|x| x["name"]})}
     it {should validate_presence_of(:role)}
@@ -21,6 +21,26 @@ RSpec.describe User, :type => :model do
 
   describe "name" do
     it {should validate_presence_of(:name)}
+  end
+
+  describe "deleted_at" do
+    it {should allow_value(nil).for(:deleted_at)}
+    it {should allow_value(Time.now).for(:deleted_at)}
+  end
+
+  describe "deleted?" do
+    context "deleted_at is set" do
+      it "should return true" do
+        user = create(:deleted_user)
+        expect(user.deleted?).to be_truthy
+      end
+    end
+    context "deleted_at is nil" do
+      it "should return false" do
+        user = create(:user)
+        expect(user.deleted?).to be_falsy
+      end
+    end
   end
 
   describe "user create_missing_users_from_file" do
