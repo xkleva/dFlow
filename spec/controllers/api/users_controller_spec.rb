@@ -73,6 +73,29 @@ describe Api::UsersController do
     end
   end
 
+  describe "PUT update" do
+    context "With valid parameters" do
+      it "should return an updated user record" do
+        user = create(:admin_user)
+        user.name = "NewName"
+        put :update, api_key: @api_key, id: user.id, user: user.as_json
+        expect(json['user']).to_not be nil
+        expect(response.status).to eq 200
+      end
+    end
+
+    context "With invalid parameters" do
+      it "should return an error message" do
+        user = create(:admin_user)
+        user2 = create(:admin_user)
+        user.username = user2.username
+        put :update, api_key: @api_key, id: user.id, user: user.as_json
+        expect(json['error']).to_not be nil
+        expect(response.status).to eq 422
+      end
+    end
+  end
+
   describe "DELETE delete" do
     context "an existing user" do
       it "should return 200" do
