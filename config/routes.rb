@@ -17,6 +17,15 @@ Rails.application.routes.draw do
     # Treenode API
     resources :treenodes
 
+    # Jobs API
+    resources :jobs
+
+    # Sources API
+    get 'sources/fetch_source_data', to: 'sources#fetch_source_data'
+    get 'sources/validate_new_objects', to: 'sources#validate_new_objects'
+    get 'sources', to: 'sources#index'
+    get 'sources/:id', to: 'sources#fetch_source_data'
+
 
 
     # Statuses API
@@ -34,24 +43,21 @@ Rails.application.routes.draw do
     get 'jobs/:id/mets_control_end', to: 'statuses#mets_control_end'
 
 
-    get 'jobs', to: 'jobs#index'
-    get 'jobs/:id', to: 'jobs#show'
-    post 'jobs', to: 'jobs#create'
+    #get 'jobs', to: 'jobs#index'
+    #get 'jobs/:id', to: 'jobs#show'
+    #post 'jobs', to: 'jobs#create'
 
-    get 'jobs/job_metadata', to: 'jobs#job_metadata'
-    get 'jobs/update_metadata', to: 'jobs#update_metadata'
-    get 'jobs/process_request', to: 'jobs#process_request'
-    get 'jobs/process_initiate', to: 'jobs#process_initiate'
-    get 'jobs/process_done', to: 'jobs#process_done'
-    get 'jobs/process_progress', to: 'jobs#process_progress'
+    #get 'jobs/job_metadata', to: 'jobs#job_metadata'
+    #get 'jobs/update_metadata', to: 'jobs#update_metadata'
+    #get 'jobs/process_request', to: 'jobs#process_request'
+    #get 'jobs/process_initiate', to: 'jobs#process_initiate'
+    #get 'jobs/process_done', to: 'jobs#process_done'
+    #get 'jobs/process_progress', to: 'jobs#process_progress'
 
-    get 'sources/fetch_source_data', to: 'sources#fetch_source_data'
-    get 'sources/validate_new_objects', to: 'sources#validate_new_objects'
-    get 'sources', to: 'sources#index'
-    get 'sources/:id', to: 'sources#fetch_source_data'
+    
 
-    get 'flows/get_flow', to: 'flows#get_flow'
-    post 'flows/update_flow_steps', to: 'flows#update_flow_steps'
+    #get 'flows/get_flow', to: 'flows#get_flow'
+    #post 'flows/update_flow_steps', to: 'flows#update_flow_steps'
 
   end
 

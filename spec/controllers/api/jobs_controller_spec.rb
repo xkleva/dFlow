@@ -126,4 +126,26 @@ describe Api::JobsController do
     end
   end
 
+  describe "PUT update" do
+    context "with valid values" do
+      it "should return an updated job" do
+        job = create(:job)
+        job.name = "NewName"
+        post :update, api_key: @api_key, id: job.id, job: job.as_json
+        expect(json['job']).to_not be nil
+        expect(json['job']['name']).to eq 'NewName'
+        expect(response.status).to eq 200
+      end
+    end
+    context "with invalid values" do
+      it "should return an error message" do
+        job = create(:job)
+        job.copyright = nil
+        post :update, api_key: @api_key, id: job.id, job: job.as_json
+        expect(json['error']).to_not be nil
+        expect(response.status).to eq 404
+      end
+    end
+  end
+
 end

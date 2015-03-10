@@ -22,7 +22,7 @@ FactoryGirl.define do
     status 'waiting_for_digitizing'
     copyright false
     created_by 'TestUser'
-    metadata '{}'
+    metadata "{}"
   end
 
   factory :job_activity do |n|

@@ -232,6 +232,7 @@ describe Api::TreenodesController do
         post :update, api_key: @api_key, id: treenode.id, treenode: treenode.as_json
         expect(json['treenode']).to_not be nil
         expect(json['treenode']['name']).to eq 'NewName'
+        expect(response.status).to eq 200
       end
     end
     context "with invalid values" do
@@ -240,6 +241,7 @@ describe Api::TreenodesController do
         treenode.name = ""
         post :update, api_key: @api_key, id: treenode.id, treenode: treenode.as_json
         expect(json['error']).to_not be nil
+        expect(response.status).to eq 422
       end
     end
   end
