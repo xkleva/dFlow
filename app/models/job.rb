@@ -42,7 +42,8 @@ class Job < ActiveRecord::Base
         display: display,
         source_label: source_label,
         breadcrumb: treenode.breadcrumb(include_self: true),
-        activities: job_activities
+        activities: job_activities,
+        metadata: metadata_hash
       })
     end
   end
