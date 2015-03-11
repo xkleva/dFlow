@@ -65,4 +65,8 @@ class Libris < Source
     return {}
   end
 
+  def self.source_link(id)
+    return "http://libris.kb.se/bib/#{id}"
+  end
+
 end

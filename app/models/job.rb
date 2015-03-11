@@ -43,8 +43,9 @@ class Job < ActiveRecord::Base
         source_label: source_label,
         breadcrumb: treenode.breadcrumb(include_self: true),
         activities: job_activities,
-        metadata: metadata_hash
-      })
+        metadata: metadata_hash,
+        source_link: source_link
+        })
     end
   end
 
@@ -130,7 +131,12 @@ class Job < ActiveRecord::Base
 
   # Returns the source object class for job - located in ./sources/
   def source_object
-    Source.find_by_classname("Libris")
+    Source.find_by_name(source)
+  end
+
+  # Returns link to source if applicatble
+  def source_link
+    return source_object.try(:source_link, catalog_id)
   end
 
   # Returns a legible title string in an illegible manner
