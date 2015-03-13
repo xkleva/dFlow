@@ -65,3 +65,9 @@ gem 'responders', '~> 2.0'
 
 gem 'apipie-rails' # For documentation
 
+group :development do
+  gem 'capistrano',  '~> 3.4.0'
+  gem 'capistrano-rails', '~> 1.1'
+  gem 'capistrano-passenger'
+end
+
