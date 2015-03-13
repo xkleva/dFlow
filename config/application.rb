@@ -6,6 +6,11 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# For Capistrano deploys
+if defined?(Bundler)
+  Bundler.require(*Rails.groups(:assets => %w(development test), :profiling => %w[staging development]))
+end
+
 module Dflow
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
