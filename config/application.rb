@@ -8,7 +8,7 @@ Bundler.require(*Rails.groups)
 
 # For Capistrano deploys
 if defined?(Bundler)
-  Bundler.require(*Rails.groups(:assets => %w(development test), :profiling => %w[staging development]))
+  Bundler.require(*Rails.groups(:assets => %w(development test), :profiling => %w[staging development lab]))
 end
 
 module Dflow

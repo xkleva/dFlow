@@ -18,3 +18,15 @@ production:
   password: your_pass
   host: localhost
   port: 3306     
+
+staging:
+  adapter: sqlite3
+  database: db/staging.sqlite3
+  pool: 5
+  timeout: 5000  
+
+lab:
+  adapter: sqlite3
+  database: db/lab.sqlite3
+  pool: 5
+  timeout: 5000  
