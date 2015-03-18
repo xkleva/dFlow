@@ -8,6 +8,21 @@
 # server 'db.example.com', user: 'deploy', roles: %w{db}
 server 'stagingserver.com', user: 'user', roles: %w{app db web}
 
+set :deploy_to, '/remote/path/to/app'
+
+# Forces user to assign a valid tag for deploy
+def get_tag
+  all_tags = `git tag`.split("\n")
+
+  ask :answer, "Tag to deploy (make sure to push the tag first): #{all_tags} "
+  tag = fetch(:answer)
+  if !all_tags.include? tag
+    abort "Tag #{tag} is not a valid value"
+  end
+  tag
+end
+
+set :branch, get_tag # Sets branch according to given tag
 
 # role-based syntax
 # ==================

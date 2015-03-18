@@ -36,6 +36,7 @@ config/initializers/config.rb
 config/passwd
 config/deploy/staging.rb
 config/deploy/production.rb
+config/deploy/lab.rb
 
 # Ignore generated css etc.
 .sass-cache/
