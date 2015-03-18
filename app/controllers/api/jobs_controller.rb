@@ -10,7 +10,7 @@ class Api::JobsController < Api::ApiController
     short 'Job object manager'
   end
 
-  api :GET, '/jobs', 'Returns a list of jobs'
+  api :GET, '/jobs', 'Returns a list of jobs based on query'
   formats [:json]
   param :page, String, :desc => "Decides which page of pagination should be returned"
   description "Returns a list of all jobs"
