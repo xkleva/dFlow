@@ -38,6 +38,9 @@ config/deploy/staging.rb
 config/deploy/production.rb
 config/deploy/lab.rb
 
+# Ignore test coverage
+coverage/
+
 # Ignore generated css etc.
 .sass-cache/
 public/assets/
