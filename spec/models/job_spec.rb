@@ -180,6 +180,13 @@ RSpec.describe Job, :type => :model do
       expect(job.search_title).to match("1234567")
     end
 
+    it "should include job_id in search_title" do
+      job = create(:job, id: 998877665)
+      expect(job.search_title).to be_nil
+      job.build_search_title
+      expect(job.search_title).to match("998877665")
+    end
+
     it "should include ordinal and chronological metadata in search_title" do
       job = create(:journal_job)
       expect(job.search_title).to be_nil

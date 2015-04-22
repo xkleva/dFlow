@@ -99,6 +99,7 @@ class Job < ActiveRecord::Base
      author_norm,
      name_norm,
      catalog_id.to_s,
+     self.id.to_s,
      generate_search_title_metadata_string.norm
     ].compact.join(" ")
   end
