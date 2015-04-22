@@ -13,7 +13,9 @@ describe Api::JobsController do
     context "with existing jobs" do
       it "should return all jobs" do
         create_list(:job,10)
+        
         get :index, api_key: @api_key
+        
         expect(json['jobs'].size).to be > 0
         expect(response.status).to eq 200
       end
@@ -23,9 +25,10 @@ describe Api::JobsController do
   describe "GET show" do
     context "with existing job" do
       it "should return full job object data" do
-
         job = create(:job)
+        
         get :show, api_key: @api_key, id: job.id
+        
         expect(json['job'].size).to be > 0
         expect(response.status).to eq 200
         expect(json['job']['breadcrumb']).to be_kind_of(Array)
@@ -34,7 +37,9 @@ describe Api::JobsController do
 
     context "with non-existing job" do
       it "should return 404" do
+        
         get :show, api_key: @api_key, id: 9999999
+        
         expect(response.status).to eq 404
       end
     end
@@ -44,12 +49,16 @@ describe Api::JobsController do
     context "with valid job parameters" do
       it "should create job without errors" do
         treenode = create(:child_treenode)
+        
         post :create, api_key: @api_key, job: {source: 'libris', treenode_id: treenode.id, name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: true, status: 'waiting_for_digitizing'}
+        
         expect(json['error']).to be nil
       end
       it "should return the created object" do
         treenode = create(:treenode)
+        
         post :create, api_key: @api_key, job: {source: 'libris', treenode_id: treenode.id, name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: 'false', status: 'waiting_for_digitizing'}
+        
         expect(json['job']).not_to be nil
         expect(json['job']['id']).not_to be nil
         expect(json['job']['name']).to eq('the jobname')
@@ -59,7 +68,9 @@ describe Api::JobsController do
     context "with invalid job parameters" do
       it "should return an error message" do
         treenode = create(:treenode)
+        
         post :create, api_key: @api_key, job: {source: 'libris', cataloz_id: '1234', title: 'Bamse och hens vänner', treenode_id: treenode.id, name: 'Bamse-jobbet', comment: 'comment'}
+        
         expect(json['error']).to_not be nil
       end
     end
@@ -69,7 +80,9 @@ describe Api::JobsController do
         job_id = 90000
         job_name = "The Jobb with the custom ID"
         treenode = create(:treenode)
+        
         post :create, api_key: @api_key, force_id: "#{job_id}", job: {source: 'libris', treenode_id: treenode.id, name: job_name, comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: 'false', status: 'waiting_for_digitizing'}
+        
         expect(json['error']).to be nil
         expect(json['job']).not_to be nil
         expect(json['job']['id']).to eq(job_id)
@@ -84,7 +97,9 @@ describe Api::JobsController do
         Job.per_page = 4
         number_of_jobs = 40
         create_list(:job, number_of_jobs)
+        
         get :index
+        
         expect(json['jobs']).to_not be_empty
         expect(json['jobs'].count).to eq(4)
         #expect(json['meta']['query']['query']).to eq("Test")
@@ -99,7 +114,9 @@ describe Api::JobsController do
         Job.per_page = 4
         number_of_jobs = 40
         create_list(:job, number_of_jobs)
+        
         get :index, page: 2
+        
         expect(json['jobs']).to_not be_empty
         expect(json['jobs'].count).to eq(4)
         #expect(json['meta']['query']['query']).to eq("Test")
@@ -113,7 +130,9 @@ describe Api::JobsController do
         Job.per_page = 4
         number_of_jobs = 40
         create_list(:job, number_of_jobs)
+        
         get :index, page: 20000000000
+        
         expect(json['jobs']).to_not be_empty
         expect(json['jobs'].count).to eq(4)
         #expect(json['meta']['query']['query']).to eq("Test")
@@ -131,7 +150,9 @@ describe Api::JobsController do
       it "should return an updated job" do
         job = create(:job)
         job.name = "NewName"
+        
         post :update, api_key: @api_key, id: job.id, job: job.as_json
+        
         expect(json['job']).to_not be nil
         expect(json['job']['name']).to eq 'NewName'
         expect(response.status).to eq 200
@@ -141,9 +162,24 @@ describe Api::JobsController do
       it "should return an error message" do
         job = create(:job)
         job.copyright = nil
+        
         post :update, api_key: @api_key, id: job.id, job: job.as_json
+        
         expect(json['error']).to_not be nil
         expect(response.status).to eq 404
+      end
+    end
+    context "with quarantine flag" do
+      it "should return an updated job" do
+        job = create(:job)
+        job.quarantined = true
+
+        post :update, api_key: @api_key, id: job.id, job: {"quarantined" => true}
+        
+        expect(json['error']).to be nil
+        expect(response.status).to eq 200
+        expect(json['job']['name']).to eq job.name
+        expect(json['job']['quarantined']).to be_truthy
       end
     end
   end
@@ -152,10 +188,13 @@ describe Api::JobsController do
     context "an existing user" do
       it "should return 200" do
         job = create(:job)
+        
         delete :destroy, api_key: @api_key, id: job.id
+        
         expect(response.status).to eq 200
 
         job2 = Job.find_by_id(job.id)
+        
         expect(job2).to be nil
       end
     end
