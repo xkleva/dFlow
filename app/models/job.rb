@@ -55,10 +55,16 @@ class Job < ActiveRecord::Base
 
   # Creates log entries for certain updated attributes
   def create_log_entries
+    # Quarantine flag log entries
     if self.quarantined_changed? && self.quarantined
-      create_log_entry("QUARANTINE")
+      create_log_entry("QUARANTINE", self.message)
     elsif self.quarantined_changed? && !self.quarantined
-      create_log_entry("UNQUARANTINE")
+      create_log_entry("UNQUARANTINE", "_UNQUARANTINED")
+    end
+
+    # Status log entries
+    if self.status_changed?
+      self.create_log_entry("STATUS", status)
     end
   end
 
@@ -78,7 +84,7 @@ class Job < ActiveRecord::Base
   end
 
   # Creates a JobActivity object for CREATE event
-  def create_log_entry(event="CREATE", message="Activity has been created")
+  def create_log_entry(event="CREATE", message="_ACTIVITY_CREATED")
     entry = JobActivity.new(username: created_by, event: event, message: message)
     job_activities << entry
   end
