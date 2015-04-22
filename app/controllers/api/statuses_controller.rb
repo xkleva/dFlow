@@ -19,8 +19,7 @@ class Api::StatusesController < Api::ApiController
 
   api!
   def post_processing_begin
-    ensure_status('post_processing')
-    render_json
+    render_json if ensure_status('post_processing')
   end
 
   api!
@@ -40,8 +39,7 @@ class Api::StatusesController < Api::ApiController
 
   api!
   def quality_control_begin
-    ensure_status('quality_control')
-    render_json
+    render_json if ensure_status('quality_control')
   end
 
   api!
@@ -51,8 +49,7 @@ class Api::StatusesController < Api::ApiController
 
   api!
   def waiting_for_mets_control_begin
-    ensure_status('waiting_for_mets_control')
-    render_json
+    render_json if ensure_status('waiting_for_mets_control')
   end
 
   api!
@@ -62,8 +59,7 @@ class Api::StatusesController < Api::ApiController
 
   api!
   def mets_control_begin
-    ensure_status('mets_control')
-    render_json
+    render_json if ensure_status('mets_control')
   end
 
   api!
@@ -75,7 +71,7 @@ class Api::StatusesController < Api::ApiController
   private 
 
   def check_job
-    @job = Job.find(params[:id])
+    @job = Job.find_by_id(params[:id])
     
     if @job.nil?
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not find a job with id #{params[:id]}")
