@@ -102,12 +102,40 @@ RSpec.describe Job, :type => :model do
     end
   end
 
+  describe "Update quarantined flag" do
+    context "without message set" do
+      it "should not validate object" do
+        job = create(:job, quarantined: false)
+        job.quarantined = true
+        expect(job.valid?).to be_falsey
+      end
+    end
+    context "with message set" do
+      it "should validate object" do
+        job = create(:job, quarantined: false)
+        job.quarantined = true
+        job.message = "Quarantined job for testing purposes"
+        expect(job.valid?).to be_truthy
+      end
+    end
+  end
+
   describe "create_log_entry" do
     context "for valid job when switching status" do
       it "should generate a JobActivity object" do
         job = create(:job)
         job.created_by = @api_key_user
         job.create_log_entry("STATUS", "StatusChange")
+        job.save
+        expect(job.job_activities.count).to eq 2
+      end
+    end
+    context "for valid job when switching quarantined" do
+      it "should generate a JobAtivity object" do
+        job = create(:job)
+        job.created_by = @api_key_user
+        job.quarantined = true
+        job.message = "Quarantined for testing purposes"
         job.save
         expect(job.job_activities.count).to eq 2
       end
@@ -144,7 +172,7 @@ RSpec.describe Job, :type => :model do
       job.build_search_title
       expect(job.search_title).to match("uppercase")
     end
-      
+
     it "should include author in search_title" do
       job = create(:job)
       expect(job.search_title).to be_nil

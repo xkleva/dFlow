@@ -19,11 +19,15 @@ class Job < ActiveRecord::Base
   validate :source_in_list
   validate :status_in_list
   validate :xml_validity
+  validate :message_presence
   validates_associated :job_activities
   attr_accessor :created_by
+  attr_accessor :message
 
   after_create :create_log_entry
   after_initialize :default_values
+
+  after_save :create_log_entries
 
   def as_json(options = {})
     if options[:list]
@@ -46,6 +50,15 @@ class Job < ActiveRecord::Base
         metadata: metadata_hash,
         source_link: source_link
         })
+    end
+  end
+
+  # Creates log entries for certain updated attributes
+  def create_log_entries
+    if self.quarantined_changed? && self.quarantined
+      create_log_entry("QUARANTINE")
+    elsif self.quarantined_changed? && !self.quarantined
+      create_log_entry("UNQUARANTINE")
     end
   end
 
@@ -138,6 +151,13 @@ class Job < ActiveRecord::Base
   def status_in_list
     if !APP_CONFIG["statuses"].map { |x| x["name"] }.include?(status)
       errors.add(:status, "#{status} not included in list of valid statuses")
+    end
+  end
+
+  # Validates that message is present on certain updated attributes
+  def message_presence
+    if self.quarantined_changed? && self.quarantined && self.message.blank?
+      errors.add(:message, "Must assign a message for quarantine action")
     end
   end
 
