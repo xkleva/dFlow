@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require "rails_helper"
 
 describe Api::JobsController do
@@ -141,6 +142,43 @@ describe Api::JobsController do
         expect(json['meta']['pagination']['page']).to eq(1)
         expect(json['meta']['pagination']['next']).to eq(2)
         expect(json['meta']['pagination']['previous']).to eq(nil)
+      end
+    end
+  end
+
+  describe "GET index" do
+    context "query" do
+      before :each do
+        @jobs = create_list(:job, 10)
+        @testjob1 = create(:job, title: "My very Special title")
+        @testjoblist = create_list(:job, 5, name: "Anothername")
+      end
+
+      it "should return filtered list when using query parameter" do
+        Job.per_page = 99999999999
+        get :index, query: "special"
+        expect(json['jobs'].count).to eq(1)
+        expect(json['jobs'][0]['id']).to eq(@testjob1.id)
+      end
+
+      it "should return paginated filtered list when using query parameter" do
+        Job.per_page = 4
+        get :index, query: "anothername"
+        expect(json['jobs'].count).to eq(4)
+        expect(json['meta']['pagination']['pages']).to eq(2)
+        expect(json['meta']['pagination']['page']).to eq(1)
+        expect(json['meta']['pagination']['next']).to eq(2)
+        expect(json['meta']['pagination']['previous']).to eq(nil)
+      end
+
+      it "should return second page of paginated filtered list when using query parameter and page" do
+        Job.per_page = 4
+        get :index, query: "anothername", page: 2
+        expect(json['jobs'].count).to eq(1)
+        expect(json['meta']['pagination']['pages']).to eq(2)
+        expect(json['meta']['pagination']['page']).to eq(2)
+        expect(json['meta']['pagination']['next']).to eq(nil)
+        expect(json['meta']['pagination']['previous']).to eq(1)
       end
     end
   end

@@ -13,6 +13,7 @@ class Api::JobsController < Api::ApiController
   api :GET, '/jobs', 'Returns a list of jobs based on query'
   formats [:json]
   param :page, String, :desc => "Decides which page of pagination should be returned"
+  param :query, String, :desc => "Return jobs matching search string"
   description "Returns a list of all jobs"
   example '{"jobs":[{"id":1001002,"name":null,"title":"Water and water pollution handbook.","display":"Water and water pollution handbook.","source_label":"Libris","catalog_id":1234,"breadcrumb_string":"Projekt / OCR-projektet","treenode_id":6}]}'.pretty_json
   def index
@@ -20,6 +21,12 @@ class Api::JobsController < Api::ApiController
     pagination = {}
     metaquery = {}
     metaquery[:query] = params[:query] # Not implemented yet
+
+    if params[:query]
+      Job.index_jobs
+      jobs = jobs.where("search_title LIKE ?", "%#{params[:query].norm}%")
+    end
+
     metaquery[:total] = jobs.count
     if !jobs.empty?
       tmp = jobs.paginate(page: params[:page])

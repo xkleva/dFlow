@@ -81,6 +81,12 @@ ActiveRecord::Schema.define(version: 20150310160839) do
     t.boolean  "copyright",                    null: false
   end
 
+  create_table "sources", force: :cascade do |t|
+    t.text     "classname"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "treenodes", force: :cascade do |t|
     t.string   "name"
     t.integer  "parent_id"
