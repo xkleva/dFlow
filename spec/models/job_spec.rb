@@ -111,6 +111,16 @@ describe "create_log_entry" do
       expect(job.job_activities.count).to eq 2
     end
   end
+
+  context "for valid job when switching quarantined" do
+    it "should generate a JobAtivity object" do
+      job = create(:job)
+      job.created_by = @api_user
+      job.quarantined = true
+      job.save
+      expect(job.job_activities.count).to eq 2
+    end
+  end
 end
 
 describe "create_pdf" do
