@@ -212,7 +212,7 @@ describe Api::JobsController do
         job = create(:job)
         job.quarantined = true
 
-        post :update, api_key: @api_key, id: job.id, job: {"quarantined" => true}
+        post :update, api_key: @api_key, id: job.id, job: {"quarantined" => true, "message" => "Quarantined for testing purposes"}
         
         expect(json['error']).to be nil
         expect(response.status).to eq 200

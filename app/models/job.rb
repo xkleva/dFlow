@@ -19,6 +19,7 @@ class Job < ActiveRecord::Base
   validate :source_in_list
   validate :status_in_list
   validate :xml_validity
+  validate :message_presence
   validates_associated :job_activities
   attr_accessor :created_by
   attr_accessor :message
@@ -149,6 +150,13 @@ class Job < ActiveRecord::Base
   def status_in_list
     if !APP_CONFIG["statuses"].map { |x| x["name"] }.include?(status)
       errors.add(:status, "#{status} not included in list of valid statuses")
+    end
+  end
+
+  # Validates that message is present on certain updated attributes
+  def message_presence
+    if self.quarantined_changed? && self.quarantined && self.message.blank?
+      errors.add(:message, "Must assign a message for quarantine action")
     end
   end
 
