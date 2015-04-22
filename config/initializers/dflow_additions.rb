@@ -8,7 +8,11 @@ class String
   def pretty_json
     JSON.parse(self).pretty_inspect
   end
-
+  
+  # Normalise string
+  #   Decompose unicode string
+  #   Remove all characters above 255 (diacritics)
+  #   Downcase and return
   def norm
     decomposed = Unicode.nfkd(self).gsub(/[^\u0000-\u00ff]/, "")
     Unicode.downcase(decomposed)
