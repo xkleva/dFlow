@@ -53,7 +53,7 @@ RSpec.describe Job, :type => :model do
     context "on create" do
       it "should create a JobActivity object" do
         job = create(:job)
-        expect(job.job_activities.size).to eq 1
+        expect(job.job_activities.size).to eq 2
         expect(job.job_activities.first.username).to eq "TestUser"
       end
     end
@@ -127,7 +127,7 @@ RSpec.describe Job, :type => :model do
         job.created_by = @api_key_user
         job.create_log_entry("STATUS", "StatusChange")
         job.save
-        expect(job.job_activities.count).to eq 2
+        expect(job.job_activities.count).to eq 3
       end
     end
     context "for valid job when switching quarantined" do
@@ -137,7 +137,7 @@ RSpec.describe Job, :type => :model do
         job.quarantined = true
         job.message = "Quarantined for testing purposes"
         job.save
-        expect(job.job_activities.count).to eq 2
+        expect(job.job_activities.count).to eq 3
       end
     end
   end

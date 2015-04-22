@@ -92,7 +92,7 @@ class Job < ActiveRecord::Base
   # Switches status according to given Status object
   def switch_status(new_status)
     self.status = new_status.name
-    self.create_log_entry("STATUS", new_status.name)
+    #self.create_log_entry("STATUS", new_status.name)
   end
 
   # Retrieve source label from config

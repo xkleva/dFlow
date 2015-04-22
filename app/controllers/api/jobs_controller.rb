@@ -28,8 +28,17 @@ class Api::JobsController < Api::ApiController
     end
 
     # Filter by quarantined flag if it exists and is a boolean value
-    if params.has_key?(:quarantined) && !params[:quarantined].blank?
-      jobs = jobs.where(quarantined: params[:quarantined].to_boolean)
+    if params.has_key?(:quarantined) && params[:quarantined] != ''
+      # If parameter is a string, cast to boolean
+      value = params[:quarantined]
+      value = value.to_boolean if params[:quarantined].is_a? String
+
+      jobs = jobs.where(quarantined: value)
+    end
+
+    # Filter by quarantined flag if it exists and is a boolean value
+    if params.has_key?(:status) && !params[:status].blank?
+      jobs = jobs.where(status: params[:status])
     end
 
     metaquery[:total] = jobs.count
