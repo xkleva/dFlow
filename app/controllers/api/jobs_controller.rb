@@ -27,6 +27,11 @@ class Api::JobsController < Api::ApiController
       jobs = jobs.where("search_title LIKE ?", "%#{params[:query].norm}%")
     end
 
+    # Filter by quarantined flag if it exists and is a boolean value
+    if params.has_key?(:quarantined) && !params[:quarantined].blank?
+      jobs = jobs.where(quarantined: params[:quarantined].to_boolean)
+    end
+
     metaquery[:total] = jobs.count
     if !jobs.empty?
       tmp = jobs.paginate(page: params[:page])

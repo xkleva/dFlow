@@ -19,7 +19,7 @@ class Job < ActiveRecord::Base
   validate :source_in_list
   validate :status_in_list
   validate :xml_validity
-  validate :message_presence
+  validate :message_presence, :on => :update
   validates_associated :job_activities
   attr_accessor :created_by
   attr_accessor :message
@@ -27,7 +27,7 @@ class Job < ActiveRecord::Base
   after_create :create_log_entry
   after_initialize :default_values
 
-  after_save :create_log_entries
+  after_save :create_log_entries, :on => :update
 
   def as_json(options = {})
     if options[:list]

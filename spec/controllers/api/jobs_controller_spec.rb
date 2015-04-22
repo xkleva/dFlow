@@ -181,6 +181,43 @@ describe Api::JobsController do
         expect(json['meta']['pagination']['previous']).to eq(1)
       end
     end
+    context "quarantined" do
+
+      it "should return filtered list when using quarantined parameter" do
+        Job.per_page = 99999999999
+        @jobs = create_list(:job, 10)
+        @quarantined_jobs = create_list(:job, 5, quarantined: true)
+        
+        get :index, quarantined: true
+        
+        expect(json['jobs'].count).to eq(5)
+      end
+
+      it "should return filtered list when using quarantined and query parameter" do
+        Job.per_page = 99999999999
+        create_list(:job, 10)
+        create_list(:job, 5, title: "My very special title")
+        create_list(:job, 7, quarantined: true, title: "My very special title")
+        create_list(:job, 4, quarantined: true)
+        
+        get :index, quarantined: true, query: "special"
+        
+        expect(json['jobs'].count).to eq(7)
+      end
+
+      it "should return filtered list when using quarantined and query parameter" do
+        Job.per_page = 99999999999
+        create_list(:job, 10)
+        create_list(:job, 5, title: "My very special title")
+        create_list(:job, 7, quarantined: true, title: "My very special title")
+        create_list(:job, 4, quarantined: true)
+        
+        get :index, quarantined: false, query: "special"
+        
+        expect(json['jobs'].count).to eq(5)
+      end
+
+    end
   end
 
   describe "PUT update" do

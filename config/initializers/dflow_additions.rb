@@ -17,4 +17,9 @@ class String
     decomposed = Unicode.nfkd(self).gsub(/[^\u0000-\u00ff]/, "")
     Unicode.downcase(decomposed)
   end
+
+  # Boolean representation of string
+  def to_boolean
+    self.downcase == 'true'
+  end
 end
