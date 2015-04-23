@@ -64,7 +64,7 @@ class Job < ActiveRecord::Base
 
     # Status log entries
     if self.status_changed?
-      self.create_log_entry("STATUS", status)
+      self.create_log_entry("STATUS", 'STATUS.' + status)
     end
   end
 
