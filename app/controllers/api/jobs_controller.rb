@@ -13,6 +13,7 @@ class Api::JobsController < Api::ApiController
   api :GET, '/jobs', 'Returns a list of jobs based on query'
   formats [:json]
   param :page, String, :desc => "Decides which page of pagination should be returned"
+  param :query, String, :desc => "Return jobs matching search string"
   description "Returns a list of all jobs"
   example '{"jobs":[{"id":1001002,"name":null,"title":"Water and water pollution handbook.","display":"Water and water pollution handbook.","source_label":"Libris","catalog_id":1234,"breadcrumb_string":"Projekt / OCR-projektet","treenode_id":6}]}'.pretty_json
   def index
@@ -20,6 +21,26 @@ class Api::JobsController < Api::ApiController
     pagination = {}
     metaquery = {}
     metaquery[:query] = params[:query] # Not implemented yet
+
+    if params[:query]
+      Job.index_jobs
+      jobs = jobs.where("search_title LIKE ?", "%#{params[:query].norm}%")
+    end
+
+    # Filter by quarantined flag if it exists and is a boolean value
+    if params.has_key?(:quarantined) && params[:quarantined] != ''
+      # If parameter is a string, cast to boolean
+      value = params[:quarantined]
+      value = value.to_boolean if params[:quarantined].is_a? String
+
+      jobs = jobs.where(quarantined: value)
+    end
+
+    # Filter by quarantined flag if it exists and is a boolean value
+    if params.has_key?(:status) && !params[:status].blank?
+      jobs = jobs.where(status: params[:status])
+    end
+
     metaquery[:total] = jobs.count
     if !jobs.empty?
       tmp = jobs.paginate(page: params[:page])
@@ -72,7 +93,7 @@ class Api::JobsController < Api::ApiController
     job_params[:metadata] = job_params[:metadata].to_json
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
-    job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status))
+    job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message))
 
     # If ID is given, use it for creation
     if params[:force_id]
@@ -95,11 +116,10 @@ class Api::JobsController < Api::ApiController
   api!
   def update
     job = Job.find_by_id(params[:id])
-
     job_params = params[:job]
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
-    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status))
+    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message))
       @response[:job] = job
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job.", job.errors)

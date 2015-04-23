@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
     # Config API
     get 'config/role_list', to: 'config#role_list'
+    get 'config/status_list', to: 'config#status_list'
 
     # User API
     resources :users

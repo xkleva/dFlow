@@ -19,11 +19,15 @@ class Job < ActiveRecord::Base
   validate :source_in_list
   validate :status_in_list
   validate :xml_validity
+  validate :message_presence, :on => :update
   validates_associated :job_activities
   attr_accessor :created_by
+  attr_accessor :message
 
   after_create :create_log_entry
   after_initialize :default_values
+
+  after_save :create_log_entries, :on => :update
 
   def as_json(options = {})
     if options[:list]
@@ -49,37 +53,86 @@ class Job < ActiveRecord::Base
     end
   end
 
+  # Creates log entries for certain updated attributes
+  def create_log_entries
+    # Quarantine flag log entries
+    if self.quarantined_changed? && self.quarantined
+      create_log_entry("QUARANTINE", self.message)
+    elsif self.quarantined_changed? && !self.quarantined
+      create_log_entry("UNQUARANTINE", "_UNQUARANTINED")
+    end
+
+    # Status log entries
+    if self.status_changed?
+      self.create_log_entry("STATUS", 'STATUS.' + status)
+    end
+  end
+
+  # Mark job as deleted
   def delete
     update_attribute(:deleted_at, Time.now)
   end
 
+  # Check if job is deleted
   def deleted?
     deleted_at.present?
   end
 
   def default_values
     self.status ||= 'waiting_for_digitizing'
-  end
-
-  def created_by_string
-    created_by || 'not_set'
+    @created_by ||= 'not_set'
   end
 
   # Creates a JobActivity object for CREATE event
-  def create_log_entry(event="CREATE", message="Activity has been created")
-    entry = JobActivity.new(username: created_by_string, event: event, message: message)
+  def create_log_entry(event="CREATE", message="_ACTIVITY_CREATED")
+    entry = JobActivity.new(username: created_by, event: event, message: message)
     job_activities << entry
   end
 
   # Switches status according to given Status object
   def switch_status(new_status)
     self.status = new_status.name
-    self.create_log_entry("STATUS", new_status.name)
+    #self.create_log_entry("STATUS", new_status.name)
   end
 
   # Retrieve source label from config
   def source_label
     Source.find_label_by_name(source)
+  end
+
+  # Combine selected metadata into a single string to use in search_title
+  def generate_search_title_metadata_string
+    ord = ordinals(true)
+    chron = chrons(true)
+    ord_string = ord.map { |x| x.join(" ")}.compact.join(" ")
+    chron_string = chron.map { |x| x.join(" ")}.compact.join(" ")
+    [ord_string, chron_string].compact.join(" ")
+  end
+
+  # Generate the string to be stored in search_title
+  def generate_search_title_string
+    author_norm = author.blank? ? "" : author.norm
+    name_norm = name.blank? ? "" : name.norm
+    [
+     title.norm,
+     author_norm,
+     name_norm,
+     catalog_id.to_s,
+     self.id.to_s,
+     generate_search_title_metadata_string.norm
+    ].compact.join(" ")
+  end
+
+  # Create search_title from title
+  def build_search_title
+    update_attribute(:search_title, generate_search_title_string)
+  end
+
+  # Generate search_titles for all jobs where it is missing
+  def self.index_jobs
+    Job.where(search_title: nil).each do |job| 
+      job.build_search_title
+    end
   end
 
   ###VALIDATION METHODS###
@@ -104,6 +157,13 @@ class Job < ActiveRecord::Base
   def status_in_list
     if !APP_CONFIG["statuses"].map { |x| x["name"] }.include?(status)
       errors.add(:status, "#{status} not included in list of valid statuses")
+    end
+  end
+
+  # Validates that message is present on certain updated attributes
+  def message_presence
+    if self.quarantined_changed? && self.quarantined && self.message.blank?
+      errors.add(:message, "Must assign a message for quarantine action")
     end
   end
 
@@ -179,10 +239,28 @@ class Job < ActiveRecord::Base
     ordinal_data.map { |x| x.join(" ") }.join(", ")
   end
 
-  # Returns an ordnial array for given key
+  # Returns an ordinal array for given key
   def ordinal_num(num)
     key = metadata_value("ordinal_#{num}_key")
     value = metadata_value("ordinal_#{num}_value")
+    return nil if key.blank? || value.blank?
+    [key, value]
+  end
+
+  # Returns chronological data as a string representation
+  def chrons(return_raw = false)
+    chron_data = []
+    chron_data << chron_num(1) if chron_num(1)
+    chron_data << chron_num(2) if chron_num(2)
+    chron_data << chron_num(3) if chron_num(3)
+    return chron_data if return_raw
+    chron_data.map { |x| x.join(" ") }.join(", ")
+  end
+
+  # Returns an chronological array for given key
+  def chron_num(num)
+    key = metadata_value("chron_#{num}_key")
+    value = metadata_value("chron_#{num}_value")
     return nil if key.blank? || value.blank?
     [key, value]
   end
