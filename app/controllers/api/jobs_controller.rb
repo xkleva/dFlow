@@ -76,7 +76,12 @@ class Api::JobsController < Api::ApiController
   def show
     begin
       job = Job.find(params[:id])
-      @response[:job] = job
+      if params[:format] == "xml"
+        render xml: job.xml
+        return
+      else
+        @response[:job] = job
+      end
     rescue
       error_msg(ErrorCodes::REQUEST_ERROR, "Could not find job '#{params[:id]}'")
     end

@@ -44,6 +44,18 @@ describe Api::JobsController do
         expect(response.status).to eq 404
       end
     end
+
+    context "when requesting format XML" do
+      it "should return the job source xml" do
+        job = create(:job)
+        # Placeholder, minimal XML.
+        job.xml = '<?xml version="1.0" encoding="UTF-8"?><xsearch xmlns:marc="http://www.loc.gov/MARC21/slim" to="1" from="1" records="1"><collection xmlns="http://www.loc.gov/MARC21/slim"><record></record></collection></xsearch>'
+        job.save
+        get :show, api_key: @api_key, id: job.id, format: :xml
+        expect(response.header['Content-Type']).to match('application/xml')
+        expect(response.body).to eq(job.xml)
+      end
+    end
   end
 
   describe "Create job" do
