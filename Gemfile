@@ -73,4 +73,4 @@ group :development do
   gem 'spring'
 end
 
-gem 'unicode'
+gem 'unicode', '~> 0.4.4.2'

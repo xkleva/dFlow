@@ -39,7 +39,8 @@ class Job < ActiveRecord::Base
         source_label: source_label,
         catalog_id: catalog_id,
         breadcrumb_string: treenode.breadcrumb(as_string: true),
-        treenode_id: treenode_id
+        treenode_id: treenode_id,
+        quarantined: quarantined
       }
     else
       super.merge({
