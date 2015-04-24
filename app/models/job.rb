@@ -271,6 +271,15 @@ class Job < ActiveRecord::Base
     PdfHelper.create_work_order(self)
   end
 
+  # Returns true if job is done
+  def done?
+    status == 'done'
+  end
+
+  def status_object
+    Status.find_by_name(status)
+  end
+
 
 end
 

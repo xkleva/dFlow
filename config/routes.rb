@@ -27,7 +27,9 @@ Rails.application.routes.draw do
     get 'sources', to: 'sources#index'
     get 'sources/:id', to: 'sources#fetch_source_data'
 
-
+    #Process API
+    get 'process/request_job/:code', to: 'process#request_job'
+    post 'process/:job_id', to: 'process#update_process'
 
     # Statuses API
     get 'jobs/:id/digitizing_begin', to: 'statuses#digitizing_begin'

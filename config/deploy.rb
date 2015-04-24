@@ -40,7 +40,11 @@ set :tmp_dir, '/home/rails/tmp'
 set :linked_files, %w{config/database.yml config/config_secret.yml config/passwd}
 
 namespace :deploy do
-
+  namespace :assets do
+    task :precompile do
+      
+    end
+  end
 end
 
 namespace :deploy do

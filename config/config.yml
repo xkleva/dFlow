@@ -85,6 +85,12 @@ statuses:
     next_status: post_processing
   -
     name: quality_control
+    next_status: waiting_for_package_metadata_import
+  -
+    name: waiting_for_package_metadata_import
+    next_status: package_metadata_import
+  -
+    name: package_metadata_import
     next_status: waiting_for_mets_control
   -
     name: waiting_for_mets_control
@@ -95,3 +101,9 @@ statuses:
   -
     name: done
     next_status: nil
+
+# List of processes and their calling status
+processes:
+  -
+    code: PACKAGE_METADATA_IMPORT
+    status: waiting_for_package_metadata_import
