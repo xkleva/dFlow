@@ -33,8 +33,8 @@ class AssetsController < ApplicationController
           id = job.id.to_s
         end
 
-        path = "#{location}/@@JOBID@@/pdf/@@JOBID@@.pdf"
-        path = path.gsub("@@JOBID@@", id)
+        path = APP_CONFIG['pdf_path']
+        path = path.gsub("@@JOBID@@", id).gsub("@@LOCATION@@", location)
 
         job_pdf = open(path)
         @response = {ok: "success"}
