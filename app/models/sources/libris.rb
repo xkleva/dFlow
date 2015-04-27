@@ -24,13 +24,14 @@ class Libris < Source
   # Returns a hash of data fetched from source
   def self.fetch_source_data(catalog_id)
     url = URI.parse(LIBRIS_XSEARCH_MARC+catalog_id.to_s)
+    pp "URL=#{url}"
     job_data = {}
     job_data = fetch_from_libris(url)
     job_data[:catalog_id] = catalog_id if not job_data.blank?
     return job_data
   #rescue Exception => e
     #pp "Error in fetch_source_data #{e.message}"
-    return {}
+    #return {}
   end
 
   private
