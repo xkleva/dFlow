@@ -31,7 +31,7 @@ FactoryGirl.define do
 
   factory :job do
     name {generate :job_name}
-    catalog_id 1
+    catalog_id '1'
     title {generate :title}
     author {generate :author}
     source 'libris'
