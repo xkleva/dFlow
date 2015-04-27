@@ -11,7 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150310160839) do
+ActiveRecord::Schema.define(version: 20150424120502) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "access_tokens", force: :cascade do |t|
     t.integer  "user_id"
@@ -61,7 +64,7 @@ ActiveRecord::Schema.define(version: 20150310160839) do
 
   create_table "jobs", force: :cascade do |t|
     t.text     "name"
-    t.integer  "catalog_id"
+    t.text     "catalog_id"
     t.text     "title"
     t.text     "author"
     t.datetime "deleted_at"
@@ -79,12 +82,6 @@ ActiveRecord::Schema.define(version: 20150310160839) do
     t.integer  "treenode_id"
     t.string   "status"
     t.boolean  "copyright",                    null: false
-  end
-
-  create_table "sources", force: :cascade do |t|
-    t.text     "classname"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "treenodes", force: :cascade do |t|
