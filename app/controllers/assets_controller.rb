@@ -24,19 +24,7 @@ class AssetsController < ApplicationController
         error_msg(ErrorCodes::OBJECT_ERROR, "Could not find job with id: #{asset_id}")
         render_json
       else
-
-        if job.done?
-          location = APP_CONFIG["pdf_path_prefix_store"]
-          id = sprintf("GUB%07d", job.id)
-        else
-          location = APP_CONFIG["pdf_path_prefix_packaging"]
-          id = job.id.to_s
-        end
-
-        path = APP_CONFIG['pdf_path']
-        path = path.gsub("@@JOBID@@", id).gsub("@@LOCATION@@", location)
-
-        job_pdf = open(path)
+        job_pdf = open(job.pdf_path)
         @response = {ok: "success"}
         
         respond_to do |format|
