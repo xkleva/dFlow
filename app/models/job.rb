@@ -48,7 +48,7 @@ class Job < ActiveRecord::Base
         display: display,
         source_label: source_label,
         breadcrumb: treenode.breadcrumb(include_self: true),
-        activities: job_activities,
+        activities: job_activities.as_json,
         metadata: metadata_hash,
         source_link: source_link,
         has_pdf: has_pdf,
