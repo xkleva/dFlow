@@ -133,7 +133,7 @@ class Job < ActiveRecord::Base
 
   # Generate search_titles for all jobs where it is missing
   def self.index_jobs
-    Job.where(search_title: nil).each do |job| 
+    Job.where(search_title: nil).each do |job|
       job.build_search_title
     end
   end
@@ -295,7 +295,7 @@ class Job < ActiveRecord::Base
     path = path.gsub("@@JOBID@@", job_id).gsub("@@LOCATION@@", location)
   end
 
-  # True if PDF can be found based on config 
+  # True if PDF can be found based on config
   def has_pdf
     if done?
       location = APP_CONFIG["pdf_exists_prefix_store"]
@@ -308,13 +308,13 @@ class Job < ActiveRecord::Base
     path = APP_CONFIG['pdf_path']
     path = path.gsub("@@JOBID@@", job_id).gsub("@@LOCATION@@", location)
 
-    response = HTTParty.get(path)
+    #response = HTTParty.get(path)
 
-    if response.success?
-      return true
-    else
+    #if response.success?
+    #  return true
+    #else
       return false
-    end
+    #end
   end
 
 

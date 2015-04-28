@@ -67,7 +67,7 @@ class Api::SourcesController < Api::ApiController
 	def fetch_source_data
 		catalog_id = params[:id]
 		source_name = params[:name]
-    extra_params = params[:extra_params] ||= {}
+    #extra_params = params[:extra_params] ||= {}
 
 		# Identify source object
 		source_object = Source.find_by_name(source_name)
@@ -81,7 +81,7 @@ class Api::SourcesController < Api::ApiController
 		# Fetch source data
     # Now here we should delegate to the source_object to deal with the params
     # since the params depends on source type.
-		source_data = source_object.fetch_source_data(catalog_id, extra_params)
+		source_data = source_object.fetch_source_data(catalog_id, params)
 		if source_data && !source_data.empty?
 			@response[:source] = source_data
 		else

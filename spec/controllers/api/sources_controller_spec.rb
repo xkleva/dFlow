@@ -148,24 +148,27 @@ describe Api::SourcesController do
     context "the source is available" do
       it "should return json with source data" do
         title = 'My title'
-        dc_data = {
-          dc_title: title,
-          dc_creator: 'The Creator',
-          dc_subject: 'The Subject',
-          dc_description: 'The Description',
-          dc_publisher: 'The Publisher',
-          dc_contributor: 'The Contributor',
-          dc_date: 'The Date',
-          dc_type: 'The Type',
-          dc_format: 'The Format',
-          dc_identifier: 'The Identifier',
-          dc_source: 'The Source',
-          dc_language: 'The Language',
-          dc_relation: 'The Relation',
-          dc_coverage: 'The Coverage',
-          dc_rights: 'The Rights'
+        dc = {
+          title: title,
+          creator: 'The Creator',
+          subject: 'The Subject',
+          description: 'The Description',
+          publisher: 'The Publisher',
+          contributor: 'The Contributor',
+          date: 'The Date',
+          type: 'The Type',
+          format: 'The Format',
+          identifier: 'The Identifier',
+          source: 'The Source',
+          language: 'The Language',
+          relation: 'The Relation',
+          coverage: 'The Coverage',
+          rights: 'The Rights'
         }
-        get :fetch_source_data, api_key: @api_key, id: '', name: 'dc', extra_params: dc_data
+        get :fetch_source_data, api_key: @api_key, id: '',
+        name: 'dc', dc_title: dc[:title], dc_creator: dc[:creator], dc_subject: dc[:subject], dc_description: dc[:description],
+        dc_publisher: dc[:publisher], dc_contributor: dc[:contributor], dc_date: dc[:date], dc_type: dc[:type], dc_format: dc[:format], dc_identifier: dc[:identifier],
+        dc_source: dc[:source], dc_language: dc[:language], dc_relation: dc[:relation], dc_coverage: dc[:coverage], dc_rights: dc[:rights]
         pp "-------------------"
         pp json
         pp "-------------------"
