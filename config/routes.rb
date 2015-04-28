@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   get 'assets/:asset_type/:asset_id', to: 'assets#show'
 
   namespace :api, :defaults => {:format => :json} do
-    get 'check_connection' , to: 'api#check_connection'
+    get 'check_connection' , to: 'process#check_connection'
 
     # Config API
     get 'config/role_list', to: 'config#role_list'

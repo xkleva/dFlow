@@ -98,7 +98,7 @@ class Api::JobsController < Api::ApiController
     job_params[:metadata] = job_params[:metadata].to_json
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
-    job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message))
+    job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata))
 
     # If ID is given, use it for creation
     if params[:force_id]
@@ -124,7 +124,7 @@ class Api::JobsController < Api::ApiController
     job_params = params[:job]
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
-    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message))
+    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata))
       @response[:job] = job
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job.", job.errors)
