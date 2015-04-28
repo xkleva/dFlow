@@ -3,7 +3,8 @@ Rails.application.routes.draw do
   resources :session
 
   # Assets routes
-  get 'assets/:asset_type/:asset_id', to: 'assets#show'
+  get 'assets/work_order/:asset_id', to: 'assets#work_order'
+  get 'assets/job_pdf/:asset_id', to: 'assets#job_pdf'
 
   namespace :api, :defaults => {:format => :json} do
     get 'check_connection' , to: 'process#check_connection'
