@@ -51,7 +51,8 @@ class Job < ActiveRecord::Base
         activities: job_activities,
         metadata: metadata_hash,
         source_link: source_link,
-        has_pdf: has_pdf
+        has_pdf: has_pdf,
+        package_metadata: package_metadata_hash
         })
     end
   end
@@ -232,6 +233,12 @@ class Job < ActiveRecord::Base
     @metadata_hash ||= JSON.parse(metadata)
   end
 
+  # Returns all package_metadata as a hash
+  def package_metadata_hash
+    return {} if package_metadata.blank? || package_metadata == "null"
+    @package_metadata_hash ||= JSON.parse(package_metadata)
+  end
+
   # Returns ordinal data as a string representation
   def ordinals(return_raw = false)
     ordinal_data = []
@@ -308,13 +315,12 @@ class Job < ActiveRecord::Base
     path = APP_CONFIG['pdf_path']
     path = path.gsub("@@JOBID@@", job_id).gsub("@@LOCATION@@", location)
 
-    #response = HTTParty.get(path)
-
-    #if response.success?
-    #  return true
-    #else
+    begin
+      open(path)
+      return true
+    rescue OpenURI::HTTPError => e
       return false
-    #end
+    end
   end
 
 
