@@ -136,10 +136,44 @@ describe Api::SourcesController do
     context "the source is known and available but source data is empty" do
       it "should return json with error data" do
         source_name = 'libris'
-        catalog_id = 0
+        catalog_id = '0'
         get :fetch_source_data, api_key: @api_key, id: catalog_id, name: source_name
         expect(json['error']).not_to be nil
         expect(json['error']['msg']).to eq("Could not find source data for source: #{source_name} and catalog_id: #{catalog_id}")
+      end
+    end
+  end
+
+  describe "Get data from a manual source" do
+    context "the source is available" do
+      it "should return json with source data" do
+        title = 'My title'
+        dc_data = {
+          dc_title: title,
+          dc_creator: 'The Creator',
+          dc_subject: 'The Subject',
+          dc_description: 'The Description',
+          dc_publisher: 'The Publisher',
+          dc_contributor: 'The Contributor',
+          dc_date: 'The Date',
+          dc_type: 'The Type',
+          dc_format: 'The Format',
+          dc_identifier: 'The Identifier',
+          dc_source: 'The Source',
+          dc_language: 'The Language',
+          dc_relation: 'The Relation',
+          dc_coverage: 'The Coverage',
+          dc_rights: 'The Rights'
+        }
+        get :fetch_source_data, api_key: @api_key, id: '', name: 'dc', extra_params: dc_data
+        pp "-------------------"
+        pp json
+        pp "-------------------"
+        expect(json['error']).to be nil
+        expect(json['source']['catalog_id']).to start_with('dc:')
+        expect(json['source']['source_name']).to eq('dc')
+        expect(json['source']['title']).to eq(title)
+        expect(json['source']['metadata']['dc_title']).to eq(title)
       end
     end
   end
