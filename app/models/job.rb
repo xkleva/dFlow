@@ -1,5 +1,6 @@
 require 'nokogiri'
 require "prawn/measurement_extensions"
+require 'httparty'
 
 class Job < ActiveRecord::Base
   default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
@@ -49,7 +50,8 @@ class Job < ActiveRecord::Base
         breadcrumb: treenode.breadcrumb(include_self: true),
         activities: job_activities,
         metadata: metadata_hash,
-        source_link: source_link
+        source_link: source_link,
+        has_pdf: has_pdf
         })
     end
   end
@@ -121,8 +123,8 @@ class Job < ActiveRecord::Base
      catalog_id.to_s,
      self.id.to_s,
      generate_search_title_metadata_string.norm
-    ].compact.join(" ")
-  end
+     ].compact.join(" ")
+   end
 
   # Create search_title from title
   def build_search_title
@@ -269,6 +271,50 @@ class Job < ActiveRecord::Base
   # Generates a work order pdf
   def create_pdf
     PdfHelper.create_work_order(self)
+  end
+
+  # Returns true if job is done
+  def done?
+    status == 'done'
+  end
+
+  def status_object
+    Status.find_by_name(status)
+  end
+
+  def pdf_path
+    if done?
+      location = APP_CONFIG["pdf_path_prefix_store"]
+      job_id = sprintf("GUB%07d", id)
+    else
+      location = APP_CONFIG["pdf_path_prefix_packaging"]
+      job_id = id.to_s
+    end
+
+    path = APP_CONFIG['pdf_path']
+    path = path.gsub("@@JOBID@@", job_id).gsub("@@LOCATION@@", location)
+  end
+
+  # True if PDF can be found based on config 
+  def has_pdf
+    if done?
+      location = APP_CONFIG["pdf_exists_prefix_store"]
+      job_id = sprintf("GUB%07d", id)
+    else
+      location = APP_CONFIG["pdf_exists_prefix_packaging"]
+      job_id = id.to_s
+    end
+
+    path = APP_CONFIG['pdf_path']
+    path = path.gsub("@@JOBID@@", job_id).gsub("@@LOCATION@@", location)
+
+    response = HTTParty.get(path)
+
+    if response.success?
+      return true
+    else
+      return false
+    end
   end
 
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150424120502) do
+ActiveRecord::Schema.define(version: 20150424122916) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,17 +71,18 @@ ActiveRecord::Schema.define(version: 20150424120502) do
     t.integer  "created_by"
     t.integer  "updated_by"
     t.text     "xml"
-    t.boolean  "quarantined",  default: false
+    t.boolean  "quarantined",     default: false
     t.text     "comment"
     t.text     "object_info"
     t.text     "search_title"
-    t.text     "metadata",     default: ""
+    t.text     "metadata",        default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "source"
     t.integer  "treenode_id"
     t.string   "status"
-    t.boolean  "copyright",                    null: false
+    t.boolean  "copyright",                       null: false
+    t.text     "process_message"
   end
 
   create_table "treenodes", force: :cascade do |t|
