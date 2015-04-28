@@ -2,7 +2,11 @@ require 'rails_helper'
 
 describe Api::StatusesController do
   before :each do
+    WebMock.disable_net_connect! 
     @api_key = APP_CONFIG["api_key"]
+  end
+  after :each do
+    WebMock.allow_net_connect!
   end
 
   describe "digitizing_begin" do

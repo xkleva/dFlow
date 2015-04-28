@@ -1,5 +1,13 @@
 class Api::ProcessController < Api::ApiController
 
+  before_filter -> { validate_rights 'manage_jobs' }, only: [:request_job, :update_process, :check_connection]
+
+  # Return 200 if connection is valid
+  def check_connection
+    @response[:msg] = "Connection successful!"
+    render_json
+  end
+
   # Returns a job for given code if any is applicable
   def request_job
     code = params[:code]
@@ -14,7 +22,6 @@ class Api::ProcessController < Api::ApiController
 
     # Find a job with proper status according to process
     job = Job.where(status: process["status"]).where(quarantined: false).where(deleted_at: nil).first
-    
     # Switch job status before it is returned
     if job.switch_status(job.status_object.next_status)
       @response[:job] = job

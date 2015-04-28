@@ -69,7 +69,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # Returns mtoken from request headers or params[:token] if set
   def get_token
+    if params.has_key?(:token) && params[:token] != ''
+      return params[:token]
+    end
     return nil if !request || !request.headers
     token_response = request.headers['Authorization']
     return nil if !token_response
