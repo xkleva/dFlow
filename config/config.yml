@@ -15,18 +15,18 @@ user_roles:
       - manage_jobs
   -
     name: GUEST
-    rights: 
+    rights:
       - view_tree
     unassignable: true
   -
     name: OPERATOR
-    rights: 
+    rights:
       - view_tree
       - manage_tree
       - manage_jobs
   -
     name: API_KEY
-    rights: 
+    rights:
       - view_tree
       - manage_tree
       - manage_jobs
@@ -44,9 +44,21 @@ sources:
     label: Libris
     class_name: Libris
   -
+    name: dc
+    label: DC
+    class_name: DublinCore
+  -
     name: other_source
     label: Other Source
     class_name: OtherSource
+  -
+    name: document
+    label: Document
+    class_name: Document
+  -
+    name: letter
+    label: Letter
+    class_name: Letter
   -
     name: operakallan
     label: Operakällan
