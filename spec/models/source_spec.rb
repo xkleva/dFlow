@@ -2,13 +2,30 @@ require 'rails_helper'
 
 RSpec.describe Source, :type => :model do
   before :each do
-    #config_init
-    #WebMock.allow_net_connect!
+    #WebMock.disable_net_connect!
+    WebMock.disable_net_connect!(allow_localhost: true)
     @libris = Source.find_by_name('libris')
+
+    ## Stub request for getting source data
+    stub_request(:get, "http://libris.kb.se/xsearch?format=marcxml&format_level=full&holdings=true&query=ONR:1234").
+      with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+      to_return(
+        :status => 200,
+        :body => File.new("#{Rails.root}/spec/support/sources/libris-xsearch-response-onr1234.xml"),
+        :headers => {"Content-Type" => "text/xml;charset=UTF-8"})
+
+    ## Stub request for getting source data
+    stub_request(:get, "http://libris.kb.se/xsearch?format=marcxml&format_level=full&holdings=true&query=ONR:1").
+      with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+      to_return(
+        :status => 200,
+        :body => File.new("#{Rails.root}/spec/support/sources/libris-xsearch-response-onr1.xml"),
+        :headers => {"Content-Type" => "text/xml;charset=UTF-8"})
   end
   after :each do
-    #WebMock.allow_net_connect!
+    WebMock.allow_net_connect!
   end
+
   describe "fetch source data" do
     context "with an existing libris ID" do
       it "should return a hash with values" do
