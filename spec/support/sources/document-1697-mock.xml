@@ -1,0 +1,472 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+
+<manuscript hd-id="1697" hd-ref="dokument" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:noNamespaceSchemaLocation="http://www.ub.gu.se/handskriftsdatabasen/api/schema.xsd">
+
+
+<archive hd-id="21" hd-ref="arkiv">
+    <unittitle>Handlingar rörande konstnären Ivar Arosenius</unittitle>
+    <unitdate>1896-2011</unitdate>
+      
+        <physloc>H 201</physloc>
+      
+      
+      <physdesc>12 volymer</physdesc>
+
+      
+    <originator hd-id="1731" hd-ref="namn">
+     
+
+
+
+  <name-given>Ivar</name-given>
+  <name-family> Arosenius</name-family>
+  <name-date>1878-1909</name-date>
+  <name-other> </name-other>
+  <name-other> </name-other>
+  <name-other> </name-other>
+
+
+							
+  <occupation hd-id="5" hd-ref="yrke">konstnär</occupation>
+
+
+    </originator>
+      
+
+    
+
+    <description>Ivar Arosenius föddes 1878 i Göteborg. Han studerade vid Slöjdföreningens skola och för Carl Wilhelmson på Valand.
+Senare flyttade han till Stockholm och började på Konstakademien med Richard Berg som lärare.
+1906 gifte han sig med Eva Adler och de bodde en kort tid i Åby utanför Norrköping. Det var här dottern Lillan föddes. 1907 flyttade familjen till Älvängen norr om Göteborg. Ivar Arosenius avled här 1909.
+
+Handlingarna, som består av manuskriptböcker, fotografier, teckningar och brev, är en deposition av Kungliga Vetenskaps- och Vitterhetssamhället i Göteborg.
+
+Material rörande Ivar Arosenius finns även i Nils Bonde Adlers samling, H 202.</description>
+    
+      <sigel hd-id="1" hd-ref="sigel">G</sigel>
+    
+    <userestrict></userestrict>
+    <note></note>
+</archive>
+
+  
+    <document> 
+      <unittitle> Fotografier och negativ</unittitle>      
+      <physloc>5</physloc>      
+      <physdesc>1 kapsel</physdesc>
+       <unitdate>1906-1968, odat.</unitdate>
+      <searchdate>1906-1968</searchdate>
+      
+        <language hd-id="3" hd-ref="sprak">Svenska</language>
+      
+
+      
+        <genreform hd-id="3" hd-ref="kategori">Fotografier</genreform>
+      
+      
+        <genre hd-id="13" hd-ref="genre">Porträtt</genre>
+      
+
+      
+       <originator  hd-id="1731" hd-ref="namn">
+         
+
+
+
+  <name-given>Ivar</name-given>
+  <name-family> Arosenius</name-family>
+  <name-date>1878-1909</name-date>
+  <name-other> </name-other>
+  <name-other> </name-other>
+  <name-other> </name-other>
+
+
+							
+  <occupation hd-id="5" hd-ref="yrke">konstnär</occupation>
+
+
+        
+          <role hd-id="1" hd-ref="funktion">Avporträtterad person</role>
+        
+      </originator>
+      
+
+
+      <titleinformation>
+       <title> Fotografier och negativ</title>
+        <subtitle>Porträtt och familjebilder</subtitle>
+        <othertitle> </othertitle>
+        <othertitle> </othertitle>
+       
+
+    </titleinformation>
+
+
+    
+     
+        <contributor hd-id="1731" hd-ref="namn">
+          
+
+
+
+  <name-given>Ivar</name-given>
+  <name-family> Arosenius</name-family>
+  <name-date>1878-1909</name-date>
+  <name-other> </name-other>
+  <name-other> </name-other>
+  <name-other> </name-other>
+
+
+							
+  <occupation hd-id="5" hd-ref="yrke">konstnär</occupation>
+
+
+        
+          <role hd-id="1" hd-ref="funktion">Avporträtterad person</role>
+        
+      </contributor>
+      
+    
+      <note>Innehåller bilder på Ivar Arosenius, Eva Arosenius, Henrik Arosenius, Sigrid Arosenius, Erik Arosenius, Ingegärd Spolén, Nils Adler, Gerhard Henning, Ernst och Elin Spolén m fl.,  bilder på hus i Åby. </note>
+     <data>
+     
+       <imagedata hd-id="1200" hd-ref="bild">
+         <physdesc>6 fotografier</physdesc>
+         <note>III.Ivar Arosenius: 
+1. Valand, 1901
+2-4. München, 1903
+5. Paris, 1904
+6. Älvängen, 1908  </note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1201" hd-ref="bild">
+         <physdesc>9 fotografier</physdesc>
+         <note>IV. Ivar Arosenius i Åby, 1906</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1202" hd-ref="bild">
+         <physdesc>2 fotgrafier</physdesc>
+         <note>V. Ivar och Ida (Eva) Arosenius i Åby, 1906</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1214" hd-ref="bild">
+         <physdesc>4 fotografier</physdesc>
+         <note>XVII. Porträtt av Eva ”Lillan” Arosenius:
+1. På verandatrappan (med vagn), på baksidan brev till Ida (Eva) Arosenius, 12/1 1909
+2. Framför huset i Älvsängen, 1908
+3. -”-
+4. Med farmor Sigrid Arosenius (1846-1929)
+</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1205" hd-ref="bild">
+         <physdesc>3 fotografier</physdesc>
+         <note>VIII. Porträtt av Ivar Arosenius (stora), fotogr. Henrik Gallen:
+1. porträttbild;
+2. porträtt i halvptofil;
+3. Ivar och Lillan</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1204" hd-ref="bild">
+         <physdesc>1 fotografi</physdesc>
+         <note>Familjefoto: på bilden från vänster 2 oidentifierade personer, Johanna Adler,  Eva ”Lillan”, Ivar Arosenius, Ida (Eva) Arosenius, Elaine Gallén </note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1207" hd-ref="bild">
+         <physdesc>5 fotografier</physdesc>
+         <note>X. Åby, 1906:
+1. Gästgiverigården
+2. Blommande gård
+3. Sjön
+4. Evas och Ivars hus
+5. -”- med påskrift av Ivar Arosenius ”Vårt hem”
+</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1206" hd-ref="bild">
+         <physdesc>3 forografier</physdesc>
+         <note>IX. Ivar på dödsbädden, Älvängen, 1909</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1208" hd-ref="bild">
+         <physdesc>2 fotografier</physdesc>
+         <note>XI. Trasdocka sydd av Ivar Arosenius, 1906</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1210" hd-ref="bild">
+         <physdesc>4 fotografier</physdesc>
+         <note>XIII. Porträtt av Ida (Eva) Arosenius
+1. Konfirmationskort
+2. Eva och Lillan
+3. Ida (Eva), fotogr. James Bourn
+4. Profilbild
+</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1213" hd-ref="bild">
+         <physdesc>3 fotografier</physdesc>
+         <note>XVI. Porträtt av Ida (Eva) Arosenius, 1963-1964?</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1215" hd-ref="bild">
+         <physdesc>12 fotografier</physdesc>
+         <note>XVIII. Familjebilder med Eva ”Lillan” i Danmark och Frankrike, 1916 . Hit även bild på Ivan Dick</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1217" hd-ref="bild">
+         <physdesc>20 fotografier</physdesc>
+         <note>XX. Eva ”Lillan” Arosenius, 1920-1970-talet</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1218" hd-ref="bild">
+         <physdesc>1 fotografi</physdesc>
+         <note>XXI. Porträtt Eva ”Lillan” Arosenius, odat.</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1220" hd-ref="bild">
+         <physdesc>3 fotografier</physdesc>
+         <note>XXIII. Porträtt av Nils B. Adler, 1917, odat. </note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1219" hd-ref="bild">
+         <physdesc>2 fotografier</physdesc>
+         <note>XXII. Eva ”Lillan” Arosenius, skolfotgrafier, odat.</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1203" hd-ref="bild">
+         <physdesc>1 fotografi</physdesc>
+         <note>VI. Gipskrossning. På bilden från vänster: Signe Lagerlöf-Sandell, Ivar Arosenius, oidentifierad person, Gerhard Henning, odat.</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1216" hd-ref="bild">
+         <physdesc>10 fotografier</physdesc>
+         <note>XIX. Eva ”Lillan” med Ida (Eva) och Sigrid Arosenius i Äppelviken, odat. Fotogr. Ernst Spolén , hit även negativ</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1209" hd-ref="bild">
+         <physdesc>3 fotografier</physdesc>
+         <note>XII. Porträtt av Henrik Arosenius (1841-1901), Ivars far. Odat.</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1212" hd-ref="bild">
+         <physdesc>6 fotografier</physdesc>
+         <note>XV. Familjebilder
+1. Ida (Eva) Arosenius
+2. ?, Nils Adler, Ida (Eva) Arosenius, Solfrid Dick
+3. Leksand. Ida (Eva) Arosenius med barnbarn Astrid, 1942
+4. Från vänster: paret Bauer-Albrektson, Astrid och Ida (Eva), 1942
+5. Evas (Lillan) med maken Harouth Constantine och dottern Astrid, 1946, 2 st., 1 negativ
+</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1195" hd-ref="bild">
+         <physdesc>4 fotografier</physdesc>
+         <note>I. Syskonen Arosenius:
+1.	Ivar Arosenius, 1897
+2.	Erik Arosenius, 1897, 1901 2 st.
+3.	Ingegerd Arosenius, 1897
+</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1196" hd-ref="bild">
+         <physdesc>6 fotografier</physdesc>
+         <note>II. Syskonen Arosenius:
+1.	Ingegerd, Ivar (i mitten), Erik Arosenius
+2.	Harald, Erik, Ivar Arosenius
+3.	Ivar Arosenius, fotogr. Ward.Dahllöf
+4.	Erik och Ivar Arosenius
+5.	Harald Arosenius
+6.	Ivar Arosenius, fotogr. James Bourn
+</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1211" hd-ref="bild">
+         <physdesc>1 fotografi</physdesc>
+         <note>XIV. Resan till Danmark, 1912. På tåget: Anton Dick, Eva Arosenius, Lillan. På perrongen till vänster Johanna Adler, till höger Axel, Rut och Bo Adler, 1912</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1227" hd-ref="bild">
+         <physdesc>8 fotografier</physdesc>
+         <note>XXX. Bilder på medlemmar av släkten Arosenius
+1. Ernst Spolén, arkitekt, 2 st.
+2. Ernst Spolén med maka
+3. Karin Arosenius (1851-1932), skulptris, 1866
+4. Erik och Elin Arosenius
+5. Ingegerd Arosenius
+6. Erik Arosenius, 1947
+7. Erik och Elin Arosenius bröllopsbild, 1912 
+</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1228" hd-ref="bild">
+         <physdesc>10 fotografier</physdesc>
+         <note>XXXV. Ävlängenbilder 
+1. Exterior med veranda
+2. Baksida, ingången till köket
+3. Kakelung nedrevåning
+4. Kakelung övrevåning 
+5. Huset från vägen
+6. Dörrmålningar i Älvängens hus (dörrarna bevaras i Starrkärrs hembygdsmuseum), 5 motiv.
+</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1229" hd-ref="bild">
+         <physdesc>5 fotografier</physdesc>
+         <note>XXXVI. Per Wik och Maria Totstensen, barnbarnbarn till Ivar Arosenius, vid huset Älvängen, 1968</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1226" hd-ref="bild">
+         <physdesc>2 fotografier</physdesc>
+         <note>XXIX. Porträtt av Gerhard Henning, odat.</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1225" hd-ref="bild">
+         <physdesc>1 fotografi</physdesc>
+         <note>XXVIII. Porträtt av Astrid Constantine-Torstensson, odat.</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1221" hd-ref="bild">
+         <physdesc>7 fotografier</physdesc>
+         <note>XXIV. Bilder från Sämsholms herrgård:
+1. Vykort med huset
+2. Huset från sjön
+3. Ivar Arosenius sovande
+4. Familjebild med syskonen Adler, från vänster Nils, Elvira, Eva, Axel.
+5. Familjebild från vänster Elvira, mor Johanna, Nils.
+6. Nils Adler
+7. Kusinen Karin Andersson
+</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1224" hd-ref="bild">
+         <physdesc>5 fotografier</physdesc>
+         <note>XXVII. Släktbilder i Älvängen:
+1. Olga Andersson, kusin till Eva Arosenius, 70-årsdagen, 1940-talet
+2. Olga Andresson vid Ivar Arosenius ateljéfönster
+3. Ida (Eva) Arosenius, Ivan Dick med frun, 1945
+4. Släkten i trädgården, sommaren 1946
+5. Kafferep i ateljen, 1946, från vänster: Harouth Constantine, Eva Arosenius, Nils Adler, Harry och Hanna Essle, Axel Adler
+</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1223" hd-ref="bild">
+         <physdesc>12 fotografier</physdesc>
+         <note>XXVI. Porträtt på Sigrid Rydén-Arosenius (1846-1929), 11 st. och porträtt av Johanna Adler-Andersson (1847-1923), 1 st., odat.</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+       <imagedata hd-id="1222" hd-ref="bild">
+         <physdesc>4 fotografier</physdesc>
+         <note>XXV. Syskonen Adler:
+1. Början på 1900-talet, från vänster Nils, Elvira, Axel, Elisabeth, Eva (Ida).
+2. Axel Adlers dotter Hanna-Greta, Nils Adler 1948-49?
+3. Från vänster Nils, Axel, Elvira, Lisa och Eva (sittande) Adler.
+4. Jäns och Johanna Adler med barnen ca 1890, från vänster Jäns, Ida, Nils, Johanna, Elvira, Lisa, Axel.
+</note>
+         <unitdate></unitdate>
+         <searchdate></searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+     
+    </data>
+   </document>
+  
+
+
+
+</manuscript>
+

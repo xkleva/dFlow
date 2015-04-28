@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+
+
+<manuscript hd-id="29149" hd-ref="brev" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="http://www.ub.gu.se/handskriftsdatabasen/api/schema.xsd">
+
+
+
+
+<archive hd-id="336" hd-ref="arkiv">
+    <unittitle>Axel Emanuel Holmbergs papper</unittitle>
+    <unitdate>-</unitdate>
+      
+        <physloc>H 39</physloc>
+      
+      
+      <physdesc>1 volym</physdesc>
+
+      
+    <originator hd-id="2613" hd-ref="namn">
+     
+
+
+
+  <name-given>Axel Emanuel</name-given>
+  <name-family> Holmberg</name-family>
+  <name-date>1817-1861</name-date>
+  <name-other> </name-other>
+  <name-other> </name-other>
+  <name-other> </name-other>
+
+
+							
+  <occupation hd-id="364" hd-ref="yrke">pastorsadjunkt</occupation>
+
+
+    </originator>
+      
+
+    
+
+    <description></description>
+    
+      <sigel hd-id="1" hd-ref="sigel">G</sigel>
+    
+    <userestrict></userestrict>
+    <note></note>
+</archive>
+
+  
+    <letter>
+      <physloc>1</physloc>
+      
+        <sender hd-id="2510" hd-ref="namn">
+         
+
+
+
+  <name-given>Gustaf Henrik</name-given>
+  <name-family> Brusewitz</name-family>
+  <name-date>1812-1899</name-date>
+  <name-other> </name-other>
+  <name-other> </name-other>
+  <name-other> </name-other>
+
+
+							
+  <occupation hd-id="5" hd-ref="yrke">konstnär</occupation>
+							
+  <occupation hd-id="68" hd-ref="yrke">museiintendent</occupation>
+
+
+        </sender>
+      
+      
+          <recipient hd-id="15535" hd-ref="namn">
+         
+
+
+
+  <name-given>Carl August</name-given>
+  <name-family> Rydberg</name-family>
+  <name-date>1824-1872</name-date>
+  <name-other> </name-other>
+  <name-other> </name-other>
+  <name-other> </name-other>
+
+
+							
+  <occupation hd-id="300" hd-ref="yrke">folkskoleinspektör</occupation>
+							
+  <occupation hd-id="574" hd-ref="yrke">bagarmästare</occupation>
+
+
+        </recipient>
+      
+      <unitdate>-</unitdate>
+      <dated>0</dated>
+      <undated>1</undated>
+      <note>Bilaga: Brusewitz&#39; amnärkningar till Holmbergs Bohusläns beskrivning.  </note>
+      
+        <language hd-id="3" hd-ref="sprak">Svenska</language>
+      
+     <data>
+     
+       <imagedata hd-id="1360" hd-ref="bild">
+         <physdesc>23 bl.</physdesc>
+         <note>Odat. </note>
+         <unitdate>1867-01-01</unitdate>
+         <searchdate>1867-01-01</searchdate>
+         <userestrict>1</userestrict>
+     </imagedata>
+
+
+
+
+     
+    </data>
+    </letter>
+  
+
+
+</manuscript>
+

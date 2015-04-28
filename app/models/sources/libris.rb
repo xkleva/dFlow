@@ -28,9 +28,6 @@ class Libris < Source
     job_data = fetch_from_libris(url)
     job_data[:catalog_id] = catalog_id if not job_data.blank?
     return job_data
-  rescue Exception => e
-    #pp "Error in fetch_source_data #{e.message}"
-    return {}
   end
 
   private
@@ -46,13 +43,11 @@ class Libris < Source
       job_data[:xml] = librisdata if not job_data.blank?
     end
     return job_data
-  rescue Exception => e
-    #pp "Error in fetch_from_libris #{e.message}"
-    return {}
   end
 
   def self.data_from_record(record)
     job_data = {}
+    return job_data if !record
     marc_record = MARC::XMLReader.new(StringIO.new(record.to_xml)).first
     job_data[:title] = [marc_record['245']['a'],marc_record['245']['b']].compact.join(" ")
     job_data[:author] = marc_record['100']['a'] if marc_record['100']
@@ -60,9 +55,6 @@ class Libris < Source
     job_data[:metadata][:type_of_record] =  marc_record.leader[6..7]
     job_data[:source_name] = Source.find_name_by_class_name(self.name)
     return job_data
-  rescue Exception => e
-    #pp "Error in data_from_record #{e.message}"
-    return {}
   end
 
   def self.source_link(id)

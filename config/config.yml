@@ -48,6 +48,14 @@ sources:
     label: Other Source
     class_name: OtherSource
   -
+    name: document
+    label: Document
+    class_name: Document
+  -
+    name: letter
+    label: Letter
+    class_name: Letter
+  -
     name: operakallan
     label: Operakällan
     class_name: UpperClass
