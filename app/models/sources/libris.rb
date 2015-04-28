@@ -22,7 +22,7 @@ class Libris < Source
   end
 
   # Returns a hash of data fetched from source
-  def self.fetch_source_data(catalog_id)
+  def self.fetch_source_data(catalog_id, extra_params={})
     url = URI.parse(LIBRIS_XSEARCH_MARC+catalog_id.to_s)
     pp "URL=#{url}"
     job_data = {}
