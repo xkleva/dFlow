@@ -46,4 +46,8 @@ RSpec.configure do |config|
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
   config.include Requests::JsonHelpers
+  config.include Requests::StubRequests
+  config.before(:each) do
+    global_stubs
+  end
 end

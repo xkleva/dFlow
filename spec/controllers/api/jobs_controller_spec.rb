@@ -5,16 +5,6 @@ describe Api::JobsController do
   before :each do
     WebMock.disable_net_connect! 
     @api_key = APP_CONFIG["api_key"]
-
-    stub_request(:get, /http:\/\/localhost:3001\/download_file\?source_file=PACKAGING:\/\d+\/pdf\/\d+\.pdf/).
-         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-         to_return(:status => 200, :body => "", :headers => {})
-
-    stub_request(:get, "http://localhost:3001/download_file?source_file=PACKAGING://pdf/.pdf").
-         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-         to_return(:status => 404, :body => "", :headers => {})
-
-
   end
   after :each do
     WebMock.allow_net_connect!
