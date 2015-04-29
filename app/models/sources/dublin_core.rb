@@ -5,6 +5,11 @@
 # {title: "String", author: "String", metadata: {}, xml: "String", source_id: int, catalog_id: int}
 #
 class DublinCore < Source
+  def self.validate_source_fields(params)
+    return false if !params[:dc]
+    return true if params[:dc][:title]
+    false
+  end
 
   # Validates fields of job object
   def self.validate_job_fields(object)

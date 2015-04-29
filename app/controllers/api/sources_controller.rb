@@ -65,7 +65,7 @@ class Api::SourcesController < Api::ApiController
 
 	# Renders JSON with source data for an item with the given catalog_id from a source with the given source_name.
 	def fetch_source_data
-		catalog_id = params[:id]
+		catalog_id = params[:catalog_id]
 		source_name = params[:name]
     dc_params = params[:dc] ||= {}
 
@@ -77,6 +77,12 @@ class Api::SourcesController < Api::ApiController
 			render_json
 			return
 		end
+
+    if !source_object.validate_source_fields(params)
+      error_msg(ErrorCodes::VALIDATION_ERROR, "Required fields missing")
+      render_json
+      return
+    end
 
 		# Fetch source data
     # Now here we should delegate to the source_object to deal with the params
