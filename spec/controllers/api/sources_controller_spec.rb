@@ -165,18 +165,15 @@ describe Api::SourcesController do
           coverage: 'The Coverage',
           rights: 'The Rights'
         }
-        get :fetch_source_data, api_key: @api_key, id: '',
-        name: 'dc', dc_title: dc[:title], dc_creator: dc[:creator], dc_subject: dc[:subject], dc_description: dc[:description],
-        dc_publisher: dc[:publisher], dc_contributor: dc[:contributor], dc_date: dc[:date], dc_type: dc[:type], dc_format: dc[:format], dc_identifier: dc[:identifier],
-        dc_source: dc[:source], dc_language: dc[:language], dc_relation: dc[:relation], dc_coverage: dc[:coverage], dc_rights: dc[:rights]
-        pp "-------------------"
-        pp json
-        pp "-------------------"
+        get :fetch_source_data, api_key: @api_key, id: 'dc', name: 'dc', dc: dc
         expect(json['error']).to be nil
         expect(json['source']['catalog_id']).to start_with('dc:')
         expect(json['source']['source_name']).to eq('dc')
         expect(json['source']['title']).to eq(title)
-        expect(json['source']['metadata']['dc_title']).to eq(title)
+        expect(json['source']['metadata']['dc']['title']).to eq(title)
+        expect(json['source']['metadata']['dc']['publisher']).to eq(dc[:publisher])
+        expect(json['source']['metadata']['dc']['contributor']).to eq(dc[:contributor])
+        expect(json['source']['metadata']['dc']['language']).to eq(dc[:language])
       end
     end
   end
