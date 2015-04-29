@@ -26,7 +26,7 @@ Rails.application.routes.draw do
     get 'sources/fetch_source_data', to: 'sources#fetch_source_data'
     get 'sources/validate_new_objects', to: 'sources#validate_new_objects'
     get 'sources', to: 'sources#index'
-    get 'sources/:id', to: 'sources#fetch_source_data'
+    get 'sources/:name', to: 'sources#fetch_source_data'
 
     #Process API
     get 'process/request_job/:code', to: 'process#request_job'

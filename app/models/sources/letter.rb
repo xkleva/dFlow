@@ -4,7 +4,7 @@ class Letter < Source
   REQUIRED_SOURCE_FIELDS = ["id"]
 
   def self.validate_source_fields(params)
-    return true if params[:id].present?
+    return true if params[:catalog_id].present?
     false
   end
 

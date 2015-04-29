@@ -39,7 +39,7 @@ describe Api::SourcesController do
   describe "Get data from a source" do
     context "the source is available and source id is valid" do
       it "should return json with source data" do
-        get :fetch_source_data, api_key: @api_key, id: 12345, name: 'libris'
+        get :fetch_source_data, api_key: @api_key, catalog_id: 12345, name: 'libris'
         expect(json['error']).to be nil
         expect(json['source']['catalog_id']).to eq('12345')
       end
@@ -48,7 +48,7 @@ describe Api::SourcesController do
     context "the source is not available" do
       it "should return json with error data" do
         source_name = 'tjottabengtsson'
-        get :fetch_source_data, api_key: @api_key, id: 12345, name: source_name
+        get :fetch_source_data, api_key: @api_key, catalog_id: 12345, name: source_name
         expect(json['error']).not_to be nil
         expect(json['error']['msg']).to eq("Could not find a source with name #{source_name}")
       end
@@ -58,7 +58,7 @@ describe Api::SourcesController do
       it "should return json with error data" do
         source_name = 'libris'
         catalog_id = '0'
-        get :fetch_source_data, api_key: @api_key, id: catalog_id, name: source_name
+        get :fetch_source_data, api_key: @api_key, catalog_id: catalog_id, name: source_name
         expect(json['error']).not_to be nil
         expect(json['error']['msg']).to eq("Could not find source data for source: #{source_name} and catalog_id: #{catalog_id}")
       end
@@ -67,7 +67,7 @@ describe Api::SourcesController do
     context "the source is known and available but required fields are wrong" do
       it "should return json with error data" do
         source_name = 'libris'
-        get :fetch_source_data, api_key: @api_key, id: nil, name: source_name
+        get :fetch_source_data, api_key: @api_key, catalog_id: nil, name: source_name
         expect(response.status).to eq(422)
         expect(json['error']).not_to be nil
         expect(json['error']['code']).to eq("VALIDATION_ERROR")
@@ -96,7 +96,7 @@ describe Api::SourcesController do
           coverage: 'The Coverage',
           rights: 'The Rights'
         }
-        get :fetch_source_data, api_key: @api_key, id: 'dc', name: 'dc', dc: dc
+        get :fetch_source_data, api_key: @api_key, name: 'dc', dc: dc
         expect(json['error']).to be nil
         expect(json['source']['catalog_id']).to start_with('dc:')
         expect(json['source']['source_name']).to eq('dc')

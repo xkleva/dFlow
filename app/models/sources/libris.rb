@@ -14,7 +14,7 @@ class Libris < Source
   VALID_KEYS = ["source_name", "source_id", "catalog_id", "name", "metadata", "title", "author", "object_info", "comment", "flow_id", "flow_params"]
 
   def self.validate_source_fields(params)
-    return true if params[:id].present?
+    return true if params[:catalog_id].present?
     false
   end
 
