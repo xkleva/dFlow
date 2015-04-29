@@ -1,5 +1,11 @@
 class Document < Source
   FETCH_URL="http://www.ub.gu.se/handskriftsdatabasen/api/getdocument.xml"
+  REQUIRED_SOURCE_FIELDS = ["id"]
+
+  def self.validate_source_fields(params)
+    return true if params[:id].present?
+    false
+  end
 
   def self.fetch_url(catalog_id)
     url = URI.parse(FETCH_URL)

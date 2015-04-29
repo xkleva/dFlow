@@ -78,6 +78,12 @@ class Api::SourcesController < Api::ApiController
 			return
 		end
 
+    if !source_object.validate_source_fields(params)
+      error_msg(ErrorCodes::VALIDATION_ERROR, "Required fields missing")
+      render_json
+      return
+    end
+
 		# Fetch source data
     # Now here we should delegate to the source_object to deal with the params
     # since the params depends on source type.
