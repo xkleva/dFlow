@@ -13,9 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20150428082256) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "access_tokens", force: :cascade do |t|
     t.integer  "user_id"
     t.text     "token"
@@ -84,12 +81,6 @@ ActiveRecord::Schema.define(version: 20150428082256) do
     t.boolean  "copyright",                        null: false
     t.text     "process_message"
     t.text     "package_metadata", default: ""
-  end
-
-  create_table "sources", force: :cascade do |t|
-    t.text     "classname"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "treenodes", force: :cascade do |t|

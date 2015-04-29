@@ -119,3 +119,6 @@ processes:
   -
     code: PACKAGE_METADATA_IMPORT
     status: waiting_for_package_metadata_import
+  -
+    code: CREATE_METS_PACKAGE
+    status: waiting_for_mets_control
