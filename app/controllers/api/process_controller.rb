@@ -22,9 +22,11 @@ class Api::ProcessController < Api::ApiController
 
     # Find a job with proper status according to process
     job = Job.where(status: process["status"]).where(quarantined: false).where(deleted_at: nil).first
+    job.created_by = @current_user.username
     # Switch job status before it is returned
-    if job.switch_status(job.status_object.next_status)
-      @response[:job] = job
+    job.switch_status(job.status_object.next_status)
+    if job.save
+      @response[:job] = job.as_json
       render_json
       return
     else
@@ -46,7 +48,7 @@ class Api::ProcessController < Api::ApiController
       return
     end
 
-    job.created_by = @current_user
+    job.created_by = @current_user.username
 
     # If process is successful, update status
     if params[:status] == 'success'
@@ -54,6 +56,7 @@ class Api::ProcessController < Api::ApiController
       if !params[:msg].blank?
         job.update_attributes(process_message: params[:msg])
       end
+      job.save
     end
 
     # If process failed, quarantine job with message
