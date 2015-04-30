@@ -39,7 +39,7 @@ class Job < ActiveRecord::Base
         display: display,
         source_label: source_label,
         catalog_id: catalog_id,
-        breadcrumb_string: treenode.breadcrumb(as_string: true),
+        breadcrumb_string: treenode_breadcrumb(as_string: true),
         treenode_id: treenode_id,
         quarantined: quarantined
       }
@@ -47,7 +47,7 @@ class Job < ActiveRecord::Base
       super.merge({
         display: display,
         source_label: source_label,
-        breadcrumb: treenode.breadcrumb(include_self: true),
+        breadcrumb: treenode_breadcrumb(include_self: true),
         activities: job_activities.as_json,
         metadata: metadata_hash,
         source_link: source_link,
@@ -55,6 +55,11 @@ class Job < ActiveRecord::Base
         package_metadata: package_metadata_hash
         })
     end
+  end
+
+  def treenode_breadcrumb(params)
+    return nil if !treenode
+    treenode.breadcrumb(params)
   end
 
   # Creates log entries for certain updated attributes

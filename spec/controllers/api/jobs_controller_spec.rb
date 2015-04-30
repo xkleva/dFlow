@@ -115,11 +115,22 @@ describe Api::JobsController do
         expect(json['job']['id']).to be_nil
       end
     end
+
     context "with invalid job parameters" do
       it "should return an error message" do
         treenode = create(:treenode)
         
         post :create, api_key: @api_key, job: {source: 'libris', cataloz_id: '1234', title: 'Bamse och hens vänner', treenode_id: treenode.id, name: 'Bamse-jobbet', comment: 'comment'}, validate_only: true
+        
+        expect(json['error']).to_not be nil
+      end
+    end
+
+    context "with invalid treenode_id parameter" do
+      it "should return an error message" do
+        treenode = create(:treenode)
+        
+        post :create, api_key: @api_key, job: {source: 'libris', catalog_id: '1234', title: 'Bamse och hens vänner', name: 'Bamse-jobbet', comment: 'comment'}, validate_only: true
         
         expect(json['error']).to_not be nil
       end
