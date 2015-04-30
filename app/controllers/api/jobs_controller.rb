@@ -94,7 +94,7 @@ class Api::JobsController < Api::ApiController
   formats [:json]
   description 'Creates a Job object'
   def create
-    validate_only = params[:validate_only]
+    validate_only = params[:validate_only] == "true"
     job_params = params[:job]
     job_params[:metadata] = job_params[:metadata].to_json
     job_params[:created_by] = @current_user.username
