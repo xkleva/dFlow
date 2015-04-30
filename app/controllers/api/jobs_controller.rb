@@ -94,6 +94,7 @@ class Api::JobsController < Api::ApiController
   formats [:json]
   description 'Creates a Job object'
   def create
+    validate_only = params[:validate_only]
     job_params = params[:job]
     job_params[:metadata] = job_params[:metadata].to_json
     job_params[:created_by] = @current_user.username
@@ -105,15 +106,17 @@ class Api::JobsController < Api::ApiController
       job.id = params[:force_id]
     end
 
-    if !job.save
+    if (!validate_only && !job.save) || (validate_only && !job.valid?)
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job.", job.errors)
     end
 
-    job_url = url_for(controller: 'jobs', action: 'create', only_path: true)
-    headers['location'] = "job_url/#{job.id}"
+    if !validate_only
+      job_url = url_for(controller: 'jobs', action: 'create', only_path: true)
+      headers['location'] = "#{job_url}/#{job.id}"
+    end
     @response[:job] = job
     render_json(201)
-  rescue Exception => e
+  rescue => e
     error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job, this is why: [#{e.message}].")
     render_json
   end

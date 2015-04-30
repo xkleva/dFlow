@@ -104,6 +104,28 @@ describe Api::JobsController do
     end
   end
 
+  describe "Validate job" do
+    context "with valid job parameters" do
+      it "should validate job without errors" do
+        treenode = create(:child_treenode)
+        
+        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: treenode.id, name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: true, status: 'waiting_for_digitizing'}, validate_only: true
+        
+        expect(json['error']).to be nil
+        expect(json['job']['id']).to be_nil
+      end
+    end
+    context "with invalid job parameters" do
+      it "should return an error message" do
+        treenode = create(:treenode)
+        
+        post :create, api_key: @api_key, job: {source: 'libris', cataloz_id: '1234', title: 'Bamse och hens vänner', treenode_id: treenode.id, name: 'Bamse-jobbet', comment: 'comment'}, validate_only: true
+        
+        expect(json['error']).to_not be nil
+      end
+    end
+  end
+
   describe "GET index" do
     context "pagination" do
       it "should return metadata about pagination" do
