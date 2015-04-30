@@ -202,6 +202,7 @@ DEPENDENCIES
   apipie-rails
   bcrypt (~> 3.1.7)
   capistrano (~> 3.4.0)
+  capistrano-bundler (~> 1.1.2)
   capistrano-passenger
   capistrano-rails (~> 1.1)
   codeclimate-test-reporter
