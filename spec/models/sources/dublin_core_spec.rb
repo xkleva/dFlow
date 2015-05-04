@@ -33,6 +33,7 @@ RSpec.describe DublinCore, :type => :model do
       end
     end
   end
+
   describe "fetch source data" do
     context "when dc data is provided" do
       it "should generate a catalog_id with the format dc:<uuid>" do
@@ -41,6 +42,7 @@ RSpec.describe DublinCore, :type => :model do
       end
       it "should find the title in title" do
         data = @dublin_core.fetch_source_data('dc', dc_data)
+        #pp data
         expect(data[:title]).to start_with("The Title")
       end
       it "should find the creator in author" do
@@ -59,6 +61,14 @@ RSpec.describe DublinCore, :type => :model do
         data = @dublin_core.fetch_source_data('dc', dc_data)
         expect(data[:metadata][:dc][:subject]).to start_with("The Subject")
       end
+    end
+  end
+
+  describe "build_xml" do
+    it "should return correct xml" do
+      xml = @dublin_core.build_xml(dc_data)
+      doc = Nokogiri::XML(xml)
+      expect(doc.search("//title").text).to start_with("The Title")
     end
   end
 

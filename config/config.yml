@@ -48,6 +48,10 @@ sources:
     label: DC
     class_name: DublinCore
   -
+    name: dcxml
+    label: DC-XML
+    class_name: DublinCoreXML
+  -
     name: other_source
     label: Other Source
     class_name: OtherSource
