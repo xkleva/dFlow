@@ -13,20 +13,12 @@ class DublinCore < DublinCoreXML
     false
   end
 
-  # Validates fields of job object
-  def self.validate_job_fields(object)
-    object.each do |key,value|
-      return false if !VALID_KEYS.include? key.to_s
-    end
-    true
-  end
-
   # Returns a hash of data fetched from source
   # I builds xml, parses the xml,
   # constructs and returns job data.
-  def self.fetch_source_data(catalog_id, dc={})
+  def self.fetch_source_data(catalog_id, extra_params={})
     job_data = {}
-    xml = build_xml(dc)
+    xml = build_xml(extra_params)
     dc_data = parse_xml(xml)
     job_data = build_job_data(dc_data, xml)
 
