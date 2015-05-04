@@ -35,4 +35,17 @@ class Source
       return source["label"]
     end
   end
+
+  def self.validate_required_fields(name, params)
+    source = find_by_name(name)
+    if source.nil?
+      return false
+    end
+    params_keys = params.keys.map(&:to_s)
+    remaining_required_fields = source.required_source_fields - params_keys
+    if remaining_required_fields.empty?
+      return true
+    end
+    false
+  end
 end

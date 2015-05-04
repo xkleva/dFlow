@@ -13,6 +13,11 @@ class Libris < Source
   LIBRIS_XSEARCH_MARC = "http://libris.kb.se/xsearch?format=marcxml&format_level=full&holdings=true&query=ONR:"
   VALID_KEYS = ["source_name", "source_id", "catalog_id", "name", "metadata", "title", "author", "object_info", "comment", "flow_id", "flow_params"]
 
+  def self.validate_source_fields(params)
+    return true if params[:catalog_id].present?
+    false
+  end
+
   # Validates fields of job object
   def self.validate_job_fields(object)
     object.each do |key,value|

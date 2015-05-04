@@ -39,7 +39,7 @@ class Job < ActiveRecord::Base
         display: display,
         source_label: source_label,
         catalog_id: catalog_id,
-        breadcrumb_string: treenode.breadcrumb(as_string: true),
+        breadcrumb_string: treenode_breadcrumb(as_string: true),
         treenode_id: treenode_id,
         quarantined: quarantined
       }
@@ -47,7 +47,7 @@ class Job < ActiveRecord::Base
       super.merge({
         display: display,
         source_label: source_label,
-        breadcrumb: treenode.breadcrumb(include_self: true),
+        breadcrumb: treenode_breadcrumb(include_self: true),
         activities: job_activities.as_json,
         metadata: metadata_hash,
         source_link: source_link,
@@ -55,6 +55,11 @@ class Job < ActiveRecord::Base
         package_metadata: package_metadata_hash
         })
     end
+  end
+
+  def treenode_breadcrumb(params)
+    return nil if !treenode
+    treenode.breadcrumb(params)
   end
 
   # Creates log entries for certain updated attributes
@@ -289,40 +294,20 @@ class Job < ActiveRecord::Base
     Status.find_by_name(status)
   end
 
-  def pdf_path
-    if done?
-      location = APP_CONFIG["pdf_path_prefix_store"]
-      job_id = sprintf("GUB%07d", id)
-    else
-      location = APP_CONFIG["pdf_path_prefix_packaging"]
-      job_id = id.to_s
-    end
+  def package_location
+    return "STORE" if done?
+    "PACKAGING"
+  end
 
-    path = APP_CONFIG['pdf_path']
-    path = path.gsub("@@JOBID@@", job_id).gsub("@@LOCATION@@", location)
+  def pdf_path
+    job_id = id.to_s
+    job_id = sprintf("GUB%07d", job_id.to_i) if done?
+    return sprintf("/%s/pdf/%s.pdf", job_id, job_id)
   end
 
   # True if PDF can be found based on config
   def has_pdf
-    if done?
-      location = APP_CONFIG["pdf_exists_prefix_store"]
-      job_id = sprintf("GUB%07d", id)
-    else
-      location = APP_CONFIG["pdf_exists_prefix_packaging"]
-      job_id = id.to_s
-    end
-
-    path = APP_CONFIG['pdf_path']
-    path = path.gsub("@@JOBID@@", job_id).gsub("@@LOCATION@@", location)
-
-    begin
-      open(path)
-      return true
-    rescue OpenURI::HTTPError => e
-      return false
-    end
+    return FileAdapter.file_exists?(package_location, pdf_path)
   end
-
-
 end
 

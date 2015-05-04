@@ -7,6 +7,19 @@ require 'sources/dublin_core_xml'
 # {title: "String", author: "String", metadata: {}, xml: "String", source_id: int, catalog_id: int}
 #
 class DublinCore < DublinCoreXML
+  def self.validate_source_fields(params)
+    return false if !params[:dc]
+    return true if params[:dc][:title]
+    false
+  end
+
+  # Validates fields of job object
+  def self.validate_job_fields(object)
+    object.each do |key,value|
+      return false if !VALID_KEYS.include? key.to_s
+    end
+    true
+  end
 
   # Returns a hash of data fetched from source
   # I builds xml, parses the xml,
