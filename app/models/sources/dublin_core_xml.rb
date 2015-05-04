@@ -38,7 +38,6 @@ class DublinCoreXML < Source
 
   def self.extract_xml(extra_params)
     xml = extra_params[:xml]
-    pp xml
     return xml
   end
 

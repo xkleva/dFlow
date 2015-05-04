@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe DublinCore, :type => :model do
+RSpec.describe DublinCoreXML, :type => :model do
 
   before :each do
     @dcxml = Source.find_by_name('dcxml')
