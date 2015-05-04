@@ -24,7 +24,6 @@ class DublinCore < Source
     job_data = {}
     job_data = populate_with_dc(catalog_id, dc)
     job_data[:catalog_id] = generate_catalog_id()
-    pp job_data
     return job_data
   end
 

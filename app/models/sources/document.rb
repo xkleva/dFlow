@@ -15,7 +15,7 @@ class Document < Source
     url
   end
 
-  def self.fetch_source_data(catalog_id)
+  def self.fetch_source_data(catalog_id, extra_params={})
     data = nil
     open(fetch_url(catalog_id)) do |u| 
       data = u.read

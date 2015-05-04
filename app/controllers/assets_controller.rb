@@ -21,15 +21,18 @@ class AssetsController < ApplicationController
     # Job PDF asset
     job = Job.find_by_id(params[:asset_id])
     if !job
-      error_msg(ErrorCodes::OBJECT_ERROR, "Could not find job with id: #{asset_id}")
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not find job with id: #{params[:asset_id]}")
+      render_json
+    elsif !job.has_pdf
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not find PDF for job with id: #{params[:asset_id]}")
       render_json
     else
-      job_pdf = open(job.pdf_path)
+      job_pdf = FileAdapter.open_file(job.package_location, job.pdf_path)
       @response = {ok: "success"}
       
       respond_to do |format|
         format.json { render_json }
-        format.pdf { send_file job_pdf, type: "application/pdf", disposition: "inline" }
+        format.pdf { send_data job_pdf.read, type: "application/pdf", disposition: "inline" }
       end
     end
   end

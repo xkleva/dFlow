@@ -37,6 +37,9 @@ user_roles:
 # Flags for using external authentication source
 external_auth: true
 
+# Adapter for file management
+file_adapter: dfile
+
 # List of available sources
 sources:
   -
