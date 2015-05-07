@@ -3,7 +3,11 @@ require 'rails_helper'
 
 RSpec.describe Job, :type => :model do
   before :each do
+    WebMock.disable_net_connect!
     login_users
+  end
+  after :each do
+    WebMock.allow_net_connect!
   end
 
   describe "title" do
@@ -236,6 +240,28 @@ RSpec.describe Job, :type => :model do
       pre_indexed_jobs.each do |pre_indexed_job|
         job = Job.find_by_id(pre_indexed_job.id)
         expect(job.search_title).to match("dummy")
+      end
+    end
+  end
+
+  describe "restart job" do
+    context "for a job with a different status" do
+      it "should set start status and create log entries" do
+
+        stub_request(:get, "http://dfile.example.org/move_to_trash?api_key=test_key&source_dir=PACKAGING:1").
+         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => "", :headers => {})
+
+
+        job = create(:job, status: 'digitizing', created_by: 'TestUser', message: 'Restarted')
+        @old_count = job.job_activities.count
+        
+        job.restart
+
+        job2 = Job.find(job.id)
+
+        expect(job2.status).to eq 'waiting_for_digitizing'
+        expect(job2.job_activities.count).to eq @old_count+2
       end
     end
   end

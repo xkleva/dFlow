@@ -87,6 +87,8 @@ events:
     name: DELETE
   -
     name: STATUS
+  -
+    name: RESTART
 
 # List of available statuses
 statuses:
@@ -129,3 +131,6 @@ processes:
   -
     code: CREATE_METS_PACKAGE
     status: waiting_for_mets_control
+
+# Defines the format of the package name
+package_name: GUB%07d

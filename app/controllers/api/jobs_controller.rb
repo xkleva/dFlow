@@ -149,6 +149,18 @@ class Api::JobsController < Api::ApiController
     render_json
   end
 
+  api!
+  def restart
+    job = Job.find_by_id(params[:id])
+    job.created_by = @currrent_user
+    job.message = params[:msg]
+    if job.restart
+      @response[:job] = job
+    else
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not restart.", job.errors)
+    end
+  end
+
 
   # Checks if job exists, and sets @job variable. Otherwise, return error.
   private

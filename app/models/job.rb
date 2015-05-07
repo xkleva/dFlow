@@ -299,15 +299,31 @@ class Job < ActiveRecord::Base
     "PACKAGING"
   end
 
+  # Returns current package name, depending on status
+  def package_name
+    package_name = id.to_s
+    package_name = sprintf(APP_CONFIG['package_name'], id) if done?
+    return package_name
+  end
+
+  # Returns path to pdf file
   def pdf_path
-    job_id = id.to_s
-    job_id = sprintf("GUB%07d", job_id.to_i) if done?
-    return sprintf("/%s/pdf/%s.pdf", job_id, job_id)
+    #job_id = id.to_s
+    #job_id = sprintf("GUB%07d", job_id.to_i) if done?
+    return sprintf("/%s/pdf/%s.pdf", package_name, package_name)
   end
 
   # True if PDF can be found based on config
   def has_pdf
     return FileAdapter.file_exists?(package_location, pdf_path)
+  end
+
+  # Restarts job by setting status and moving files
+  def restart
+    if FileAdapter.move_to_trash(package_location, package_name) && switch_status(Status.find_by_name('waiting_for_digitizing'))
+      create_log_entry("RESTART", message)
+      save!
+    end
   end
 end
 

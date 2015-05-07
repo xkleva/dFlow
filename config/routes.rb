@@ -21,6 +21,7 @@ Rails.application.routes.draw do
 
     # Jobs API
     resources :jobs
+    put 'jobs/:id/restart', to: 'jobs#restart'
 
     # Sources API
     get 'sources/fetch_source_data', to: 'sources#fetch_source_data'

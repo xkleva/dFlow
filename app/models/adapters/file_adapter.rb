@@ -1,3 +1,6 @@
+# Base class for FileAdapters
+# Used by calling FileAdapter.method_name
+
 class FileAdapter
   def self.adapter
     @@adapter_object ||= nil
