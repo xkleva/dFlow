@@ -22,6 +22,13 @@ class Api::ProcessController < Api::ApiController
 
     # Find a job with proper status according to process
     job = Job.where(status: process["status"]).where(quarantined: false).where(deleted_at: nil).first
+
+    if !job
+      @repsonse[:msg] = "No job found to process for code #{code}"
+      render_json
+      return
+    end
+
     job.created_by = @current_user.username
     # Switch job status before it is returned
     job.switch_status(job.status_object.next_status)
