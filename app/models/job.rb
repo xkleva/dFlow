@@ -41,7 +41,8 @@ class Job < ActiveRecord::Base
         catalog_id: catalog_id,
         breadcrumb_string: treenode_breadcrumb(as_string: true),
         treenode_id: treenode_id,
-        quarantined: quarantined
+        quarantined: quarantined,
+        main_status: main_status
       }
     else
       super.merge({
@@ -52,7 +53,8 @@ class Job < ActiveRecord::Base
         metadata: metadata_hash,
         source_link: source_link,
         has_pdf: has_pdf,
-        package_metadata: package_metadata_hash
+        package_metadata: package_metadata_hash,
+        main_status: main_status
         })
     end
   end
@@ -215,7 +217,7 @@ class Job < ActiveRecord::Base
 
   # Generates a display title used in lists primarily
   def display
-    title_trunc = title_string.truncate(50, separator: ' ')
+    title_trunc = title_string.truncate(85, separator: ' ')
     display = name.present? ? name : title_trunc
     if !ordinals.blank?
       display += " (#{ordinals})"
@@ -324,6 +326,36 @@ class Job < ActiveRecord::Base
       create_log_entry("RESTART", message)
       save!
     end
+  end
+
+  # Returns a limited number of main statuses based on current status
+  # Valid values: ["DONE", "WAITING_FOR_ACTION", "PROCESSING", "ERROR"]
+  def main_status
+    return "NOT_STARTED" if !is_started?
+    return "ERROR" if is_error?
+    return "DONE" if is_done?
+    return "WAITING_FOR_ACTION" if is_waiting_for_action?
+    return "PROCESSING" if is_processing?
+  end
+
+  def is_started?
+    status != 'waiting_for_digitizing'
+  end
+
+  def is_error?
+    quarantined
+  end
+
+  def is_done?
+    done?
+  end
+
+  def is_waiting_for_action?
+    ["waiting_for_digitizing", "quality_control"].include? (status)
+  end
+
+  def is_processing?
+    !is_error? && !is_done? && !is_waiting_for_action?
   end
 end
 
