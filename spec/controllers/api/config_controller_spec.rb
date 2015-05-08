@@ -2,7 +2,7 @@ require "rails_helper"
 
 describe Api::ConfigController do
 	before :each do
-		@api_key = APP_CONFIG["api_key"]
+		@api_key = APP_CONFIG["api_key_users"].first["api_key"]
 	end
 
 	describe "GET role_list" do

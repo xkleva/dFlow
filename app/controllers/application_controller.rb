@@ -61,8 +61,11 @@ class ApplicationController < ActionController::Base
   def validate_key
     return if @current_user
     api_key = params[:api_key]
-    if api_key == APP_CONFIG["api_key"]
-      @current_user = User.new(username: 'api_key_user', name: 'API key user', role: "API_KEY")
+    api_user = APP_CONFIG["api_key_users"].find{|x| x["api_key"] == api_key}
+    if api_user
+      api_user = api_user.dup
+      api_user.delete("api_key")
+      @current_user = User.new(api_user)
       return true
     else
       return false

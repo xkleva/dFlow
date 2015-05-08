@@ -4,7 +4,7 @@ describe Api::UsersController do
 
   before :each do
     login_users
-    @api_key = APP_CONFIG["api_key"]
+    @api_key = APP_CONFIG["api_key_users"].first["api_key"]
   end
 
   describe "POST create" do

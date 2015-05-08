@@ -24,7 +24,7 @@ class Api::ProcessController < Api::ApiController
     job = Job.where(status: process["status"]).where(quarantined: false).where(deleted_at: nil).first
 
     if !job
-      @repsonse[:msg] = "No job found to process for code #{code}"
+      @response[:msg] = "No job found to process for code #{code}"
       render_json
       return
     end

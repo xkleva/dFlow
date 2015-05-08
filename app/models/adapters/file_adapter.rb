@@ -15,6 +15,7 @@ class FileAdapter
   end
 
   def self.method_missing(method, *args)
+    FileAdapter.adapter.errors = {} unless method == :errors
     FileAdapter.adapter.send(method, *args)
   end
 end
