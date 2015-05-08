@@ -4,6 +4,8 @@
 require 'open-uri'
 
 class DfileAdapter
+  attr_accessor :errors
+
   def initialize(base_url:)
     @base_url = base_url
   end
