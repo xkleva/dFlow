@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150428082256) do
+ActiveRecord::Schema.define(version: 20150511153604) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,12 +84,7 @@ ActiveRecord::Schema.define(version: 20150428082256) do
     t.boolean  "copyright",                        null: false
     t.text     "process_message"
     t.text     "package_metadata", default: ""
-  end
-
-  create_table "sources", force: :cascade do |t|
-    t.text     "classname"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer  "parent_ids",       default: [],                 array: true
   end
 
   create_table "treenodes", force: :cascade do |t|

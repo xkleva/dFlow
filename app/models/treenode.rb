@@ -16,6 +16,16 @@ class Treenode < ActiveRecord::Base
     jobs.each {|job| job.delete}
   end
 
+  # Returns array of all parent ids
+  def parent_ids
+    parent_ids = []
+    if has_parent_id?
+      parent_ids += parent.parent_ids
+    end
+    parent_ids << id
+    return parent_ids
+  end
+
   def deleted?
     deleted_at.present?
   end

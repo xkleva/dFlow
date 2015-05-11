@@ -29,6 +29,7 @@ class Job < ActiveRecord::Base
   after_initialize :default_values
 
   after_save :create_log_entries, :on => :update
+  before_validation :set_treenode_ids
 
   def as_json(options = {})
     if options[:list]
@@ -64,6 +65,13 @@ class Job < ActiveRecord::Base
   def treenode_breadcrumb(params)
     return nil if !treenode
     treenode.breadcrumb(params)
+  end
+
+  def set_treenode_ids
+    pp 'counting'
+    pp treenode.parent_ids
+    self.parent_ids = treenode.parent_ids
+    true
   end
 
   # Creates log entries for certain updated attributes
