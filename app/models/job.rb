@@ -364,5 +364,10 @@ class Job < ActiveRecord::Base
   def files_list
     return FileAdapter.files_list(package_location, package_name)
   end
+
+  # Returns true if job is a subset of a periodical
+  def is_periodical
+    return source_object.try(:is_periodical, metadata_value('type_of_record'))
+  end
 end
 

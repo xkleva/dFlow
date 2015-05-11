@@ -29,7 +29,6 @@ class Libris < Source
   # Returns a hash of data fetched from source
   def self.fetch_source_data(catalog_id, extra_params={})
     url = URI.parse(LIBRIS_XSEARCH_MARC+catalog_id.to_s)
-    pp "URL=#{url}"
     job_data = {}
     job_data = fetch_from_libris(url)
     job_data[:catalog_id] = catalog_id if not job_data.blank?
@@ -60,12 +59,19 @@ class Libris < Source
       job_data[:metadata] = {}
       job_data[:metadata][:type_of_record] =  marc_record.leader[6..7]
       job_data[:source_name] = Source.find_name_by_class_name(self.name)
+      job_data[:source_label] = Source.find_label_by_name(job_data[:source_name])
+      job_data[:is_periodical] = is_periodical(job_data[:metadata][:type_of_record])
     end
     return job_data
   end
 
   def self.source_link(id)
     return "http://libris.kb.se/bib/#{id}"
+  end
+
+  # Returns true if given type is a subset of a periodical
+  def self.is_periodical(type_of_record)
+    ['as', 'cs'].include?(type_of_record)
   end
 
 end
