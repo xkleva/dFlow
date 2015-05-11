@@ -68,9 +68,7 @@ class Job < ActiveRecord::Base
   end
 
   def set_treenode_ids
-    pp 'counting'
-    pp treenode.parent_ids
-    self.parent_ids = treenode.parent_ids
+    self.parent_ids = treenode.parent_ids if treenode
     true
   end
 
