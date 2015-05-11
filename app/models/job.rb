@@ -42,7 +42,8 @@ class Job < ActiveRecord::Base
         breadcrumb_string: treenode_breadcrumb(as_string: true),
         treenode_id: treenode_id,
         quarantined: quarantined,
-        main_status: main_status
+        main_status: main_status,
+        status: status
       }
     else
       super.merge({
@@ -351,7 +352,7 @@ class Job < ActiveRecord::Base
   end
 
   def is_waiting_for_action?
-    ["waiting_for_digitizing", "quality_control"].include? (status)
+    ["waiting_for_digitizing", "quality_control", "post_processing_user_input"].include? (status)
   end
 
   def is_processing?
