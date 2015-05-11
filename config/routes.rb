@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   # Assets routes
   get 'assets/work_order/:asset_id', to: 'assets#work_order'
   get 'assets/job_pdf/:asset_id', to: 'assets#job_pdf'
+  get 'assets/job_file/:asset_id', to: 'assets#job_file'
 
   namespace :api, :defaults => {:format => :json} do
     get 'check_connection' , to: 'process#check_connection'
