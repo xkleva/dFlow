@@ -55,7 +55,8 @@ class Job < ActiveRecord::Base
         source_link: source_link,
         has_pdf: has_pdf,
         package_metadata: package_metadata_hash,
-        main_status: main_status
+        main_status: main_status,
+        files: files_list
         })
     end
   end
@@ -357,6 +358,11 @@ class Job < ActiveRecord::Base
 
   def is_processing?
     !is_error? && !is_done? && !is_waiting_for_action?
+  end
+
+  # Returns a list of all files in job package
+  def files_list
+    return FileAdapter.files_list(package_location, package_name)
   end
 end
 

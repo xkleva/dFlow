@@ -54,4 +54,16 @@ class DfileAdapter
       return false
     end
   end
+
+  # Returns a list of files including catalog structure based on location
+  def files_list(location, path)
+    source_dir = "#{location}:#{path}"
+    url = api_url(:list_files, params: {source_dir: source_dir, show_catalogues: true})
+    response = HTTParty.get(url)
+    if response.success?
+      return response
+    else
+      return response
+    end
+  end
 end
