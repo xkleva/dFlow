@@ -87,33 +87,45 @@ statuses:
   -
     name: waiting_for_digitizing
     next_status: digitizing
+    state: START
   -
     name: digitizing
+    previous_status: waiting_for_digitizing
     next_status: post_processing
+    state: PROCESS
   -
     name: post_processing
     next_status: quality_control
+    state: PROCESS
   -
     name: post_processing_user_input
+    previous_status: post_processing
     next_status: post_processing
+    state: ACTION
   -
     name: quality_control
     next_status: waiting_for_package_metadata_import
+    state: ACTION
   -
     name: waiting_for_package_metadata_import
     next_status: package_metadata_import
+    state: PROCESS
   -
     name: package_metadata_import
     next_status: waiting_for_mets_control
+    state: PROCESS
   -
     name: waiting_for_mets_control
     next_status: mets_control
+    state: PROCESS
   -
     name: mets_control
     next_status: done
+    state: PROCESS
   -
     name: done
-    next_status: nil
+    next_status:
+    state: FINISH
 
 # List of processes and their calling status
 processes:

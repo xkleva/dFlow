@@ -112,4 +112,30 @@ RSpec.describe Treenode, :type => :model do
       end
     end
   end
+
+  describe "load_state_groups" do
+    context "jobs with different states exist" do
+      it "should return a hash with states" do
+        treenode = create(:top_treenode)
+        create(:job, treenode_id: treenode.id, status: 'digitizing')
+        create(:job, treenode_id: treenode.id, status: 'waiting_for_digitizing')
+        hash = treenode.get_state_groups
+        expect(hash.size).to eq 2
+        expect(hash["START"]).to eq 1
+      end
+    end
+    context "jobs with different states exist under children" do
+      it "should return a hash with states" do
+        treenode = create(:top_treenode)
+        create(:job, treenode_id: treenode.id, status: 'digitizing')
+        create(:job, treenode_id: treenode.id, status: 'waiting_for_digitizing')
+        childnode = create(:treenode, parent_id: treenode.id)
+        create(:job, treenode_id: childnode.id, status: 'digitizing')
+        create(:job, treenode_id: childnode.id, status: 'waiting_for_digitizing')
+        hash = treenode.get_state_groups
+        expect(hash.size).to eq 2
+        expect(hash["START"]).to eq 2
+      end
+    end
+  end
 end

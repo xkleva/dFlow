@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150511153604) do
+ActiveRecord::Schema.define(version: 20150512074546) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -86,6 +86,8 @@ ActiveRecord::Schema.define(version: 20150511153604) do
     t.text     "package_metadata", default: ""
     t.integer  "parent_ids",       default: [],                 array: true
   end
+
+  add_index "jobs", ["parent_ids"], name: "index_jobs_on_parent_ids", using: :gin
 
   create_table "treenodes", force: :cascade do |t|
     t.string   "name"

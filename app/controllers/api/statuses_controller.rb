@@ -5,68 +5,18 @@ class Api::StatusesController < Api::ApiController
   resource_description do
     short 'Status update manager - Updates job statuses'
   end
-  # API endpoint to start digitizing
-  api!
-  description "Starts digitizing"
-  def digitizing_begin
-    new_status('waiting_for_digitizing', Status.find_by_name('digitizing'))
+
+  # Sets new status if allowed
+  def new
+    to_status = Status.find_by_name(params[:status])
+    new_status(to_status.previous_status, to_status)
   end
 
-  api!
-  def digitizing_end
-    new_status('digitizing', Status.find_by_name('digitizing').next_status)
+  # Completes status and changes to next status
+  def complete
+    from_status = Status.find_by_name(params[:status])
+    new_status(from_status, from_status.next_status)
   end
-
-  api!
-  def post_processing_begin
-    render_json if ensure_status('post_processing')
-  end
-
-  api!
-  def post_processing_end
-    new_status('post_processing', Status.find_by_name('post_processing').next_status)
-  end
-
-  api!
-  def post_processing_user_input_begin
-    new_status('post_processing', Status.find_by_name('post_processing_user_input'))
-  end
-
-  api!
-  def post_processing_user_input_end
-    new_status('post_processing_user_input', Status.find_by_name('post_processing_user_input').next_status)
-  end
-
-  api!
-  def quality_control_begin
-    render_json if ensure_status('quality_control')
-  end
-
-  api!
-  def quality_control_end
-    new_status('quality_control', Status.find_by_name('quality_control').next_status)
-  end
-
-  api!
-  def waiting_for_mets_control_begin
-    render_json if ensure_status('waiting_for_mets_control')
-  end
-
-  api!
-  def waiting_for_mets_control_end
-    new_status('waiting_for_mets_control', Status.find_by_name('waiting_for_mets_control').next_status)
-  end
-
-  api!
-  def mets_control_begin
-    render_json if ensure_status('mets_control')
-  end
-
-  api!
-  def mets_control_end
-    new_status('mets_control', Status.find_by_name('mets_control').next_status)
-  end
-
 
   private 
 
@@ -83,7 +33,15 @@ class Api::StatusesController < Api::ApiController
   # Changes status
   def new_status(from_status, to_status)
 
-    return if !ensure_status(from_status)
+    # If job is already in new status, return success
+    if @job.status == to_status.name
+      @response[:job] = @job
+      render_json
+      return
+    end
+
+    # If job is not in from_status, return
+    return if from_status && !ensure_status(from_status)
 
     @job.created_by = @current_user.username
     @job.switch_status(to_status)
@@ -100,8 +58,8 @@ class Api::StatusesController < Api::ApiController
   # Makes sure that job exists and is in correct status
   def ensure_status(status)
 
-    if @job.status != status
-      error_msg(ErrorCodes::QUEUE_ERROR, "Job is in wrong status: #{@job.status} instead of #{status}")
+    if @job.status != status.name
+      error_msg(ErrorCodes::QUEUE_ERROR, "Job is in wrong status: #{@job.status} instead of #{status.name}")
       render_json
       return false
     else

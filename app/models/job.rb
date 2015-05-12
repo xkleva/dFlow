@@ -98,7 +98,7 @@ class Job < ActiveRecord::Base
   end
 
   def default_values
-    self.status ||= 'waiting_for_digitizing'
+    self.status ||= Status.find_start_status.name
     @created_by ||= 'not_set'
   end
 
@@ -297,7 +297,7 @@ class Job < ActiveRecord::Base
 
   # Returns true if job is done
   def done?
-    status == 'done'
+    status == Status.find_finish_status.name
   end
 
   def status_object
@@ -330,7 +330,7 @@ class Job < ActiveRecord::Base
 
   # Restarts job by setting status and moving files
   def restart
-    if FileAdapter.move_to_trash(package_location, package_name) && switch_status(Status.find_by_name('waiting_for_digitizing'))
+    if FileAdapter.move_to_trash(package_location, package_name) && switch_status(Status.find_start_status)
       create_log_entry("RESTART", message)
       save!
     end
@@ -347,7 +347,7 @@ class Job < ActiveRecord::Base
   end
 
   def is_started?
-    status != 'waiting_for_digitizing'
+    status != Status.find_start_status.name
   end
 
   def is_error?
@@ -359,7 +359,7 @@ class Job < ActiveRecord::Base
   end
 
   def is_waiting_for_action?
-    ["waiting_for_digitizing", "quality_control", "post_processing_user_input"].include? (status)
+    Status.statuses_by_state("ACTION").map{|x| x["name"]}.include? (status)
   end
 
   def is_processing?

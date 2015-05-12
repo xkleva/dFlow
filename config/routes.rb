@@ -35,18 +35,8 @@ Rails.application.routes.draw do
     post 'process/:job_id', to: 'process#update_process'
 
     # Statuses API
-    get 'jobs/:id/digitizing_begin', to: 'statuses#digitizing_begin'
-    get 'jobs/:id/digitizing_end', to: 'statuses#digitizing_end'
-    get 'jobs/:id/post_processing_begin', to: 'statuses#post_processing_begin'
-    get 'jobs/:id/post_processing_end', to: 'statuses#post_processing_end'
-    get 'jobs/:id/post_processing_user_input_begin', to: 'statuses#post_processing_user_input_begin'
-    get 'jobs/:id/post_processing_user_input_end', to: 'statuses#post_processing_user_input_end'
-    get 'jobs/:id/quality_control_begin', to: 'statuses#quality_control_begin'
-    get 'jobs/:id/quality_control_end', to: 'statuses#quality_control_end'
-    get 'jobs/:id/waiting_for_mets_control_begin', to: 'statuses#waiting_for_mets_control_begin'
-    get 'jobs/:id/waiting_for_mets_control_end', to: 'statuses#waiting_for_mets_control_end'
-    get 'jobs/:id/mets_control_begin', to: 'statuses#mets_control_begin'
-    get 'jobs/:id/mets_control_end', to: 'statuses#mets_control_end'
+    get 'statuses/:id/new/:status', to: 'statuses#new'
+    get 'statuses/:id/complete/:status', to: 'statuses#complete'
 
 
     #get 'jobs', to: 'jobs#index'
