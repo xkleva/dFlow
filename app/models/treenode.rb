@@ -10,7 +10,7 @@ class Treenode < ActiveRecord::Base
   validate :parent_id_exists, :if => :has_parent_id?
   validate :parent_id_change_destination
 
-  after_save :handle_node_move, :on => :update
+  after_update :handle_node_move
 
   def delete
     update_attribute(:deleted_at, Time.now)
@@ -23,7 +23,7 @@ class Treenode < ActiveRecord::Base
     if self.parent_id_changed?
       Job.all.each do |job|
         job.set_treenode_ids
-        job.save
+        job.save(validate: false)
       end
     end
   end
@@ -126,6 +126,8 @@ class Treenode < ActiveRecord::Base
     end
 
     base_json[:state_groups] = get_state_groups
+
+    base_json[:jobs_count] = jobs.count
 
     base_json
   end

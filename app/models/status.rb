@@ -20,8 +20,13 @@ class Status
     Status.new(APP_CONFIG["statuses"].find{|x| x["state"] == "FINISH"})
   end
 
-  def self.statuses_by_state(state)
-    APP_CONFIG["statuses"].select{|x| x["state"] == state}
+  # Returns array of status names for given state
+  def self.status_by_state(state)
+    APP_CONFIG["statuses"].select{|x| x["state"] == state}.map{|x| x["name"]}
+  end
+
+  def self.all_states
+    APP_CONFIG["statuses"].map{|x| x["state"]}.uniq
   end
 
   # Returns next status object

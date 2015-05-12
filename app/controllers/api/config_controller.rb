@@ -40,7 +40,26 @@ class Api::ConfigController < Api::ApiController
     if status_list.empty?
       error_msg(ErrorCodes::ERROR, "No Statuses are defined")
     else
-      @response[:statuss] = status_list
+      @response[:statuses] = status_list
+    end
+    render_json
+
+  rescue
+    error_msg(ErrorCodes::ERROR, "Something went wrong")
+    render_json
+  end
+
+  # Returns a list of statuses
+  api!
+  def state_list
+    # Select role name from config list of roles
+    states_list = Status.all_states
+
+    # Set response
+    if states_list.empty?
+      error_msg(ErrorCodes::ERROR, "No States are defined")
+    else
+      @response[:states] = states_list
     end
     render_json
 

@@ -22,6 +22,10 @@ class Api::JobsController < Api::ApiController
     metaquery = {}
     metaquery[:query] = params[:query] # Not implemented yet
 
+    if params.has_key?(:node_id)
+      jobs = jobs.where(treenode_id: params[:node_id])
+    end
+
     if params[:query]
       Job.index_jobs
       jobs = jobs.where("search_title LIKE ?", "%#{params[:query].norm}%")
@@ -36,9 +40,14 @@ class Api::JobsController < Api::ApiController
       jobs = jobs.where(quarantined: value)
     end
 
-    # Filter by quarantined flag if it exists and is a boolean value
+    # Filter by status
     if params.has_key?(:status) && !params[:status].blank?
       jobs = jobs.where(status: params[:status])
+    end
+
+    # Filter by state
+    if params.has_key?(:state) && !params[:state].blank?
+      jobs = jobs.where(status: Status.status_by_state(params[:state]))
     end
 
     metaquery[:total] = jobs.count

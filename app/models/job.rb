@@ -359,11 +359,11 @@ class Job < ActiveRecord::Base
   end
 
   def is_waiting_for_action?
-    Status.statuses_by_state("ACTION").map{|x| x["name"]}.include? (status)
+    status_object.state == "ACTION"
   end
 
   def is_processing?
-    !is_error? && !is_done? && !is_waiting_for_action?
+    status_object.state == "PROCESS"
   end
 
   # Returns a list of all files in job package
