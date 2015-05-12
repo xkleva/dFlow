@@ -38,7 +38,7 @@ module Requests
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
       to_return(:status => 200, :body => "", :headers => {})
 
-      stub_request(:get, "http://dfile.example.org/list_files?api_key=test_key&show_catalogues=true&source_dir=PACKAGING:1").
+      stub_request(:get, /http:\/\/dfile\.example\.org\/list_files\?api_key=test_key&show_catalogues=true&source_dir=PACKAGING:\d+/).
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
       to_return(:status => 200, :body => "", :headers => {})
 
