@@ -249,8 +249,8 @@ RSpec.describe Job, :type => :model do
       it "should set start status and create log entries" do
 
         stub_request(:get, /http:\/\/dfile\.example\.org\/move_to_trash\?api_key=test_key&source_dir=PACKAGING:\d+/).
-         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-         to_return(:status => 200, :body => "", :headers => {})
+        with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+        to_return(:status => 200, :body => "", :headers => {})
 
 
         job = create(:job, status: 'digitizing', created_by: 'TestUser', message: 'Restarted')

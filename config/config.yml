@@ -29,6 +29,7 @@ user_roles:
     rights:
       - view_tree
       - manage_tree
+      - manage_tree_root
       - manage_jobs
       - manage_users
       - view_users

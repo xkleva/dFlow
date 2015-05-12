@@ -10,10 +10,22 @@ class Treenode < ActiveRecord::Base
   validate :parent_id_exists, :if => :has_parent_id?
   validate :parent_id_change_destination
 
+  after_save :handle_node_move, :on => :update
+
   def delete
     update_attribute(:deleted_at, Time.now)
     children.each {|child| child.delete}
     jobs.each {|job| job.delete}
+  end
+
+  # If node has been moved, update all jobs treenode_ids
+  def handle_node_move
+    if self.parent_id_changed?
+      Job.all.each do |job|
+        job.set_treenode_ids
+        job.save
+      end
+    end
   end
 
   # Returns array of all parent ids
@@ -107,7 +119,7 @@ class Treenode < ActiveRecord::Base
 
     if options[:include_breadcrumb]
       if options[:include_breadcrumb_string]
-      base_json[:breadcrumb] = self.breadcrumb(as_string: true)
+        base_json[:breadcrumb] = self.breadcrumb(as_string: true)
       else
         base_json[:breadcrumb] = self.breadcrumb
       end

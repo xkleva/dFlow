@@ -137,5 +137,27 @@ RSpec.describe Treenode, :type => :model do
         expect(hash["START"]).to eq 2
       end
     end
+    context "after node has been moved" do
+      it "should return updated hash" do
+        treenode = create(:top_treenode)
+        treenode2 = create(:top_treenode)
+        create(:job, treenode_id: treenode.id, status: 'digitizing')
+        create(:job, treenode_id: treenode.id, status: 'waiting_for_digitizing')
+        childnode = create(:treenode, parent_id: treenode.id)
+        create(:job, treenode_id: childnode.id, status: 'digitizing')
+        create(:job, treenode_id: childnode.id, status: 'waiting_for_digitizing')
+
+        childnode.update_attribute('parent_id', treenode2.id)
+        childnode.save
+        treenode2 = Treenode.find(treenode2.id)
+        tnHash = treenode.get_state_groups
+        tn2Hash = treenode2.get_state_groups
+
+        expect(tn2Hash.size).to eq 2
+        expect(tn2Hash["START"]).to eq 1
+        expect(tnHash.size).to eq 2
+        expect(tnHash["START"]).to eq 1
+      end
+    end
   end
 end
