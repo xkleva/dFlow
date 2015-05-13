@@ -35,7 +35,7 @@ class Api::StatusesController < Api::ApiController
 
     # If job is already in new status, return success
     if @job.status == to_status.name
-      @response[:job] = @job
+      @response[:status_change] = ["ok"]
       render_json
       return
     end
@@ -49,7 +49,7 @@ class Api::StatusesController < Api::ApiController
     if !@job.valid? || !@job.save
       error_msg(ErrorCodes::VALIDATION_ERROR, "Could not save job", @job.errors)
     else
-      @response[:job] = @job
+      @response[:status_change] = ["ok"]
     end
 
     render_json
