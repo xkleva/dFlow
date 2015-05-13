@@ -25,6 +25,7 @@ class Letter < Source
     record = Nokogiri::XML(data)
     job_data = data_from_record(record)
     job_data[:xml] = data if job_data.present?
+    job_data[:catalog_id] = catalog_id
     job_data
   end
 
