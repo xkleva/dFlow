@@ -60,16 +60,25 @@ class PdfHelper
 
         pdf.text "Operatör", :style=>:bold
         pdf.move_down md_value
-        pdf.text "[ ] Maria     [ ] Grim     [ ] Ingela"
-        pdf.move_down md_value
-        pdf.text "[ ] Annan: ____________"
+        unless APP_CONFIG["pdf_settings"]["operators"].blank?
+          pdf.text APP_CONFIG["pdf_settings"]["operators"]
+          pdf.move_down md_value
+          pdf.text "[ ] Annan: __________________"
+        else
+          pdf.text "________________________"
+        end
+        
         pdf.move_down md_value*2
 
         pdf.text "Utrustning", :style=>:bold
         pdf.move_down md_value
-        pdf.text "[ ] Robot    [ ] Zeutschel    [ ] Canon " 
-        pdf.move_down md_value
-        pdf.text "[ ] Annan: ____________"
+        unless APP_CONFIG["pdf_settings"]["equipments"].blank?
+          pdf.text APP_CONFIG["pdf_settings"]["equipments"]
+          pdf.move_down md_value
+          pdf.text "[ ] Annan: __________________"
+        else
+          pdf.text "________________________"
+        end
         pdf.move_down md_value*2
 
         pdf.text "Svårighetsgrad", :style => :bold
@@ -91,7 +100,7 @@ class PdfHelper
       #pdf.transparent(0.5) { pdf.stroke_bounds}
     end
 
-  
+
     pdf.move_cursor_to (7).send(:mm)
     pdf.line [0, pdf.cursor], [pdf.bounds.right, pdf.cursor]
     pdf.stroke
