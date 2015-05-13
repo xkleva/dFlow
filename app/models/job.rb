@@ -57,7 +57,8 @@ class Job < ActiveRecord::Base
         has_pdf: has_pdf,
         package_metadata: package_metadata_hash,
         main_status: main_status,
-        files: files_list
+        files: files_list,
+        is_periodical: is_periodical
         })
     end
   end
