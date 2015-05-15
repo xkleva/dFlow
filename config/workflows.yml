@@ -1,0 +1,130 @@
+---
+
+# List of processes and their calling status
+processes:
+  -
+    code: CONFIRMATION
+    state: ACTION
+    required_params: 
+      - manual
+  -
+    code: PACKAGE_METADATA_IMPORT
+    state: PROCESS
+  -
+    code: CREATE_METS_PACKAGE
+    state: PROCESS
+  -
+    code: QUALITY_CONTROL
+    state: ACTION
+
+workflows:
+  -
+    name: SCANGATE_FLOW
+    steps:
+      - 
+        step: 10
+        process: CONFIRMATION
+        description: Väntar på digitalisering
+        goto_true: 20
+        goto_false:
+        params:
+          manual: true
+          msg: Starta digitalisering
+      - 
+        step: 20
+        process: CONFIRMATION
+        description: Digitalisering
+        goto_true: 30
+        goto_false:
+        params:
+          manual: false
+      - 
+        step: 30
+        process: CONFIRMATION
+        description: Efterbearbetning
+        goto_true: 40
+        goto_false:
+        params:
+          manual: false
+      - 
+        step: 40
+        process: CONFIRMATION
+        description: Manuell efterbearbetning
+        goto_true: 50
+        goto_false:
+        params:
+          manual: false
+      - 
+        step: 50
+        process: CONFIRMATION
+        description: Efterbearbetning
+        goto_true: 60
+        goto_false:
+        params:
+          manual: false
+      - 
+        step: 60
+        process: CONFIRMATION
+        description: Kvalitetskontroll
+        goto_true: 70
+        goto_false:
+        params:
+          manual: true
+      - 
+        step: 70
+        process: PACKAGE_METADATA_IMPORT
+        description: Metadataimport
+        goto_true: 80
+        goto_false:
+        params:
+      - 
+        step: 80
+        process: CREATE_METS_PACKAGE
+        description: Skapa METS-paket
+        goto_true:
+        goto_false:
+        params:
+  -
+    name: MISSING_GOTO_STEP
+    steps:
+      - 
+        step: 10
+        process: CONFIRMATION
+        description: Väntar på digitalisering
+        goto_true: 200
+        goto_false:
+        params:
+          manual: true
+          msg: Starta digitalisering
+  -
+    name: DUPLICATE_STEP
+    steps:
+      - 
+        step: 10
+        process: CONFIRMATION
+        description: Väntar på digitalisering
+        goto_true: 10
+        goto_false:
+        params:
+          manual: true
+          msg: Starta digitalisering
+      - 
+        step: 10
+        process: CONFIRMATION
+        description: Väntar på digitalisering
+        goto_true: 10
+        goto_false:
+        params:
+          manual: true
+          msg: Starta digitalisering
+  -
+    name: MISSING_PARAMS
+    steps:
+      - 
+        step: 10
+        process: CONFIRMATION
+        description: Väntar på digitalisering
+        goto_true: 10
+        goto_false:
+        params:
+          msg: Starta digitalisering

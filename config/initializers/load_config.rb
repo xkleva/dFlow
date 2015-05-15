@@ -6,6 +6,7 @@ else
   secret_config = YAML.load_file("#{Rails.root}/config/config_secret.yml")
 end
 APP_CONFIG = main_config.merge(secret_config)
+APP_CONFIG = APP_CONFIG.merge(YAML.load_file("#{Rails.root}/config/workflows.yml"))
 
 # Read all users from passwd file and create users that do not already exist
 if Rails.env != "test" && (ActiveRecord::Base.connection.table_exists? 'users') # Checks if table exists to be able to migrate a new db

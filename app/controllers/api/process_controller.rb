@@ -20,6 +20,15 @@ class Api::ProcessController < Api::ApiController
       return
     end
 
+    # Check if there are jobs that are in process status
+    running_jobs = Job.where(status: Status.find_by_name(process["status"]).next_status.name).where(quarantined: false).where(deleted_at: nil)
+
+    if !running_jobs.empty?
+      @response[:msg] = "There are jobs running for process #{code}"
+      render_json
+      return
+    end
+    
     # Find a job with proper status according to process
     job = Job.where(status: process["status"]).where(quarantined: false).where(deleted_at: nil).first
 

@@ -10,6 +10,8 @@ class Job < ActiveRecord::Base
   belongs_to :treenode
   has_many :job_activities, :dependent => :destroy
 
+  has_many :flow_steps, :dependent => :destroy
+
   validates :id, :uniqueness => true
   validates :title, :presence => true
   validates :catalog_id, :presence => true

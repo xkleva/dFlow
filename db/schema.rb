@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150512074546) do
+ActiveRecord::Schema.define(version: 20150515120441) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,33 +24,20 @@ ActiveRecord::Schema.define(version: 20150512074546) do
     t.datetime "updated_at",   null: false
   end
 
-  create_table "entries", force: :cascade do |t|
-    t.integer  "job_id"
-    t.integer  "flow_step_id"
-    t.string   "state"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "flow_steps", force: :cascade do |t|
-    t.integer  "flow_id"
-    t.integer  "process_id"
-    t.string   "goto_true"
-    t.string   "goto_false"
-    t.string   "condition_method"
-    t.string   "condition_operator"
-    t.string   "condition_value"
-    t.string   "params"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "flows", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "start_position"
-    t.text     "params_info"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer  "step"
+    t.integer  "job_id"
+    t.text     "process"
+    t.integer  "goto_true"
+    t.integer  "goto_false"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.datetime "aborted_at"
+    t.text     "params"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.text     "description"
+    t.text     "process_msg"
   end
 
   create_table "job_activities", force: :cascade do |t|
@@ -71,20 +58,21 @@ ActiveRecord::Schema.define(version: 20150512074546) do
     t.integer  "created_by"
     t.integer  "updated_by"
     t.text     "xml"
-    t.boolean  "quarantined",      default: false
+    t.boolean  "quarantined",       default: false
     t.text     "comment"
     t.text     "object_info"
     t.text     "search_title"
-    t.text     "metadata",         default: ""
+    t.text     "metadata",          default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "source"
     t.integer  "treenode_id"
     t.string   "status"
-    t.boolean  "copyright",                        null: false
+    t.boolean  "copyright",                         null: false
     t.text     "process_message"
-    t.text     "package_metadata", default: ""
-    t.integer  "parent_ids",       default: [],                 array: true
+    t.text     "package_metadata",  default: ""
+    t.integer  "parent_ids",        default: [],                 array: true
+    t.integer  "current_flow_step"
   end
 
   add_index "jobs", ["parent_ids"], name: "index_jobs_on_parent_ids", using: :gin
