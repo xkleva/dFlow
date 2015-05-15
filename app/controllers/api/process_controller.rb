@@ -21,7 +21,17 @@ class Api::ProcessController < Api::ApiController
     end
 
     # Check if there are jobs that are in process status
-    running_jobs = Job.where(status: Status.find_by_name(process["status"]).next_status.name).where(quarantined: false).where(deleted_at: nil)
+    #running_jobs = Job.where(status: Status.find_by_name(process["status"]).next_status.name).where(quarantined: false).where(deleted_at: nil)
+    steps = FlowStep.where(code: process["code"]).where.not(entered_at: nil).where(started_at: nil)
+    currStep = nil
+    steps.each do |step|
+      if step.job.quarantined?
+        next
+      else
+        currStep = step
+        exit
+      end
+    end ###Forts'tt h'r
 
     if !running_jobs.empty?
       @response[:msg] = "There are jobs running for process #{code}"

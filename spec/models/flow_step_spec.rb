@@ -4,7 +4,7 @@ RSpec.describe FlowStep, :type => :model do
   describe "step" do
 
     it "should fail on duplicate step ids for job" do
-      job = create(:job)
+      job = build(:job)
       flow_step = create(:flow_step, step: 10, job: job)
 
       flow_step2 = build(:flow_step, step: 10, job: job)
@@ -13,10 +13,10 @@ RSpec.describe FlowStep, :type => :model do
     end
 
     it "should succeed on duplicate step ids for job" do
-      job = create(:job)
-      flow_step = create(:flow_step, step: 10, job: job, aborted_at: DateTime.now)
+      job = build(:job)
+      flow_step = create(:flow_step, step: 10, job_id: job.id, aborted_at: DateTime.now)
 
-      flow_step2 = build(:flow_step, step: 10, job: job)
+      flow_step2 = build(:flow_step, step: 10, job_id: job.id)
 
       expect(flow_step2.valid?).to be_truthy
     end

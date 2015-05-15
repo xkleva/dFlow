@@ -28,6 +28,7 @@ workflows:
         goto_true: 20
         goto_false:
         params:
+          start: true
           manual: true
           msg: Starta digitalisering
       - 

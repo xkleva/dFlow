@@ -13,7 +13,7 @@ RSpec.describe Api::ProcessController, :type => :controller do
   describe "request_job" do
     context "a job with status waiting_for_package_metadata_import exists" do
       it "should return a job" do
-        create(:job, status: 'waiting_for_package_metadata_import');
+        create(:job, current_flow_step: 70);
         
         get :request_job, code: 'PACKAGE_METADATA_IMPORT', api_key: @api_key
         

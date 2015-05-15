@@ -160,6 +160,7 @@ class Treenode < ActiveRecord::Base
 
   # Loads counts of job statuses for this node
   def get_state_groups
+    return {}
     jobs = Job.where("? = ANY (parent_ids)", id)
     status_groups = jobs.group('status').count
     state_groups = {}

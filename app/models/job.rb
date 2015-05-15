@@ -11,6 +11,7 @@ class Job < ActiveRecord::Base
   has_many :job_activities, :dependent => :destroy
 
   has_many :flow_steps, :dependent => :destroy
+  belongs_to :flow_step, foreign_key: "current_flow_step", primary_key: "step"
 
   validates :id, :uniqueness => true
   validates :title, :presence => true
@@ -18,9 +19,8 @@ class Job < ActiveRecord::Base
   validates :treenode_id, :presence => true
   validates :source, :presence => true
   validates :copyright, :inclusion => {:in => [true, false]}
-  validates :status, :presence => true
   validate :source_in_list
-  validate :status_in_list
+  validate :flow_in_list
   validate :xml_validity
   validate :message_presence, :on => :update
   validates_associated :job_activities
@@ -28,13 +28,19 @@ class Job < ActiveRecord::Base
   attr_accessor :message
 
   after_create :create_log_entry
+  after_create :create_flow_steps
   after_initialize :default_values
 
   after_save :create_log_entries, :on => :update
   before_validation :set_treenode_ids
 
   def as_json(options = {})
-    if options[:list]
+    if !id 
+      {
+        name: name,
+        title: title
+      }
+    elsif options[:list]
       {
         id: id,
         name: name,
@@ -46,7 +52,7 @@ class Job < ActiveRecord::Base
         treenode_id: treenode_id,
         quarantined: quarantined,
         main_status: main_status,
-        status: status
+        status: flow_step_object.description
       }
     else
       super.merge({
@@ -85,8 +91,15 @@ class Job < ActiveRecord::Base
     end
 
     # Status log entries
-    if self.status_changed?
-      self.create_log_entry("STATUS", 'STATUS.' + status)
+    #if self.status_changed?
+    #  self.create_log_entry("STATUS", 'STATUS.' + status)
+    #end
+  end
+
+  # Creates flow_steps for flow
+  def create_flow_steps
+    if !Flow.find(self.flow).apply_flow(self)
+      raise StandardError, "Could not create flow for job"
     end
   end
 
@@ -101,7 +114,6 @@ class Job < ActiveRecord::Base
   end
 
   def default_values
-    self.status ||= Status.find_start_status.name
     @created_by ||= 'not_set'
   end
 
@@ -112,10 +124,10 @@ class Job < ActiveRecord::Base
   end
 
   # Switches status according to given Status object
-  def switch_status(new_status)
-    self.status = new_status.name
+  #def switch_status(new_status)
+    #self.status = new_status.name
     #self.create_log_entry("STATUS", new_status.name)
-  end
+  #end
 
   # Retrieve source label from config
   def source_label
@@ -175,12 +187,19 @@ class Job < ActiveRecord::Base
     end
   end
 
-  # Check if status is in list of configured sources
-  def status_in_list
-    if !APP_CONFIG["statuses"].map { |x| x["name"] }.include?(status)
-      errors.add(:status, "#{status} not included in list of valid statuses")
+  # Check if flow is in list of configured flows
+  def flow_in_list
+    if !APP_CONFIG["workflows"].map { |x| x["name"] }.include?(flow)
+      errors.add(:flow, "not included in list of valid sources")
     end
   end
+
+  # Check if status is in list of configured sources
+  #def status_in_list
+  #  if !APP_CONFIG["statuses"].map { |x| x["name"] }.include?(status)
+  #    errors.add(:status, "#{status} not included in list of valid statuses")
+  #  end
+  #end
 
   # Validates that message is present on certain updated attributes
   def message_presence
@@ -300,11 +319,7 @@ class Job < ActiveRecord::Base
 
   # Returns true if job is done
   def done?
-    status == Status.find_finish_status.name
-  end
-
-  def status_object
-    Status.find_by_name(status)
+    flow_step_object.finish_step?
   end
 
   def package_location
@@ -333,7 +348,7 @@ class Job < ActiveRecord::Base
 
   # Restarts job by setting status and moving files
   def restart
-    if FileAdapter.move_to_trash(package_location, package_name) && switch_status(Status.find_start_status)
+    if FileAdapter.move_to_trash(package_location, package_name) #&& switch_status(Status.find_start_status)
       create_log_entry("RESTART", message)
       save!
     end
@@ -350,7 +365,7 @@ class Job < ActiveRecord::Base
   end
 
   def is_started?
-    status != Status.find_start_status.name
+    flow_step_object.start_step?
   end
 
   def is_error?
@@ -362,11 +377,11 @@ class Job < ActiveRecord::Base
   end
 
   def is_waiting_for_action?
-    status_object.state == "ACTION"
+    flow_step_object.state == "ACTION"
   end
 
   def is_processing?
-    status_object.state == "PROCESS"
+    flow_step_object.state == "PROCESS"
   end
 
   # Returns a list of all files in job package
@@ -377,6 +392,14 @@ class Job < ActiveRecord::Base
   # Returns true if job is a subset of a periodical
   def is_periodical
     return source_object.try(:is_periodical, metadata_value('type_of_record'))
+  end
+
+  # Reutrns current flow_step object
+  def flow_step_object
+    #pp flow_steps
+    #pp flow_step
+    return flow_step
+    #FlowStep.where(job_id: id, step: current_flow_step, aborted_at: nil).first
   end
 end
 

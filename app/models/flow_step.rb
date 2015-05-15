@@ -41,4 +41,39 @@ class FlowStep < ActiveRecord::Base
     @params_hash ||= JSON.parse(params)
   end
 
+  # Returns true if step is the last one of the flow
+  def finish_step?
+    return !goto_true && !goto_false
+  end
+
+  # Returns true if step is the first one of the flow
+  def start_step?
+    params_hash["start"]
+  end
+
+  # Returns true if step is waiting to be entered
+  def waiting?
+    entered_at.nil?
+  end
+
+   # Returns true if step is next in line to be started
+  def pending?
+    entered_at.presence && started_at.nil?
+  end
+
+  # Returns true if step is currently running
+  def running?
+    started_at.presence? && finished_at.nil?
+  end
+
+  # Returns true if step is finished
+  def finished?
+    finished_at.presence?
+  end
+
+  def state
+    process_object["state"]
+  end
+
+
 end

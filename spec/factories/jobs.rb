@@ -36,10 +36,11 @@ FactoryGirl.define do
     author {generate :author}
     source 'libris'
     association :treenode, factory: [:top_treenode]
-    status 'waiting_for_digitizing'
     copyright false
     created_by 'TestUser'
     metadata "{}"
+    flow "SCANGATE_FLOW"
+    current_flow_step 10
 
     trait :deleted do
       deleted_at Time.now
@@ -52,6 +53,7 @@ FactoryGirl.define do
     factory :deleted_job, traits: [:deleted]
 
     factory :journal_job, traits: [:journal]
+
   end
 
   factory :job_activity do |n|

@@ -1,6 +1,6 @@
 FactoryGirl.define do
   sequence :step do |n|
-    n*10
+    n+1*10
   end
   factory :flow_step do
     step {generate :step}

@@ -1,4 +1,4 @@
-class Status
+class Statuss
   attr_accessor :name, :state
 
   def initialize(status_hash)
