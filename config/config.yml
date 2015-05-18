@@ -79,7 +79,7 @@ events:
   -
     name: DELETE
   -
-    name: STATUS
+    name: FLOW_STEP
   -
     name: RESTART
 

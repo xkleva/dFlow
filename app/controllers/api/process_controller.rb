@@ -21,26 +21,20 @@ class Api::ProcessController < Api::ApiController
     end
 
     # Check if there are jobs that are in process status
-    #running_jobs = Job.where(status: Status.find_by_name(process["status"]).next_status.name).where(quarantined: false).where(deleted_at: nil)
-    steps = FlowStep.where(code: process["code"]).where.not(entered_at: nil).where(started_at: nil)
-    currStep = nil
-    steps.each do |step|
-      if step.job.quarantined?
-        next
-      else
-        currStep = step
-        exit
-      end
-    end ###Forts'tt h'r
-
-    if !running_jobs.empty?
+    jobs = Job.where(quarantined: false, deleted_at: nil).select(:id)
+    running_steps = FlowStep.where(process: process["code"]).where.not(entered_at: nil, started_at: nil, aborted_at: nil).where(finished_at: nil).where(job_id: jobs)
+    if !running_steps.empty?
       @response[:msg] = "There are jobs running for process #{code}"
       render_json
       return
     end
-    
-    # Find a job with proper status according to process
-    job = Job.where(status: process["status"]).where(quarantined: false).where(deleted_at: nil).first
+
+    steps = FlowStep.where(process: process["code"]).where(entered_at: nil, started_at: nil, aborted_at: nil, finished_at: nil).where(job_id: jobs)
+
+    job = nil
+    if steps.present?
+      job = steps.first.job
+    end
 
     if !job
       @response[:msg] = "No job found to process for code #{code}"
@@ -50,13 +44,13 @@ class Api::ProcessController < Api::ApiController
 
     job.created_by = @current_user.username
     # Switch job status before it is returned
-    job.switch_status(job.status_object.next_status)
+    job.flow_step.start!
     if job.save
       @response[:job] = job.as_json
       render_json
       return
     else
-      @response[:error] = "Could not update status of job with id #{job.id}"
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not update status of job with id #{job.id}", job.errors)
       render_json
       return
     end
@@ -78,11 +72,8 @@ class Api::ProcessController < Api::ApiController
 
     # If process is successful, update status
     if params[:status] == 'success'
-      job.switch_status(job.status_object.next_status)
-      if !params[:msg].blank?
-        job.update_attributes(process_message: params[:msg])
-      end
-      job.save
+      job.flow_step.finish!
+      job.reload
     end
 
     # If process failed, quarantine job with message
@@ -93,7 +84,7 @@ class Api::ProcessController < Api::ApiController
     # If process is sending a progress report, save message
     if params[:status] == 'progress'
       if !params[:msg].blank?
-        job.update_attributes(process_message: params[:msg])
+        job.flow_step.update_attribute('process_msg', params[:msg])
       end
     end
 

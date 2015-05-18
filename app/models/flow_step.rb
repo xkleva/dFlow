@@ -56,8 +56,13 @@ class FlowStep < ActiveRecord::Base
     entered_at.nil?
   end
 
+  # Returns true if step is entered
+  def entered?
+    entered_at.presence
+  end
+
    # Returns true if step is next in line to be started
-  def pending?
+   def pending?
     entered_at.presence && started_at.nil?
   end
 
@@ -73,6 +78,51 @@ class FlowStep < ActiveRecord::Base
 
   def state
     process_object["state"]
+  end
+
+  def enter!
+    self.entered_at = DateTime.now
+    self.save!
+    job.update_attribute('current_flow_step', step)
+    job.create_log_entry("FLOW_STEP", "entered")
+  end
+
+  def start!
+    self.started_at = DateTime.now
+    self.save!
+    job.create_log_entry("FLOW_STEP", "started")
+  end
+
+  def finish!
+    self.finished_at = DateTime.now
+    self.save!
+    job.create_log_entry("FLOW_STEP", "finished")
+    if next_step
+      next_step.enter!
+    end
+  end
+
+  # Returns next step if exists and not already entered
+  def next_step
+    if goto_true.present?
+      fs = FlowStep.job_flow_step(job_id: job_id, flow_step: goto_true)
+      if fs.entered?
+        job.update_attibutes(quarantined: true, message: "Broken flow, step already entered #{fs.step}, called from #{self.step}")
+        return nil
+      else
+        return fs
+      end
+    end
+    nil
+  end
+
+  def abort!
+    self.aborted_at = DateTime.now
+    self.save!
+  end
+
+  def self.job_flow_step(job_id:, flow_step:)
+    FlowStep.where(job_id: job_id, step: flow_step, aborted_at: nil).first
   end
 
 

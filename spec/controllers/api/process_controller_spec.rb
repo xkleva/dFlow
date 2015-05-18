@@ -11,15 +11,17 @@ RSpec.describe Api::ProcessController, :type => :controller do
   end
 
   describe "request_job" do
-    context "a job with status waiting_for_package_metadata_import exists" do
+    context "a job with process CONFIRMATION exists" do
       it "should return a job" do
-        create(:job, current_flow_step: 70);
+        job = create(:job);
+
+        job.flow_step.enter!
         
-        get :request_job, code: 'PACKAGE_METADATA_IMPORT', api_key: @api_key
+        get :request_job, code: 'CONFIRMATION', api_key: @api_key
         
         expect(response.status).to eq 200
         expect(json['job']).to_not be nil
-        expect(json['job']['status']).to eq 'package_metadata_import'
+        expect(json['job']['status']).to eq 'Väntar på digitalisering'
       end
     end
   end
@@ -27,36 +29,36 @@ RSpec.describe Api::ProcessController, :type => :controller do
   describe "update_process" do
     context "sends a progress message" do
       it "should accept message and save for job" do
-        job = create(:job, status: 'package_metadata_import')
+        job = create(:job)
 
         post :update_process, job_id: job.id, status: 'progress', msg: 'Everything is running fine!', api_key: @api_key
 
         expect(response.status).to be 200
-        expect(json['job']['status']).to eq 'package_metadata_import'
-        expect(json['job']['process_message']).to eq 'Everything is running fine!'
+        expect(json['job']['status']).to eq 'Väntar på digitalisering'
+        expect(json['job']['flow_step']['process_msg']).to eq 'Everything is running fine!'
       end
     end
 
     context "sends a fail message" do
       it "should quarantine job with message" do
-        job = create(:job, status: 'package_metadata_import')
+        job = create(:job)
 
         post :update_process, job_id: job.id, status: 'fail', msg: 'Something was missing!', api_key: @api_key
 
         expect(response.status).to be 200
-        expect(json['job']['status']).to eq 'package_metadata_import'
+        expect(json['job']['status']).to eq 'Väntar på digitalisering'
         expect(json['job']['quarantined']).to be_truthy
       end
     end
 
     context "sends a success message" do
       it "should move job to next status" do
-        job = create(:job, status: 'package_metadata_import')
+        job = create(:job)
 
         post :update_process, job_id: job.id, status: 'success', msg: 'All done!', api_key: @api_key
 
         expect(response.status).to be 200
-        expect(json['job']['status']).to eq job.status_object.next_status.name
+        expect(json['job']['status']).to eq 'Digitalisering'
       end
     end
   end

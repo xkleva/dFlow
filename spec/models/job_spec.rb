@@ -125,15 +125,6 @@ RSpec.describe Job, :type => :model do
   end
 
   describe "create_log_entry" do
-    context "for valid job when switching status" do
-      it "should generate a JobActivity object" do
-        job = create(:job)
-        job.created_by = @api_key_user
-        job.create_log_entry("STATUS", "StatusChange")
-        job.save
-        expect(job.job_activities.count).to eq 2
-      end
-    end
     context "for valid job when switching quarantined" do
       it "should generate a JobAtivity object" do
         job = create(:job)
