@@ -1,0 +1,97 @@
+---
+# List of processes and their calling status
+processes:
+  -
+    code: CONFIRMATION
+    state: ACTION
+    required_params: 
+      - manual
+  -
+    code: AUTOMATIC_PROCESS
+    state: PROCESS
+
+workflows:
+  -
+    name: VALID_FLOW
+    steps:
+      - 
+        step: 10
+        process: CONFIRMATION
+        description: Waiting to begin
+        goto_true: 20
+        goto_false:
+        params:
+          start: true
+          manual: true
+          msg: Start flow
+      - 
+        step: 20
+        process: CONFIRMATION
+        description: First manual process
+        goto_true: 30
+        goto_false:
+        params:
+          manual: false
+          msg: Confirm manual process done
+      - 
+        step: 30
+        process: AUTOMATIC_PROCESS
+        description: First automatic process
+        goto_true: 40
+        goto_false:
+        params:
+          manual: false
+      - 
+        step: 40
+        process: AUTOMATIC_PROCESS
+        description: Final automatic process
+        goto_true: 50
+        goto_false:
+        params:
+          manual: false
+  -
+    name: MISSING_GOTO_STEP
+    steps:
+      - 
+        step: 10
+        process: CONFIRMATION
+        description: Väntar på digitalisering
+        goto_true: 200
+        goto_false:
+        params:
+          manual: true
+          msg: Starta digitalisering
+  -
+    name: DUPLICATE_STEP
+    steps:
+      - 
+        step: 10
+        process: CONFIRMATION
+        description: Väntar på digitalisering
+        goto_true: 10
+        goto_false:
+        params:
+          manual: true
+          msg: Starta digitalisering
+      - 
+        step: 10
+        process: CONFIRMATION
+        description: Väntar på digitalisering
+        goto_true: 10
+        goto_false:
+        params:
+          manual: true
+          msg: Starta digitalisering
+  -
+    name: MISSING_PARAMS
+    steps:
+      - 
+        step: 10
+        process: CONFIRMATION
+        description: Väntar på digitalisering
+        goto_true: 10
+        goto_false:
+        params:
+          msg: Starta digitalisering
+
+default_workflow: VALID_FLOW

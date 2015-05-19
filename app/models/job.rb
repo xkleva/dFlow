@@ -69,7 +69,6 @@ class Job < ActiveRecord::Base
         status: flow_step.description,
         flow_step: flow_step,
         flow_steps: flow_steps
-        #temp: translate_status_to_flow
         })
     end
   end

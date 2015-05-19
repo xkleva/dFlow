@@ -63,14 +63,14 @@ describe Api::JobsController do
       it "should create job without errors" do
         treenode = create(:child_treenode)
         
-        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: treenode.id, name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: true, flow: 'SCANGATE_FLOW'}
+        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: treenode.id, name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: true, flow: 'VALID_FLOW'}
         
         expect(json['error']).to be nil
       end
       it "should return the created object" do
         treenode = create(:treenode)
         
-        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: treenode.id, name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: 'false', flow: 'SCANGATE_FLOW'}
+        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: treenode.id, name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: 'false', flow: 'VALID_FLOW'}
         
         expect(json['job']).not_to be nil
         expect(json['job']['id']).not_to be nil
@@ -94,7 +94,7 @@ describe Api::JobsController do
         job_name = "The Jobb with the custom ID"
         treenode = create(:treenode)
         
-        post :create, api_key: @api_key, force_id: "#{job_id}", job: {source: 'libris', treenode_id: treenode.id, name: job_name, comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: 'false', flow: 'SCANGATE_FLOW'}
+        post :create, api_key: @api_key, force_id: "#{job_id}", job: {source: 'libris', treenode_id: treenode.id, name: job_name, comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: 'false', flow: 'VALID_FLOW'}
         
         expect(json['error']).to be nil
         expect(json['job']).not_to be nil
@@ -109,7 +109,7 @@ describe Api::JobsController do
       it "should validate job without errors" do
         treenode = create(:child_treenode)
         
-        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: treenode.id, name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: true, flow: "SCANGATE_FLOW"}, validate_only: true
+        post :create, api_key: @api_key, job: {source: 'libris', treenode_id: treenode.id, name: 'the jobname', comment: 'comment', title: 'The best book ever', catalog_id: '1234', copyright: true, flow: "VALID_FLOW"}, validate_only: true
         
         expect(json['error']).to be nil
         expect(json['job']['id']).to be_nil

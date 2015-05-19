@@ -260,11 +260,11 @@ RSpec.describe Job, :type => :model do
   describe "create job with stepnr" do
     context "for a new job" do
       it "should set current flow step to given number" do
-        job = create(:job, current_flow_step: 70)
-        expect(job.flow_step.step).to eq 70
+        job = create(:job, current_flow_step: 30)
+        expect(job.flow_step.step).to eq 30
       end
       it "should set state accorfing to given step" do
-        job = create(:job, current_flow_step: 70)
+        job = create(:job, current_flow_step: 30)
         expect(job.state).to eq "PROCESS"
       end
     end

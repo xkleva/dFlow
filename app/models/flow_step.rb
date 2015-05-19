@@ -136,6 +136,7 @@ class FlowStep < ActiveRecord::Base
     self.entered_at = DateTime.now
     self.save!
     job.set_current_flow_step(self)
+    job.update_attribute('state', main_state)
   end
 
   def start!
@@ -143,6 +144,7 @@ class FlowStep < ActiveRecord::Base
     self.started_at = DateTime.now
     self.save!
     job.create_log_entry("STARTED", self.description)
+    job.update_attribute('state', main_state)
   end
 
   def finish!
@@ -150,6 +152,7 @@ class FlowStep < ActiveRecord::Base
     self.finished_at = DateTime.now
     self.save!
     job.create_log_entry("FINISHED", self.description)
+    job.update_attribute('state', main_state)
     if next_step
       next_step.job = job
       next_step.enter!

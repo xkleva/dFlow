@@ -39,7 +39,7 @@ FactoryGirl.define do
     copyright false
     created_by 'TestUser'
     metadata "{}"
-    flow "SCANGATE_FLOW"
+    flow "VALID_FLOW"
     current_flow_step 10
     state "ACTION"
 

@@ -107,6 +107,7 @@ class Api::JobsController < Api::ApiController
     job_params = params[:job]
     job_params[:metadata] = job_params[:metadata].to_json
     job_params[:created_by] = @current_user.username
+    job_params[:flow] ||= APP_CONFIG["default_workflow"]
     parameters = ActionController::Parameters.new(job_params)
     job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow, :current_flow_step))
 
