@@ -82,6 +82,12 @@ events:
     name: FLOW_STEP
   -
     name: RESTART
+  -
+    name: STATUS
+  -
+    name: STARTED
+  -
+    name: FINISHED
 
 # List of available statuses
 statuses:

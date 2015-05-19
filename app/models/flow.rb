@@ -33,9 +33,14 @@ class Flow
     @errors.blank?
   end
 
-  def generate_flow_steps(job_id)
+  # Create flow step objects for job
+  def generate_flow_steps(job_id, steps_list = [])
     @flow_steps = []
     @workflow_hash["steps"].each do |flow_step|
+      # Skip step if step_list has values and current step is not part of it
+      if steps_list.present? && !steps_list.include?(flow_step["step"])
+        next
+      end
       params = flow_step.dup
       params["job_id"] = job_id
       params["params"] = params["params"].to_json
@@ -75,7 +80,12 @@ class Flow
 
   # Returns the lowest step nr witin flow
   def first_step_nr
-    @flow_steps_hash.map{|x| x["step"]}.min
+    first_step["step"]
+  end
+
+  # Returns start step
+  def first_step
+    @flow_steps_hash.find{|x| x["params"]["start"]}
   end
 
   def step_nr_valid?(step_nr)
@@ -84,12 +94,9 @@ class Flow
 
   # Create flow steps for job id
   def apply_flow(job, step_nr=nil)
-
     if !job
       raise StandardError, "Job missing"
     end
-
-    generate_flow_steps(job.id)
 
     # If no step nr is assigned, use the lowest one
     if !step_nr
@@ -100,12 +107,44 @@ class Flow
       end
     end
 
+    # List of step_nrs to be generated
+    generate_steps_list = []
+
+    job.flow_steps.each do |flow_step|
+      flow_step.job = job
+
+      # Abort all existing flow_steps after and including given step_nr
+      if flow_step.is_after?(step_nr) || flow_step.is_equal?(step_nr)
+        flow_step.abort!
+        generate_steps_list << flow_step.step
+      end
+
+      # Finish all existing flow_steps before given step_nr
+      if flow_step.is_before?(step_nr)
+        if !flow_step.entered?
+          flow_step.enter!
+        end
+        if !flow_step.started?
+          flow_step.start!
+        end
+        if !flow_step.finished?
+          flow_step.finish!
+        end
+      end
+    end
+
+    # Generate new flow steps
+    generate_flow_steps(job.id, generate_steps_list)
+
     Job.transaction do
       FlowStep.transaction do
         flow_steps.each do |flow_step|
           flow_step.save!
+          if flow_step.step == step_nr
+            flow_step.job = job
+            flow_step.enter!
+          end
         end
-        job.update_attribute('current_flow_step', step_nr)
       end
     end
   end

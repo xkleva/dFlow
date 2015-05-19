@@ -10,8 +10,7 @@ class Job < ActiveRecord::Base
   belongs_to :treenode
   has_many :job_activities, :dependent => :destroy
 
-  has_many :flow_steps, :dependent => :destroy
-  #has_one :flow_step, ->(current_flow_step) { where("flow_steps.step = ?", current_flow_step)}
+  has_many :flow_steps, -> {where(aborted_at: nil)}, :dependent => :destroy
 
   validates :id, :uniqueness => true
   validates :title, :presence => true
@@ -68,7 +67,9 @@ class Job < ActiveRecord::Base
         files: files_list,
         is_periodical: is_periodical,
         status: flow_step.description,
-        flow_step: flow_step
+        flow_step: flow_step,
+        flow_steps: flow_steps
+        #temp: translate_status_to_flow
         })
     end
   end
@@ -90,19 +91,13 @@ class Job < ActiveRecord::Base
       create_log_entry("QUARANTINE", self.message)
     elsif self.quarantined_changed? && !self.quarantined
       create_log_entry("UNQUARANTINE", "_UNQUARANTINED")
-    end
-  end
-
-  # Creates flow_steps for flow
-  def create_flow_steps
-    if !Flow.find(self.flow).apply_flow(self)
-      raise StandardError, "Could not create flow for job"
+      create_flow_steps
     end
   end
 
   # Mark job as deleted
   def delete
-    update_attribute(:deleted_at, Time.now)
+    self.update_attribute(:deleted_at, Time.now)
   end
 
   # Check if job is deleted
@@ -112,6 +107,7 @@ class Job < ActiveRecord::Base
 
   def default_values
     @created_by ||= 'not_set'
+    @flow ||= 'SCANGATE_FLOW'
   end
 
   # Creates a JobActivity object for CREATE event
@@ -150,7 +146,7 @@ class Job < ActiveRecord::Base
 
   # Create search_title from title
   def build_search_title
-    update_attribute(:search_title, generate_search_title_string)
+    self.update_attribute(:search_title, generate_search_title_string)
   end
 
   # Generate search_titles for all jobs where it is missing
@@ -301,20 +297,15 @@ class Job < ActiveRecord::Base
     PdfHelper.create_work_order(self)
   end
 
-  # Returns true if job is done
-  def done?
-    flow_step.finish_step?
-  end
-
   def package_location
-    return "STORE" if done?
+    return "STORE" if is_done?
     "PACKAGING"
   end
 
   # Returns current package name, depending on status
   def package_name
     package_name = id.to_s
-    package_name = sprintf(APP_CONFIG['package_name'], id) if done?
+    package_name = sprintf(APP_CONFIG['package_name'], id) if is_done?
     return package_name
   end
 
@@ -332,7 +323,8 @@ class Job < ActiveRecord::Base
 
   # Restarts job by setting status and moving files
   def restart
-    if FileAdapter.move_to_trash(package_location, package_name) #&& switch_status(Status.find_start_status)
+    self.current_flow_step = flow_object.first_step_nr
+    if FileAdapter.move_to_trash(package_location, package_name) && create_flow_steps
       create_log_entry("RESTART", message)
       save!
     end
@@ -341,15 +333,15 @@ class Job < ActiveRecord::Base
   # Returns a limited number of main statuses based on current status
   # Valid values: ["DONE", "WAITING_FOR_ACTION", "PROCESSING", "ERROR"]
   def main_status
-    return "NOT_STARTED" if !is_started?
     return "ERROR" if is_error?
+    return "NOT_STARTED" if is_start?
     return "DONE" if is_done?
     return "WAITING_FOR_ACTION" if is_waiting_for_action?
     return "PROCESSING" if is_processing?
   end
 
-  def is_started?
-    flow_step.start_step?
+  def is_start?
+    state == "START"
   end
 
   def is_error?
@@ -357,15 +349,15 @@ class Job < ActiveRecord::Base
   end
 
   def is_done?
-    done?
+    state == "FINISH"
   end
 
   def is_waiting_for_action?
-    flow_step.state == "ACTION"
+    state == "ACTION"
   end
 
   def is_processing?
-    flow_step.state == "PROCESS"
+    state == "PROCESS"
   end
 
   # Returns a list of all files in job package
@@ -378,9 +370,58 @@ class Job < ActiveRecord::Base
     return source_object.try(:is_periodical, metadata_value('type_of_record'))
   end
 
+  def set_current_flow_step(flow_step)
+    self.update_attribute('current_flow_step', flow_step.step)
+    self.update_attribute('state', flow_step.main_state)
+  end
+
   # Returns current flow step object
   def flow_step
-    return FlowStep.job_flow_step(job_id: id, flow_step: current_flow_step)
+    if !flow_steps.present?
+      create_flow_steps
+    end
+    FlowStep.job_flow_step(job_id: id, flow_step: current_flow_step || 10)
+  end
+
+   # Creates flow_steps for flow
+  def create_flow_steps
+    if !Flow.find(self.flow).apply_flow(self, self.current_flow_step)
+      raise StandardError, "Could not create flow for job"
+    end
+    self.reload
+  end
+
+  def flow_object
+    Flow.find(self.flow)
+  end
+
+  # ONLY FOR MIGRATION PURPOSES, DELETE WHEN IN PRODUCTION
+  def translate_status_to_flow
+    flow_step_status_map = {
+      'waiting_for_digitizing' => 10,
+      'digitizing' => 20,
+      'post_processing' => 30,
+      'post_processing_user_input' => 40,
+      'done' => 80
+    }
+
+    flow_steps.each do |flow_step|
+      flow_step.destroy
+    end
+
+    self.reload
+
+    self.current_flow_step = flow_step_status_map[status]
+
+    create_flow_steps
+
+    if status == 'done'
+      flow_step.job = self
+      flow_step.finish!
+    end
+
+    return "done"
+
   end
 end
 

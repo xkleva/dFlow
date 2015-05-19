@@ -114,50 +114,52 @@ RSpec.describe Treenode, :type => :model do
   end
 
   describe "load_state_groups" do
-    # context "jobs with different states exist" do
-    #   it "should return a hash with states" do
-    #     treenode = create(:top_treenode)
-    #     create(:job, treenode_id: treenode.id, status: 'digitizing')
-    #     create(:job, treenode_id: treenode.id, status: 'waiting_for_digitizing')
-    #     hash = treenode.get_state_groups
-    #     expect(hash.size).to eq 2
-    #     expect(hash["START"]).to eq 1
-    #   end
-    # end
-    # context "jobs with different states exist under children" do
-    #   it "should return a hash with states" do
-    #     treenode = create(:top_treenode)
-    #     create(:job, treenode_id: treenode.id, status: 'digitizing')
-    #     create(:job, treenode_id: treenode.id, status: 'waiting_for_digitizing')
-    #     childnode = create(:treenode, parent_id: treenode.id)
-    #     create(:job, treenode_id: childnode.id, status: 'digitizing')
-    #     create(:job, treenode_id: childnode.id, status: 'waiting_for_digitizing')
-    #     hash = treenode.get_state_groups
-    #     expect(hash.size).to eq 2
-    #     expect(hash["START"]).to eq 2
-    #   end
-    # end
-    # context "after node has been moved" do
-    #   it "should return updated hash" do
-    #     treenode = create(:top_treenode)
-    #     treenode2 = create(:top_treenode)
-    #     create(:job, treenode_id: treenode.id, status: 'digitizing')
-    #     create(:job, treenode_id: treenode.id, status: 'waiting_for_digitizing')
-    #     childnode = create(:treenode, parent_id: treenode.id)
-    #     create(:job, treenode_id: childnode.id, status: 'digitizing')
-    #     create(:job, treenode_id: childnode.id, status: 'waiting_for_digitizing')
+    context "jobs with different states exist" do
+      it "should return a hash with states" do
+        treenode = create(:top_treenode)
+        create(:job, treenode_id: treenode.id, current_flow_step: 10)
+        create(:job, treenode_id: treenode.id, current_flow_step: 20)
+        hash = treenode.get_state_groups
+        expect(hash.size).to eq 2
+        expect(hash["START"]).to eq 1
+        expect(hash["PROCESS"]).to eq 1
+      end
+    end
+    context "jobs with different states exist under children" do
+      it "should return a hash with states" do
+        treenode = create(:top_treenode)
+        create(:job, treenode_id: treenode.id, current_flow_step: 10)
+        create(:job, treenode_id: treenode.id, current_flow_step: 70)
+        childnode = create(:treenode, parent_id: treenode.id)
+        create(:job, treenode_id: childnode.id, current_flow_step: 10)
+        create(:job, treenode_id: childnode.id, current_flow_step: 70)
+        hash = treenode.get_state_groups
 
-    #     childnode.update_attribute('parent_id', treenode2.id)
-    #     childnode.save
-    #     treenode2 = Treenode.find(treenode2.id)
-    #     tnHash = treenode.get_state_groups
-    #     tn2Hash = treenode2.get_state_groups
+        expect(hash.size).to eq 2
+        expect(hash["PROCESS"]).to eq 2
+      end
+    end
+    context "after node has been moved" do
+      it "should return updated hash" do
+        treenode = create(:top_treenode)
+        treenode2 = create(:top_treenode)
+        create(:job, treenode_id: treenode.id, current_flow_step: 10)
+        create(:job, treenode_id: treenode.id, current_flow_step: 70)
+        childnode = create(:treenode, parent_id: treenode.id)
+        create(:job, treenode_id: childnode.id, current_flow_step: 10)
+        create(:job, treenode_id: childnode.id, current_flow_step: 70)
 
-    #     expect(tn2Hash.size).to eq 2
-    #     expect(tn2Hash["START"]).to eq 1
-    #     expect(tnHash.size).to eq 2
-    #     expect(tnHash["START"]).to eq 1
-    #   end
-    # end
+        childnode.update_attribute('parent_id', treenode2.id)
+        childnode.save
+        treenode2 = Treenode.find(treenode2.id)
+        tnHash = treenode.get_state_groups
+        tn2Hash = treenode2.get_state_groups
+
+        expect(tn2Hash.size).to eq 2
+        expect(tn2Hash["START"]).to eq 1
+        expect(tnHash.size).to eq 2
+        expect(tnHash["START"]).to eq 1
+      end
+    end
   end
 end

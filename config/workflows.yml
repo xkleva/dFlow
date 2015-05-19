@@ -39,6 +39,7 @@ workflows:
         goto_false:
         params:
           manual: false
+          msg: Digitalisering klar
       - 
         step: 30
         process: CONFIRMATION

@@ -32,7 +32,7 @@ class Api::ConfigController < Api::ApiController
   api!
   def state_list
     # Select role name from config list of roles
-    states_list = APP_CONFIG["processes"].map{|x| x["code"]}.uniq
+    states_list = APP_CONFIG["processes"].map{|x| x["state"]}.uniq
 
     # Set response
     if states_list.empty?

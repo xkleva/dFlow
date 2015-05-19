@@ -8,6 +8,11 @@ class FlowStep < ActiveRecord::Base
   validate :process_in_list
   validate :validate_params
 
+  def as_json(opts={})
+    super.merge({
+      params: params_hash
+    })
+  end
   # Returns true if step has not been aborted
   def is_active?
     aborted_at.nil?
@@ -63,42 +68,104 @@ class FlowStep < ActiveRecord::Base
 
    # Returns true if step is next in line to be started
    def pending?
-    entered_at.presence && started_at.nil?
+    entered_at.present? && started_at.nil?
   end
 
   # Returns true if step is currently running
   def running?
-    started_at.presence? && finished_at.nil?
+    started_at.present? && finished_at.nil?
+  end
+
+  # Returns true if step is started
+  def started?
+    started_at.present?
   end
 
   # Returns true if step is finished
   def finished?
-    finished_at.presence?
+    finished_at.present?
   end
 
   def state
     process_object["state"]
   end
 
+  # Returns flow step object referenced by goto_true
+  def goto_true_step
+    if goto_true
+      return FlowStep.job_flow_step(job_id: self.job_id, flow_step: self.goto_true)
+    end
+    nil
+  end
+
+  # Returns flow step object referenced by goto_false
+  def goto_false_step
+    if goto_false
+      return FlowStep.job_flow_step(job_id: self.job_id, flow_step: self.goto_false)
+    end
+    nil
+  end
+
+  # Returns true if step_nr occurs before given step
+  def is_before?(step_nr)
+    if goto_true == step_nr
+      return true
+    elsif goto_false == step_nr
+      return true
+    elsif goto_true_step && goto_true_step.is_before?(step_nr)
+      return true
+    elsif goto_false_step && goto_false_step.is_before?(step_nr)
+      return true
+    else
+      return false
+    end
+  end
+
+  # Returns true if step_nr occurs after given step
+  def is_after?(step_nr)
+    return !is_before?(step_nr) && !is_equal?(step_nr)
+  end
+
+  # Returns true if current step has given step_nr
+  def is_equal?(step_nr)
+    return step_nr == self.step
+  end
+
   def enter!
+    return if entered?
     self.entered_at = DateTime.now
     self.save!
-    job.update_attribute('current_flow_step', step)
-    job.create_log_entry("FLOW_STEP", "entered")
+    job.set_current_flow_step(self)
   end
 
   def start!
+    return if started?
     self.started_at = DateTime.now
     self.save!
-    job.create_log_entry("FLOW_STEP", "started")
+    job.create_log_entry("STARTED", self.description)
   end
 
   def finish!
+    return if finished?
     self.finished_at = DateTime.now
     self.save!
-    job.create_log_entry("FLOW_STEP", "finished")
+    job.create_log_entry("FINISHED", self.description)
     if next_step
+      next_step.job = job
       next_step.enter!
+    end
+  end
+
+  # Returns main_state based on process type and location in flow
+  def main_state
+    if start_step?
+      return "START"
+    elsif finish_step? && finished?
+      return "FINISH"
+    elsif state == "ACTION" && !params_hash["manual"]
+      return "PROCESS"
+    else
+      return state
     end
   end
 
@@ -107,7 +174,7 @@ class FlowStep < ActiveRecord::Base
     if goto_true.present?
       fs = FlowStep.job_flow_step(job_id: job_id, flow_step: goto_true)
       if fs.entered?
-        job.update_attibutes(quarantined: true, message: "Broken flow, step already entered #{fs.step}, called from #{self.step}")
+        job.update_attributes(quarantined: true, message: "Broken flow, step already entered #{fs.step}, called from #{self.step}")
         return nil
       else
         return fs

@@ -33,11 +33,11 @@ Rails.application.routes.draw do
 
     #Process API
     get 'process/request_job/:code', to: 'process#request_job'
-    post 'process/:job_id', to: 'process#update_process'
+    get 'process/:job_id', to: 'process#update_process'
 
     # Statuses API
-    get 'statuses/:id/new/:status', to: 'statuses#new'
-    get 'statuses/:id/complete/:status', to: 'statuses#complete'
+    #get 'statuses/:id/new/:status', to: 'statuses#new'
+    #get 'statuses/:id/complete/:status', to: 'statuses#complete'
 
 
     #get 'jobs', to: 'jobs#index'

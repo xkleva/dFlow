@@ -41,6 +41,7 @@ FactoryGirl.define do
     metadata "{}"
     flow "SCANGATE_FLOW"
     current_flow_step 10
+    state "ACTION"
 
     trait :deleted do
       deleted_at Time.now

@@ -41,13 +41,13 @@ class Api::JobsController < Api::ApiController
     end
 
     # Filter by status
-    if params.has_key?(:status) && !params[:status].blank?
-      jobs = jobs.where(status: params[:status])
-    end
+    #if params.has_key?(:status) && !params[:status].blank?
+    #  jobs = jobs.where(status: params[:status])
+    #end
 
     # Filter by state
     if params.has_key?(:state) && !params[:state].blank?
-      jobs = jobs.where(status: Status.status_by_state(params[:state]))
+      jobs = jobs.where(state: params[:state])
     end
 
     metaquery[:total] = jobs.count
@@ -108,7 +108,7 @@ class Api::JobsController < Api::ApiController
     job_params[:metadata] = job_params[:metadata].to_json
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
-    job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow))
+    job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow, :current_flow_step))
 
     # If ID is given, use it for creation
     if params[:force_id]
@@ -139,7 +139,7 @@ class Api::JobsController < Api::ApiController
     job_params[:metadata] = job_params[:metadata].to_json
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
-    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow))
+    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow, :current_flow_step))
       @response[:job] = job
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job.", job.errors)

@@ -55,7 +55,7 @@ RSpec.describe Flow, :type => :model do
   describe "apply_flow" do
     context "for a valid job and flow" do
       it "should generate flow_steps for job" do
-        job = build(:job)
+        job = create(:job)
         flow = Flow.find("SCANGATE_FLOW")
         flow.apply_flow(job)
 

@@ -15,7 +15,7 @@ class Api::ProcessController < Api::ApiController
 
     # If process does not exist in config, return error
     if !process
-      @response[:error] = "No such process code found: #{code}"
+      error_msg(ErrorCodes::OBJECT_ERROR, "No such process code found: #{code}", job.errors)
       render_json
       return
     end
@@ -63,16 +63,21 @@ class Api::ProcessController < Api::ApiController
     job = Job.find_by_id(params[:job_id])
 
     if !job
-      @response[:error] = "Could not find job with id #{params[:job_id]}"
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not find job with id #{params[:job_id]}", job.errors)
       render_json
       return
     end
 
     job.created_by = @current_user.username
+    flow_step = job.flow_step
+    flow_step.job = job
 
     # If process is successful, update status
     if params[:status] == 'success'
-      job.flow_step.finish!
+      if !flow_step.started?
+        flow_step.update_attribute('started_at', DateTime.now)
+      end
+      flow_step.finish!
       job.reload
     end
 
