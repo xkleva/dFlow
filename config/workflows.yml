@@ -72,6 +72,7 @@ workflows:
         goto_false:
         params:
           manual: true
+          msg: Kvalitetskontroll OK!
       - 
         step: 70
         process: PACKAGE_METADATA_IMPORT

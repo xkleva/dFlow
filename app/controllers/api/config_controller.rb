@@ -22,10 +22,6 @@ class Api::ConfigController < Api::ApiController
       @response[:roles] = role_list
     end
     render_json
-
-  rescue
-    error_msg(ErrorCodes::ERROR, "Something went wrong")
-    render_json
   end
 
   # Returns a list of statuses
@@ -42,10 +38,6 @@ class Api::ConfigController < Api::ApiController
     else
       @response[:states] = states_list.uniq
     end
-    render_json
-
-  rescue
-    error_msg(ErrorCodes::ERROR, "Something went wrong")
     render_json
   end
 
