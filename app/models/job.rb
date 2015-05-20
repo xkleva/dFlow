@@ -387,11 +387,13 @@ class Job < ActiveRecord::Base
     ###### For migration purposes ONLY!
     if status.present?
       flow_step_status_map = {
-        nil => 10,
         'waiting_for_digitizing' => 10,
         'digitizing' => 20,
         'post_processing' => 30,
         'post_processing_user_input' => 40,
+        'quality_control' => 60,
+        'waiting_for_mets_control' => 80,
+        'mets_control' => 80,
         'done' => 80
       }
 
