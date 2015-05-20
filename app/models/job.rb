@@ -384,6 +384,7 @@ class Job < ActiveRecord::Base
 
   # Run on create
   def create_initial_flow_steps
+    ###### For migration purposes ONLY!
     flow_step_status_map = {
       nil => 10,
       'waiting_for_digitizing' => 10,
@@ -407,6 +408,7 @@ class Job < ActiveRecord::Base
       flow_step.job = self
       flow_step.finish!
     end
+    ###########################
   end
 
    # Creates flow_steps for flow
