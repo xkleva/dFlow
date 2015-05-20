@@ -302,4 +302,79 @@ RSpec.describe FlowStep, :type => :model do
     end
   end
 
+  describe "main_state" do
+    context "for an entered first flow_step" do
+      it "should return START" do
+        job = create(:job)
+
+        expect(job.flow_step.main_state).to eq "START"
+        expect(job.state).to eq "START"
+      end
+    end
+    context "for an entered second flow_step (automatic confirmation)" do
+      it "should return PROCESS" do
+        job = create(:job)
+        job.flow_step.finish!
+        job.reload
+
+        expect(job.flow_step.main_state).to eq "PROCESS"
+        expect(job.state).to eq "PROCESS"
+      end
+    end
+    context "for an entered last step" do
+      it "should return PROCESS" do
+        job = create(:job, current_flow_step: 40)
+
+        expect(job.flow_step.main_state).to eq "PROCESS"
+        expect(job.state).to eq "PROCESS"
+      end
+    end
+    context "for a finished last step" do
+      it "should return FINISH" do
+        job = create(:job, current_flow_step: 40)
+        job.flow_step.finish!
+        job.reload
+
+        expect(job.flow_step.main_state).to eq "FINISH"
+        expect(job.state).to eq "FINISH"
+      end
+    end
+  end
+
+  describe "next_step" do
+    context "where next step exists" do
+      it "should return FlowStep" do
+        job = create(:job)
+
+        fs = job.flow_step.next_step
+        expect(fs.step).to eq 20
+      end
+    end
+    context "where next step has already been entered" do
+      it "should return nil and quarantine job" do
+        job = create(:job)
+        fs = job.flow_step
+
+        job.flow_step.finish!
+
+        fs2 = fs.next_step
+        job.reload
+
+        expect(fs2).to eq nil
+        expect(job.quarantined).to be_truthy
+      end
+    end
+  end
+
+  describe "abort!" do
+    context "for an existing flow_step" do
+      it "should set aborted_at flag for flow_step" do
+        flow_step = create(:flow_step)
+        flow_step.abort!
+
+        expect(flow_step.aborted_at).to be_truthy
+      end
+    end
+  end
+
 end

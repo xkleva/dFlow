@@ -159,6 +159,11 @@ class FlowStep < ActiveRecord::Base
     end
   end
 
+  def abort!
+    self.aborted_at = DateTime.now
+    self.save!
+  end
+
   # Returns main_state based on process type and location in flow
   def main_state
     if start_step?
@@ -184,11 +189,6 @@ class FlowStep < ActiveRecord::Base
       end
     end
     nil
-  end
-
-  def abort!
-    self.aborted_at = DateTime.now
-    self.save!
   end
 
   def self.job_flow_step(job_id:, flow_step:)
