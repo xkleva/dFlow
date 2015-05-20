@@ -45,10 +45,18 @@ workflows:
         step: 40
         process: AUTOMATIC_PROCESS
         description: Final automatic process
-        goto_true:
+        goto_true: 50
         goto_false:
         params:
           manual: false
+      - 
+        step: 50
+        process: CONFIRMATION
+        description: Manually triggered process
+        goto_true:
+        goto_false:
+        params:
+          manual: true
   -
     name: MISSING_GOTO_STEP
     steps:

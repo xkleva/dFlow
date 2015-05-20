@@ -33,12 +33,14 @@ class Api::ConfigController < Api::ApiController
   def state_list
     # Select role name from config list of roles
     states_list = APP_CONFIG["processes"].map{|x| x["state"]}.uniq
+    states_list.unshift("START")
+    states_list << "FINISH"
 
     # Set response
     if states_list.empty?
       error_msg(ErrorCodes::ERROR, "No States are defined")
     else
-      @response[:states] = states_list
+      @response[:states] = states_list.uniq
     end
     render_json
 

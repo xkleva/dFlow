@@ -331,12 +331,20 @@ RSpec.describe FlowStep, :type => :model do
     end
     context "for a finished last step" do
       it "should return FINISH" do
-        job = create(:job, current_flow_step: 40)
+        job = create(:job, current_flow_step: 50)
         job.flow_step.finish!
         job.reload
 
         expect(job.flow_step.main_state).to eq "FINISH"
         expect(job.state).to eq "FINISH"
+      end
+    end
+    context "for a manual ACTION step" do
+      it "should return ACTION" do
+        job = create(:job, current_flow_step: 50)
+
+        expect(job.flow_step.main_state).to eq "ACTION"
+        expect(job.state).to eq "ACTION"
       end
     end
   end
