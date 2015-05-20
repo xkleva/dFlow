@@ -14,14 +14,25 @@ RSpec.describe Api::ProcessController, :type => :controller do
     context "a job with process CONFIRMATION exists" do
       it "should return a job" do
         job = create(:job);
-
-        job.flow_step.enter!
         
         get :request_job, code: 'CONFIRMATION', api_key: @api_key
         
         expect(response.status).to eq 200
         expect(json['job']).to_not be nil
         expect(json['job']['status']).to eq 'Waiting to begin'
+      end
+    end
+    context "a job with process CONFIRMATION exists, but is already started" do
+      it "should return message saying there are jobs running" do
+        job = create(:job);
+
+        job.flow_step.start!
+        
+        get :request_job, code: 'CONFIRMATION', api_key: @api_key
+        
+        expect(response.status).to eq 200
+        expect(json['job']).to be nil
+        expect(json['msg']).to include("There are jobs running for process")
       end
     end
   end
@@ -31,7 +42,7 @@ RSpec.describe Api::ProcessController, :type => :controller do
       it "should accept message and save for job" do
         job = create(:job)
 
-        post :update_process, job_id: job.id, status: 'progress', msg: 'Everything is running fine!', api_key: @api_key
+        get :update_process, job_id: job.id, step: 10, status: 'progress', msg: 'Everything is running fine!', api_key: @api_key
 
         expect(response.status).to be 200
         expect(json['job']['status']).to eq 'Waiting to begin'
@@ -43,7 +54,7 @@ RSpec.describe Api::ProcessController, :type => :controller do
       it "should quarantine job with message" do
         job = create(:job)
 
-        post :update_process, job_id: job.id, status: 'fail', msg: 'Something was missing!', api_key: @api_key
+        get :update_process, job_id: job.id, step: 10, status: 'fail', msg: 'Something was missing!', api_key: @api_key
 
         expect(response.status).to be 200
         expect(json['job']['status']).to eq 'Waiting to begin'
@@ -55,10 +66,22 @@ RSpec.describe Api::ProcessController, :type => :controller do
       it "should move job to next status" do
         job = create(:job)
 
-        post :update_process, job_id: job.id, status: 'success', msg: 'All done!', api_key: @api_key
+        get :update_process, job_id: job.id, step: 10, status: 'success', msg: 'All done!', api_key: @api_key
 
         expect(response.status).to be 200
         expect(json['job']['status']).to eq 'First manual process'
+        expect(json['job']['current_flow_step']).to eq 20
+      end
+    end
+
+    context "sends a success message with wrong step nr" do
+      it "should return 402" do
+        job = create(:job)
+
+        get :update_process, job_id: job.id, step: 20, status: 'success', msg: 'All done!', api_key: @api_key
+
+        expect(response.status).to be 422
+        expect(json['job']).to be nil
       end
     end
   end

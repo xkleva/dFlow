@@ -22,14 +22,14 @@ class Api::ProcessController < Api::ApiController
 
     # Check if there are jobs that are in process status
     jobs = Job.where(quarantined: false, deleted_at: nil).select(:id)
-    running_steps = FlowStep.where(process: process["code"]).where.not(entered_at: nil, started_at: nil, aborted_at: nil).where(finished_at: nil).where(job_id: jobs)
+    running_steps = FlowStep.where(process: process["code"]).where.not(entered_at: nil, started_at: nil).where(finished_at: nil, aborted_at: nil).where(job_id: jobs)
     if !running_steps.empty?
       @response[:msg] = "There are jobs running for process #{code}"
       render_json
       return
     end
 
-    steps = FlowStep.where(process: process["code"]).where(entered_at: nil, started_at: nil, aborted_at: nil, finished_at: nil).where(job_id: jobs)
+    steps = FlowStep.where(process: process["code"]).where.not(entered_at: nil).where(started_at: nil, aborted_at: nil, finished_at: nil).where(job_id: jobs)
 
     job = nil
     if steps.present?
@@ -71,6 +71,13 @@ class Api::ProcessController < Api::ApiController
     job.created_by = @current_user.username
     flow_step = job.flow_step
     flow_step.job = job
+
+    # Validate that job is currently on given flow_step
+    if flow_step.step != params[:step].to_i
+      error_msg(ErrorCodes::QUEUE_ERROR, "Given step number does not correlate to current flow_step, step: #{params[:step]}, job: #{params[:job_id]}, current step: #{flow_step.step}")
+      render_json
+      return
+    end
 
     # If process is successful, update status
     if params[:status] == 'success'
