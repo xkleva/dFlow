@@ -21,7 +21,7 @@ RSpec.describe Api::ProcessController, :type => :controller do
         
         expect(response.status).to eq 200
         expect(json['job']).to_not be nil
-        expect(json['job']['status']).to eq 'Väntar på digitalisering'
+        expect(json['job']['status']).to eq 'Waiting to begin'
       end
     end
   end
@@ -34,7 +34,7 @@ RSpec.describe Api::ProcessController, :type => :controller do
         post :update_process, job_id: job.id, status: 'progress', msg: 'Everything is running fine!', api_key: @api_key
 
         expect(response.status).to be 200
-        expect(json['job']['status']).to eq 'Väntar på digitalisering'
+        expect(json['job']['status']).to eq 'Waiting to begin'
         expect(json['job']['flow_step']['process_msg']).to eq 'Everything is running fine!'
       end
     end
@@ -46,7 +46,7 @@ RSpec.describe Api::ProcessController, :type => :controller do
         post :update_process, job_id: job.id, status: 'fail', msg: 'Something was missing!', api_key: @api_key
 
         expect(response.status).to be 200
-        expect(json['job']['status']).to eq 'Väntar på digitalisering'
+        expect(json['job']['status']).to eq 'Waiting to begin'
         expect(json['job']['quarantined']).to be_truthy
       end
     end
@@ -58,7 +58,7 @@ RSpec.describe Api::ProcessController, :type => :controller do
         post :update_process, job_id: job.id, status: 'success', msg: 'All done!', api_key: @api_key
 
         expect(response.status).to be 200
-        expect(json['job']['status']).to eq 'Digitalisering'
+        expect(json['job']['status']).to eq 'First manual process'
       end
     end
   end

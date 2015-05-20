@@ -65,17 +65,46 @@ class Flow
     
     # Validate each step nr
     if step_nrs.count != step_nrs.uniq.count
-      @errors << {step: "Duplicated step nrs exists!"}
+      @errors << {step: "Duplicated step nrs exist!"}
     end
 
     # Validate existence of step nr from references
     if (goto_true_nrs - step_nrs).present?
-      @errors << {step: "Given goto step does not exist! #{(goto_true_nrs - step_nrs).inspect}"}
+      @errors << {step: "Given goto_true step does not exist! #{(goto_true_nrs - step_nrs).inspect}"}
     end
 
     if (goto_false_nrs - step_nrs).present?
-      @errors << {step: "Given goto step does not exist! #{(goto_false_nrs - step_nrs).inspect}"}
+      @errors << {step: "Given goto_false step does not exist! #{(goto_false_nrs - step_nrs).inspect}"}
     end
+
+    # Check for circular references
+    @flow_steps_hash.each do |flow_step|
+      if flow_step_is_before?(flow_step, flow_step["step"])
+        @errors << {step: "Circular reference exists for step: #{flow_step["step"]}"}
+      end
+    end
+
+  end
+
+  # Returns true if given ste_nr occurs anywhere below flow_step
+  def flow_step_is_before?(flow_step, step_nr)
+    return false if flow_step.nil? || step_nr.nil?
+    if flow_step["goto_true"] == step_nr
+      return true
+    elsif flow_step["goto_false"] == step_nr
+      return true
+    elsif flow_step["goto_true"] && flow_step_is_before?(find_flow_step(flow_step["goto_true"]),step_nr)
+      return true
+    elsif flow_step["goto_false"] && flow_step_is_before?(find_flow_step(flow_step["goto_false"]),step_nr)
+      return true
+    else
+      return false
+    end
+  end
+
+  # Returns a flow_step hash from total array
+  def find_flow_step(step_nr)
+    return @flow_steps_hash.find{|x| x["step"] == step_nr}
   end
 
   # Returns the lowest step nr witin flow

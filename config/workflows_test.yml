@@ -45,7 +45,7 @@ workflows:
         step: 40
         process: AUTOMATIC_PROCESS
         description: Final automatic process
-        goto_true: 50
+        goto_true:
         goto_false:
         params:
           manual: false
@@ -93,5 +93,43 @@ workflows:
         goto_false:
         params:
           msg: Starta digitalisering
+  -
+    name: CIRCULAR_REFERENCE
+    steps:
+      - 
+        step: 10
+        process: CONFIRMATION
+        description: Waiting to begin
+        goto_true: 20
+        goto_false:
+        params:
+          start: true
+          manual: true
+          msg: Start flow
+      - 
+        step: 20
+        process: CONFIRMATION
+        description: First manual process
+        goto_true: 30
+        goto_false:
+        params:
+          manual: false
+          msg: Confirm manual process done
+      - 
+        step: 30
+        process: AUTOMATIC_PROCESS
+        description: First automatic process
+        goto_true: 40
+        goto_false: 10
+        params:
+          manual: false
+      - 
+        step: 40
+        process: AUTOMATIC_PROCESS
+        description: Final automatic process
+        goto_true:
+        goto_false:
+        params:
+          manual: false
 
 default_workflow: VALID_FLOW

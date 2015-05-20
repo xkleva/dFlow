@@ -4,7 +4,7 @@ RSpec.describe Flow, :type => :model do
   describe "find" do
     context "for an existing flow name" do
       it "should return a flow" do
-        flow = Flow.find("SCANGATE_FLOW")
+        flow = Flow.find("VALID_FLOW")
         flow.generate_flow_steps(0)
 
         expect(flow).to be_truthy
@@ -21,7 +21,7 @@ RSpec.describe Flow, :type => :model do
   describe "validate" do
     context "for a valid flow" do
       it "should return true" do
-        flow = Flow.find("SCANGATE_FLOW")
+        flow = Flow.find("VALID_FLOW")
         expect(flow.valid?).to be_truthy
       end
     end
@@ -29,18 +29,28 @@ RSpec.describe Flow, :type => :model do
       it "should return false" do
         flow = Flow.find("MISSING_GOTO_STEP")
         expect(flow.valid?).to be_falsey
+        expect(flow.errors.map{|x| x[:step]}.join(" ")).to include("Given goto_true step does not exist!")
       end
     end
     context "for an invalid flow" do
       it "should return false" do
         flow = Flow.find("DUPLICATE_STEP")
         expect(flow.valid?).to be_falsey
+        expect(flow.errors.map{|x| x[:step]}.join(" ")).to include("Duplicated step nrs exist!")
       end
     end
     context "for an invalid flow" do
       it "should return false" do
         flow = Flow.find("MISSING_PARAMS")
         expect(flow.valid?).to be_falsey
+        expect(flow.errors.first.messages[:params]).to be_truthy
+      end
+    end
+    context "for an invalid flow with a circular reference" do
+      it "should return false" do
+        flow = Flow.find("CIRCULAR_REFERENCE")
+        expect(flow.valid?).to be_falsey
+        expect(flow.errors.map{|x| x[:step]}.join(" ")).to include("Circular reference exists")
       end
     end
   end
@@ -56,7 +66,7 @@ RSpec.describe Flow, :type => :model do
     context "for a valid job and flow" do
       it "should generate flow_steps for job" do
         job = create(:job)
-        flow = Flow.find("SCANGATE_FLOW")
+        flow = Flow.find("VALID_FLOW")
         flow.apply_flow(job)
 
         expect(job.current_flow_step).to eq 10

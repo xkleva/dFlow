@@ -129,10 +129,10 @@ RSpec.describe Treenode, :type => :model do
       it "should return a hash with states" do
         treenode = create(:top_treenode)
         create(:job, treenode_id: treenode.id, current_flow_step: 10)
-        create(:job, treenode_id: treenode.id, current_flow_step: 70)
+        create(:job, treenode_id: treenode.id, current_flow_step: 40)
         childnode = create(:treenode, parent_id: treenode.id)
         create(:job, treenode_id: childnode.id, current_flow_step: 10)
-        create(:job, treenode_id: childnode.id, current_flow_step: 70)
+        create(:job, treenode_id: childnode.id, current_flow_step: 40)
         hash = treenode.get_state_groups
 
         expect(hash.size).to eq 2
@@ -144,10 +144,10 @@ RSpec.describe Treenode, :type => :model do
         treenode = create(:top_treenode)
         treenode2 = create(:top_treenode)
         create(:job, treenode_id: treenode.id, current_flow_step: 10)
-        create(:job, treenode_id: treenode.id, current_flow_step: 70)
+        create(:job, treenode_id: treenode.id, current_flow_step: 40)
         childnode = create(:treenode, parent_id: treenode.id)
         create(:job, treenode_id: childnode.id, current_flow_step: 10)
-        create(:job, treenode_id: childnode.id, current_flow_step: 70)
+        create(:job, treenode_id: childnode.id, current_flow_step: 40)
 
         childnode.update_attribute('parent_id', treenode2.id)
         childnode.save
