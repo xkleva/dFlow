@@ -409,6 +409,8 @@ class Job < ActiveRecord::Base
         flow_step.job = self
         flow_step.finish!
       end
+      self.status = nil
+      self.save!
     else
       create_flow_steps
     end
