@@ -25,6 +25,7 @@ class Job < ActiveRecord::Base
   validates_associated :job_activities
   attr_accessor :created_by
   attr_accessor :message
+  attr_accessor :nolog # Flag, set to true to inactivate job activity creation
 
   after_create :create_log_entry
   after_create :create_initial_flow_steps
@@ -90,6 +91,7 @@ class Job < ActiveRecord::Base
       create_log_entry("QUARANTINE", self.message)
     elsif self.quarantined_changed? && !self.quarantined
       create_log_entry("UNQUARANTINE", "_UNQUARANTINED")
+      self.message = nil
       create_flow_steps
     end
   end
@@ -111,6 +113,7 @@ class Job < ActiveRecord::Base
 
   # Creates a JobActivity object for CREATE event
   def create_log_entry(event="CREATE", message="_ACTIVITY_CREATED")
+    return if nolog
     entry = JobActivity.new(username: created_by, event: event, message: message)
     job_activities << entry
   end
@@ -376,9 +379,9 @@ class Job < ActiveRecord::Base
 
   # Returns current flow step object
   def flow_step
-    if !flow_steps.present?
-      create_flow_steps
-    end
+    #if !flow_steps.present?
+    #  create_flow_steps
+    #end
     FlowStep.job_flow_step(job_id: id, flow_step: current_flow_step || 10)
   end
 

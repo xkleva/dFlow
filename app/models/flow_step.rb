@@ -135,6 +135,7 @@ class FlowStep < ActiveRecord::Base
     return if entered?
     self.entered_at = DateTime.now
     self.save!
+    job.nolog = true
     job.set_current_flow_step(self)
     job.update_attribute('state', main_state)
   end

@@ -43,8 +43,10 @@ class Api::ProcessController < Api::ApiController
     end
 
     job.created_by = @current_user.username
+    flow_step = job.flow_step
+    flow_step.job = job
     # Switch job status before it is returned
-    job.flow_step.start!
+    flow_step.start!
     if job.save
       @response[:job] = job.as_json
       render_json
