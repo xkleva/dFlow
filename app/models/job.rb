@@ -385,30 +385,33 @@ class Job < ActiveRecord::Base
   # Run on create
   def create_initial_flow_steps
     ###### For migration purposes ONLY!
-    flow_step_status_map = {
-      nil => 10,
-      'waiting_for_digitizing' => 10,
-      'digitizing' => 20,
-      'post_processing' => 30,
-      'post_processing_user_input' => 40,
-      'done' => 80
-    }
+    if status.present?
+      flow_step_status_map = {
+        nil => 10,
+        'waiting_for_digitizing' => 10,
+        'digitizing' => 20,
+        'post_processing' => 30,
+        'post_processing_user_input' => 40,
+        'done' => 80
+      }
 
-    flow_steps.each do |flow_step|
-      flow_step.destroy
+      flow_steps.each do |flow_step|
+        flow_step.destroy
+      end
+
+      self.reload
+
+      self.current_flow_step = flow_step_status_map[status]
+
+      create_flow_steps
+
+      if status == 'done'
+        flow_step.job = self
+        flow_step.finish!
+      end
+    else
+      create_flow_steps
     end
-
-    self.reload
-
-    self.current_flow_step = flow_step_status_map[status]
-
-    create_flow_steps
-
-    if status == 'done'
-      flow_step.job = self
-      flow_step.finish!
-    end
-    ###########################
   end
 
    # Creates flow_steps for flow
