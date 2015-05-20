@@ -86,7 +86,7 @@ class Flow
 
   end
 
-  # Returns true if given ste_nr occurs anywhere below flow_step
+  # Returns true if given step_nr occurs anywhere below flow_step
   def flow_step_is_before?(flow_step, step_nr)
     return false if flow_step.nil? || step_nr.nil?
     if flow_step["goto_true"] == step_nr
@@ -126,7 +126,6 @@ class Flow
     if !job
       raise StandardError, "Job missing"
     end
-
     # If no step nr is assigned, use the lowest one
     if !step_nr
       step_nr = first_step_nr
@@ -151,13 +150,13 @@ class Flow
       # Finish all existing flow_steps before given step_nr
       if flow_step.is_before?(step_nr)
         if !flow_step.entered?
-          flow_step.enter!
+          flow_step.update_attribute('entered_at', DateTime.now)
         end
         if !flow_step.started?
-          flow_step.start!
+          flow_step.update_attribute('started_at', DateTime.now)
         end
         if !flow_step.finished?
-          flow_step.finish!
+          flow_step.update_attribute('finished_at', DateTime.now)
         end
       end
     end
@@ -172,6 +171,11 @@ class Flow
           if flow_step.step == step_nr
             flow_step.job = job
             flow_step.enter!
+          end
+          if flow_step_is_before?(find_flow_step(flow_step.step), step_nr)
+            flow_step.update_attribute('entered_at', DateTime.now)
+            flow_step.update_attribute('started_at', DateTime.now)
+            flow_step.update_attribute('finished_at', DateTime.now)
           end
         end
       end

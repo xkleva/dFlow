@@ -87,25 +87,6 @@ RSpec.describe Job, :type => :model do
     end
   end
 
-  #describe "switch status" do
-  #  context "Switch to valid status" do
-  #    before :each do
-  #      @job = create(:job, status: 'waiting_for_digitizing')
-  #      @old_count = @job.job_activities.count
-  #      @job.created_by = "api_key_user"
-  #      @job.switch_status(Status.find_by_name('digitizing'))
-  #      @job.save
-  #      @job2 = Job.find(@job.id)
-  #    end
-  #    it "should save new status" do
-  #      expect(@job2.status).to eq 'digitizing'
-  #    end
-  #    it "should generate an activity entry" do
-  #      expect(@job2.job_activities.count).to eq @old_count+1
-  #    end
-  #  end
-  #end
-
   describe "Update quarantined flag" do
     context "without message set" do
       it "should not validate object" do
@@ -120,6 +101,24 @@ RSpec.describe Job, :type => :model do
         job.quarantined = true
         job.message = "Quarantined job for testing purposes"
         expect(job.valid?).to be_truthy
+      end
+    end
+    context "unquarantine with updated current_flow_step" do
+      it "should recreate flow_steps" do
+        job = create(:job, quarantined: true)
+        fs_old1 = FlowStep.job_flow_step(job_id: job.id, flow_step: 10)
+        fs_old2 = FlowStep.job_flow_step(job_id: job.id, flow_step: 30)
+        fs_old3 = FlowStep.job_flow_step(job_id: job.id, flow_step: 40)
+
+        job.update_attributes(current_flow_step: 30, quarantined: false)
+        fs_new1 = FlowStep.job_flow_step(job_id: job.id, flow_step: 10)
+        fs_new2 = FlowStep.job_flow_step(job_id: job.id, flow_step: 30)
+        fs_new3 = FlowStep.job_flow_step(job_id: job.id, flow_step: 40)
+
+        expect(job.current_flow_step).to eq 30
+        expect(fs_old1.created_at == fs_new1.created_at).to be_truthy
+        expect(fs_old2.created_at != fs_new2.created_at).to be_truthy
+        expect(fs_old3.created_at != fs_new3.created_at).to be_truthy
       end
     end
   end
@@ -248,11 +247,10 @@ RSpec.describe Job, :type => :model do
         @old_count = job.job_activities.count
         
         job.restart
+        job.reload
 
-        job2 = Job.find(job.id)
-
-        #expect(job2.status).to eq 'waiting_for_digitizing'
-        expect(job2.job_activities.count).to eq @old_count+1
+        expect(job.flow_step.description).to eq 'Waiting to begin'
+        expect(job.job_activities.count).to eq @old_count+1
       end
     end
   end
@@ -263,9 +261,26 @@ RSpec.describe Job, :type => :model do
         job = create(:job, current_flow_step: 30)
         expect(job.flow_step.step).to eq 30
       end
-      it "should set state accorfing to given step" do
+      it "should set state according to given step" do
         job = create(:job, current_flow_step: 30)
         expect(job.state).to eq "PROCESS"
+      end
+      it "should complete all previous steps" do
+        job = create(:job, current_flow_step: 30)
+        flow_step1 = FlowStep.job_flow_step(job_id: job.id, flow_step: 10)
+        flow_step2 = FlowStep.job_flow_step(job_id: job.id, flow_step: 10)
+        job.reload
+
+        expect(flow_step1.entered?).to be_truthy
+        expect(flow_step1.started?).to be_truthy
+        expect(flow_step1.finished?).to be_truthy
+        expect(flow_step2.entered?).to be_truthy
+        expect(flow_step2.started?).to be_truthy
+        expect(flow_step2.finished?).to be_truthy
+
+        expect(job.current_flow_step).to eq 30
+        expect(job.flow_step.entered?).to be_truthy
+        expect(job.flow_step.started?).to be_falsey
       end
     end
   end
