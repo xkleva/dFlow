@@ -87,7 +87,7 @@ class Job < ActiveRecord::Base
     return if self.quarantined
     self.quarantined = true
     self.save
-    create_log_entry("QUARANTINE", self.message)
+    create_log_entry("QUARANTINE", msg)
   end
 
   # Unsets quarantine flag for job
