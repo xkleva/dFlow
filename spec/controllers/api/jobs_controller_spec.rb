@@ -278,6 +278,21 @@ describe Api::JobsController do
         expect(response.status).to eq 200
       end
     end
+    context "without metadata key" do
+      it "should not update metadata" do
+        job = create(:job, metadata: {type_of_record: 'test'}.to_json)
+        job.name = "NewName"
+        
+        post :update, api_key: @api_key, id: job.id, job: job.as_json
+        
+        json_hash = {type_of_record: 'test'}.as_json
+
+        expect(json['job']).to_not be nil
+        expect(json['job']['name']).to eq 'NewName'
+        expect(json['job']['metadata']).to eq json_hash
+        expect(response.status).to eq 200
+      end
+    end
     context "with invalid values" do
       it "should return an error message" do
         job = create(:job)
