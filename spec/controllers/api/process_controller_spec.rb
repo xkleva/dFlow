@@ -72,6 +72,21 @@ RSpec.describe Api::ProcessController, :type => :controller do
         expect(json['job']['status']).to eq 'First manual process'
         expect(json['job']['current_flow_step']).to eq 20
       end
+
+      it "should not affect previous flow steps" do
+        job = create(:job)
+        job.flow_step.start!
+        timestamp1 = job.flow_step.started_at
+        job.flow_step.finish!
+
+        get :update_process, job_id: job.id, step: 20, status: 'success', msg: 'All done!', api_key: @api_key
+
+        job.reload
+
+        timestamp2 = FlowStep.job_flow_step(job_id: job.id, flow_step: 10).started_at
+        expect(response.status).to be 200
+        expect(timestamp1 == timestamp2).to be_truthy
+      end
     end
 
     context "sends a success message with wrong step nr" do

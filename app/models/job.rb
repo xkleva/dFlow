@@ -408,11 +408,12 @@ class Job < ActiveRecord::Base
 
       if status == 'done'
         flow_step.job = self
+        flow_step.start!
         flow_step.finish!
       end
       self.status = nil
       self.save!
-    else
+    elsif flow_steps.blank?
       create_flow_steps
     end
   end
