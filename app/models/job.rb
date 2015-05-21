@@ -21,7 +21,6 @@ class Job < ActiveRecord::Base
   validate :source_in_list
   validate :flow_in_list
   validate :xml_validity
-  validate :message_presence, :on => :update
   validates_associated :job_activities
   attr_accessor :created_by
   attr_accessor :message
@@ -31,7 +30,6 @@ class Job < ActiveRecord::Base
   after_create :create_initial_flow_steps
   after_initialize :default_values
 
-  after_save :create_log_entries, :on => :update
   before_validation :set_treenode_ids
 
   def as_json(options = {})
@@ -84,16 +82,22 @@ class Job < ActiveRecord::Base
     true
   end
 
-  # Creates log entries for certain updated attributes
-  def create_log_entries
-    # Quarantine flag log entries
-    if self.quarantined_changed? && self.quarantined
-      create_log_entry("QUARANTINE", self.message)
-    elsif self.quarantined_changed? && !self.quarantined
-      create_log_entry("UNQUARANTINE", "_UNQUARANTINED")
-      self.message = nil
-      create_flow_steps
-    end
+  # Sets quarantine flag for job
+  def quarantine!(msg:)
+    return if self.quarantined
+    self.quarantined = true
+    self.save
+    create_log_entry("QUARANTINE", self.message)
+  end
+
+  # Unsets quarantine flag for job
+  def unquarantine!(flow_step:)
+    return if !self.quarantined
+    self.quarantined = false
+    self.current_flow_step = flow_step
+    create_flow_steps
+    self.save
+    create_log_entry("UNQUARANTINE","_UNQUARANTINED")
   end
 
   # Mark job as deleted
@@ -113,7 +117,6 @@ class Job < ActiveRecord::Base
 
   # Creates a JobActivity object for CREATE event
   def create_log_entry(event="CREATE", message="_ACTIVITY_CREATED")
-    return if nolog
     entry = JobActivity.new(username: created_by, event: event, message: message)
     job_activities << entry
   end
@@ -180,13 +183,6 @@ class Job < ActiveRecord::Base
   def flow_in_list
     if !APP_CONFIG["workflows"].map { |x| x["name"] }.include?(flow)
       errors.add(:flow, "not included in list of valid sources")
-    end
-  end
-
-  # Validates that message is present on certain updated attributes
-  def message_presence
-    if self.quarantined_changed? && self.quarantined && self.message.blank?
-      errors.add(:message, "Must assign a message for quarantine action")
     end
   end
 

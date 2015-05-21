@@ -61,6 +61,8 @@ class Api::ProcessController < Api::ApiController
   end
 
   # Takes a process update and updates job accordingly
+  # Required: job_id, step, status
+  # Optional: msg
   def update_process
     job = Job.find_by_id(params[:job_id])
 
@@ -81,7 +83,18 @@ class Api::ProcessController < Api::ApiController
       return
     end
 
-    # If process is successful, update status
+    # If process is started, start if possible
+    if params[:status] == 'start'
+      if flow_step.started?
+        error_msg(ErrorCodes::QUEUE_ERROR, "Given step number is already started: #{params[:step]}, job: #{params[:job_id]}")
+        render_json
+        return
+      else
+        flow_step.start!
+      end
+    end
+
+    # If process is successful, finish and go to next step
     if params[:status] == 'success'
       if !flow_step.started?
         flow_step.update_attribute('started_at', DateTime.now)

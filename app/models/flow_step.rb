@@ -183,7 +183,7 @@ class FlowStep < ActiveRecord::Base
     if goto_true.present?
       fs = FlowStep.job_flow_step(job_id: job_id, flow_step: goto_true)
       if fs.entered?
-        job.update_attributes(quarantined: true, message: "Broken flow, step already entered #{fs.step}, called from #{self.step}")
+        job.quarantine!(msg: "Broken flow, step already entered #{fs.step}, called from #{self.step}")
         return nil
       else
         return fs

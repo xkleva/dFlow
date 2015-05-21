@@ -82,7 +82,46 @@ RSpec.describe Api::ProcessController, :type => :controller do
 
         expect(response.status).to be 422
         expect(json['job']).to be nil
+        expect(json['error']['msg']).to include("Given step number does not correlate to current flow_step")
       end
     end
+
+    context "sends a start message with correct step nr" do
+      it "should start job" do
+        job = create(:job)
+
+        get :update_process, job_id: job.id, step: 10, status: 'start', msg: 'Started!', api_key: @api_key
+
+        expect(response.status).to be 200
+        expect(json['job']['current_flow_step']).to eq 10
+        expect(json['job']['flow_step']['started_at']).to_not be nil
+      end
+    end
+
+    context "sends a start message with wrong step nr" do
+      it "should return error code" do
+        job = create(:job)
+
+        get :update_process, job_id: job.id, step: 20, status: 'start', msg: 'Started!', api_key: @api_key
+
+        expect(response.status).to be 422
+        expect(json['job']).to be nil
+        expect(json['error']['msg']).to include("Given step number does not correlate to current flow_step")
+      end
+    end
+
+    context "sends a start message for already started job" do
+      it "should return error code" do
+        job = create(:job)
+        job.flow_step.start!
+
+        get :update_process, job_id: job.id, step: 10, status: 'start', msg: 'Started!', api_key: @api_key
+
+        expect(response.status).to be 422
+        expect(json['job']).to be nil
+        expect(json['error']['msg']).to include("Given step number is already started")
+      end
+    end
+
   end
 end

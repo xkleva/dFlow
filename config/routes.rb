@@ -24,6 +24,8 @@ Rails.application.routes.draw do
     # Jobs API
     resources :jobs
     get 'jobs/:id/restart', to: 'jobs#restart'
+    get 'jobs/:id/quarantine', to: 'jobs#quarantine'
+    get 'jobs/:id/unquarantine', to: 'jobs#unquarantine'
 
     # Sources API
     get 'sources/fetch_source_data', to: 'sources#fetch_source_data'

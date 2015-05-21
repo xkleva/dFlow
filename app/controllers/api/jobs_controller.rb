@@ -1,7 +1,7 @@
 
 class Api::JobsController < Api::ApiController
   before_filter :check_params
-  before_filter -> { validate_rights 'manage_jobs' }, only: [:create, :update, :destroy, :restart]
+  before_filter -> { validate_rights 'manage_jobs' }, only: [:create, :update, :destroy, :restart, :quarantine, :unquarantine]
   respond_to :json, :pdf
   require 'pp'
   
@@ -173,6 +173,30 @@ class Api::JobsController < Api::ApiController
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not restart.", job.errors)
     end
 
+    render_json
+  end
+
+  api!
+  def quarantine
+    job = Job.find_by_id(params[:id])
+    job.created_by = @current_user.username
+    if job.quarantine!(msg: params[:message])
+      @response[:job] = job
+    else
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not quarantine job.", job.errors)
+    end
+    render_json
+  end
+
+  api!
+  def unquarantine
+    job = Job.find_by_id(params[:id])
+    job.created_by = @current_user.username
+    if job.unquarantine!(flow_step: params[:step])
+      @response[:job] = job
+    else
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not unquarantine job.", job.errors)
+    end
     render_json
   end
 

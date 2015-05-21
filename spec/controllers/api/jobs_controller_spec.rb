@@ -320,4 +320,44 @@ describe Api::JobsController do
     end
   end
 
+  describe "GET restart" do
+    context "for an existing job" do
+      it "should return job" do
+        job = create(:job, current_flow_step: 20, id: 666)
+
+        get :restart, api_key: @api_key, id: job.id
+
+        expect(response.status).to eq 200
+        expect(json['job']['current_flow_step']).to eq 10
+      end
+    end
+  end
+
+  describe "GET quarantine" do
+    context "for an unquarantined job" do
+      it "should return job" do
+        job = create(:job)
+
+        get :quarantine, api_key: @api_key, id: job.id
+
+        expect(response.status).to eq 200
+        expect(json['job']['quarantined']).to eq true
+      end
+    end
+  end
+
+  describe "GET unquarantine" do
+    context "for a quarantined job" do
+      it "should return job" do
+        job = create(:job)
+        job.quarantine!(msg: "Quarantined")
+
+        get :unquarantine, api_key: @api_key, id: job.id
+
+        expect(response.status).to eq 200
+        expect(json['job']['quarantined']).to eq false
+      end
+    end
+  end
+
 end

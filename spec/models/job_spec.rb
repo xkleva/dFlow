@@ -88,29 +88,29 @@ RSpec.describe Job, :type => :model do
   end
 
   describe "Update quarantined flag" do
-    context "without message set" do
-      it "should not validate object" do
-        job = create(:job, quarantined: false)
-        job.quarantined = true
-        expect(job.valid?).to be_falsey
+    context "for unquarantined job" do
+      it "should quarantine job and add log item" do
+        job = create(:job)
+        job.quarantine!(msg: "quarantined")
+        expect(job.job_activities.count).to eq 2
       end
     end
-    context "with message set" do
-      it "should validate object" do
-        job = create(:job, quarantined: false)
-        job.quarantined = true
-        job.message = "Quarantined job for testing purposes"
-        expect(job.valid?).to be_truthy
+    context "for quarantined job" do
+      it "should do nothing" do
+        job = create(:job, quarantined: true)
+        job.quarantine!(msg: "Quarantined")
+        expect(job.job_activities.count).to eq 1
       end
     end
     context "unquarantine with updated current_flow_step" do
       it "should recreate flow_steps" do
-        job = create(:job, quarantined: true)
+        job = create(:job)
+        job.quarantine!(msg: "Quarantined for testing purposes")
         fs_old1 = FlowStep.job_flow_step(job_id: job.id, flow_step: 10)
         fs_old2 = FlowStep.job_flow_step(job_id: job.id, flow_step: 30)
         fs_old3 = FlowStep.job_flow_step(job_id: job.id, flow_step: 40)
 
-        job.update_attributes(current_flow_step: 30, quarantined: false)
+        job.unquarantine!(flow_step: 30)
         fs_new1 = FlowStep.job_flow_step(job_id: job.id, flow_step: 10)
         fs_new2 = FlowStep.job_flow_step(job_id: job.id, flow_step: 30)
         fs_new3 = FlowStep.job_flow_step(job_id: job.id, flow_step: 40)
@@ -125,12 +125,12 @@ RSpec.describe Job, :type => :model do
 
   describe "create_log_entry" do
     context "for valid job when switching quarantined" do
-      it "should generate a JobAtivity object" do
+      it "should generate a JobActivity object" do
         job = create(:job)
         job.created_by = @api_key_user
-        job.quarantined = true
-        job.message = "Quarantined for testing purposes"
-        job.save
+        job.quarantine!(msg: "Quarantined")
+        job.reload
+
         expect(job.job_activities.count).to eq 2
       end
     end
