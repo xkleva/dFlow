@@ -105,7 +105,7 @@ class Api::ProcessController < Api::ApiController
 
     # If process failed, quarantine job with message
     if params[:status] == 'fail'
-      job.update_attributes(quarantined: true, message: params[:msg])
+      job.quarantine!(msg: params[:msg])
     end
 
     # If process is sending a progress report, save message
