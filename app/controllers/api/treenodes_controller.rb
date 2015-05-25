@@ -28,7 +28,7 @@ class Api::TreenodesController < Api::ApiController
   api :GET, '/treenodes/:id', 'Returns a treenode object'
   param :show_children, :bool, desc: 'Includes child nodes when set to true'
   param :show_jobs, :bool, desc: 'Includes jobs under treeNode when set to true'
-  param :page, :bool, desc: 'Declares which page of job results should be retrieved (default: 1)'
+  param :page, :number, desc: 'Declares which page of job results should be retrieved (default: 1)'
   param :show_breadcrumb, :bool,  desc: 'Includes breadcrumb for treeNode when set to true'
   param :show_breadcrumb_as_string, :bool, desc: 'Includes a string representation of breadcrumb when set to true'
   def show

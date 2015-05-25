@@ -184,7 +184,7 @@ class Api::JobsController < Api::ApiController
 
   api :GET, '/jobs/:id/quarantine', 'Puts a Job into Quarantine'
   description 'Puts a Job into Quarantine, meaning it will not continue processing until it has been removed from Quarantine'
-  param :message, String, desc: "Quarantine message (reason for action)", required: true
+  param :message, String, desc: "Quarantine message (reason for action)"
   def quarantine
     job = Job.find_by_id(params[:id])
     job.created_by = @current_user.username
@@ -198,7 +198,7 @@ class Api::JobsController < Api::ApiController
 
   api :GET, '/jobs/:id/unquarantine', 'Takes a Job out of Quarantine'
   description 'Takes a job out of Quarantine state, and sets given flow step number as current flow step. Subsequent flow steps will be recreated.'
-  param :step, :number, "Step number of flow step to set as current flow step for job.", required: true 
+  param :step, :number, "Step number of flow step to set as current flow step for job." 
   def unquarantine
     job = Job.find_by_id(params[:id])
     job.created_by = @current_user.username

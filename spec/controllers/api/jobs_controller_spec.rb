@@ -353,7 +353,7 @@ describe Api::JobsController do
       it "should return job" do
         job = create(:job)
 
-        get :quarantine, api_key: @api_key, id: job.id
+        get :quarantine, api_key: @api_key, id: job.id, message: "Quarantine message"
 
         expect(response.status).to eq 200
         expect(json['job']['quarantined']).to eq true
