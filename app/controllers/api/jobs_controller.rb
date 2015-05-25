@@ -11,11 +11,11 @@ class Api::JobsController < Api::ApiController
   end
 
   api :GET, '/jobs', 'Returns a list of jobs based on query'
-  formats [:json]
-  param :page, String, :desc => "Decides which page of pagination should be returned"
-  param :query, String, :desc => "Return jobs matching search string"
-  description "Returns a list of all jobs"
+  param :page, :number, desc: "Declares which page of search result should be displayed (default: 1)", default: 1
+  param :query, String, desc: "Return jobs matching search string"
+  description "Returns a list of jobs based on given query parameters. These job objects are minimized for performance reasons, to retrieve a complete job object see /jobs/:id ."
   example '{"jobs":[{"id":1001002,"name":null,"title":"Water and water pollution handbook.","display":"Water and water pollution handbook.","source_label":"Libris","catalog_id":1234,"breadcrumb_string":"Projekt / OCR-projektet","treenode_id":6}]}'.pretty_json
+  see 'jobs#show'
   def index
     jobs = Job.all
     pagination = {}
@@ -78,9 +78,8 @@ class Api::JobsController < Api::ApiController
     render_json
   end
   
-  api :GET, '/jobs/id', 'Returns a single Job object'
-  formats [:json]
-  description 'Returns a job object'
+  api :GET, '/jobs/:id', 'Returns a single complete Job object'
+  description 'Returns a complete Job object, including workflow and log entries.'
   example '{"job":{"status":"waiting_for_digitizing","id":1001002,"name":null,"catalog_id":1234,"title":"Water and water pollution handbook.","author":null,"deleted_at":null,"created_by":null,"updated_by":null,"xml":"\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003cxsearch xmlns:marc=\"http://www.loc.gov/MARC21/slim\" to=\"1\" ...","quarantined":false,"comment":null,"object_info":null,"search_title":null,"metadata":"{\"type_of_record\":\"am\"}","created_at":"2015-02-20T15:14:12.254Z","updated_at":"2015-02-20T15:14:12.254Z","source":"libris","treenode_id":6,"copyright":false,"display":"Water and water pollution handbook.","source_label":"Libris","breadcrumb":[{"id":1,"name":"Projekt"},{"id":6,"name":"OCR-projektet"}],"activities":[{"job_id":1001002,"id":7276,"username":"admin","event":"CREATE","message":"Activity has been created","created_at":"2015-02-20T15:14:12.259Z","updated_at":"2015-02-20T15:14:12.259Z"}]}}'.pretty_json
   def show
     begin
@@ -100,8 +99,9 @@ class Api::JobsController < Api::ApiController
   # Creates a job from given parameter data.
   # The created object is returned in JSON as well as a location header.
   api :POST, '/jobs/', 'Creates a Job object'
-  formats [:json]
-  description 'Creates a Job object'
+  description 'Creates a Job object, base object is created by using /sources/fetch_source_data. This object can be saved as is, except for copyright value which must be assigned (true for restricted use, false for public domain).'
+  see 'sources#fetch_source_data'
+  example '{"job":{"treenode_id":25, "dc":{}, "source":"libris", "catalog_id":"1234", "title":"Water and water pollution handbook.", "xml":"xml", "metadata":{"type_of_record":"am"}, "is_periodical":false, "source_label":"Libris", "copyright":false, "name":"Test job name"}}'.pretty_json
   def create
     validate_only = params[:validate_only]
     job_params = params[:job]
@@ -133,7 +133,9 @@ class Api::JobsController < Api::ApiController
     render_json
   end
 
-  api!
+  api :PUT, '/jobs/:id', 'Updates a Job object'
+  description 'Updates an existing job object. Only parameters that are to be updated have to be sent to this method, all other fields will remain unchanged.'
+  example '{"job":{"copyright":false}}'
   def update
     job = Job.find_by_id(params[:id])
     job_params = params[:job]
@@ -151,7 +153,8 @@ class Api::JobsController < Api::ApiController
     render_json
   end
 
-  api!
+  api :DELETE, '/jobs/:id', 'Deletes a Job object'
+  description 'Deletes a Job object. Job deletion is a soft delete, and will only flag object as deleted. To restore a deleted job, set deleted_at flag to null in database'
   def destroy
     job = Job.find_by_id(params[:id])
     
@@ -164,7 +167,8 @@ class Api::JobsController < Api::ApiController
     render_json
   end
 
-  api!
+  api :GET, '/jobs/:id/restart', 'Restarts a job'
+  description 'Restarts a job, meaning that the flow steps will be recreated and current flow step be set to the first step. This operation cannot be undone.'
   def restart
     job = Job.find_by_id(params[:id])
     job.created_by = @current_user.username
@@ -178,7 +182,9 @@ class Api::JobsController < Api::ApiController
     render_json
   end
 
-  api!
+  api :GET, '/jobs/:id/quarantine', 'Puts a Job into Quarantine'
+  description 'Puts a Job into Quarantine, meaning it will not continue processing until it has been removed from Quarantine'
+  param :message, String, desc: "Quarantine message (reason for action)", required: true
   def quarantine
     job = Job.find_by_id(params[:id])
     job.created_by = @current_user.username
@@ -190,7 +196,9 @@ class Api::JobsController < Api::ApiController
     render_json
   end
 
-  api!
+  api :GET, '/jobs/:id/unquarantine', 'Takes a Job out of Quarantine'
+  description 'Takes a job out of Quarantine state, and sets given flow step number as current flow step. Subsequent flow steps will be recreated.'
+  param :step, :number, "Step number of flow step to set as current flow step for job.", required: true 
   def unquarantine
     job = Job.find_by_id(params[:id])
     job.created_by = @current_user.username

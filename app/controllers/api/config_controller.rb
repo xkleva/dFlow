@@ -8,7 +8,7 @@ class Api::ConfigController < Api::ApiController
   end
 
 	# Returns a list of assignable roles on format {roles: ["ROLE1", "ROLE2", ...]}
-  api!
+  api :GET, '/config/roles', 'Returns a list of assignable roles for users'
   def role_list
     role_list = []
 		# Select role name from config list of roles
@@ -25,7 +25,7 @@ class Api::ConfigController < Api::ApiController
   end
 
   # Returns a list of statuses
-  api!
+  api :GET, '/config/states', 'Returns a list of possible states for flow step processes'
   def state_list
     # Select role name from config list of roles
     states_list = APP_CONFIG["processes"].map{|x| x["state"]}.uniq

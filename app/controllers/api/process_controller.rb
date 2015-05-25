@@ -2,13 +2,15 @@ class Api::ProcessController < Api::ApiController
 
   before_filter -> { validate_rights 'manage_jobs' }, only: [:request_job, :update_process, :check_connection]
 
-  # Return 200 if connection is valid
+  api :GET, '/process/check_connection', 'Check if connection is available'
+  description 'Returns 200 and a success message if API is available'
   def check_connection
     @response[:msg] = "Connection successful!"
     render_json
   end
 
-  # Returns a job for given code if any is applicable
+  api :GET, '/process/request_job/:code', ' Returns a job for given code'
+  description 'Returns a Job where its current flow step has given process code as process name. Returns no job  if a process of given code is currently running, or if there are no applicable jobs'
   def request_job
     code = params[:code]
     process = APP_CONFIG["processes"].find{|x| x["code"] == code}
@@ -60,9 +62,11 @@ class Api::ProcessController < Api::ApiController
     render_json
   end
 
-  # Takes a process update and updates job accordingly
-  # Required: job_id, step, status
-  # Optional: msg
+  api :GET, '/process/:job_id', 'Updated a jobs flow step\'s status'
+  description 'Updates a Jobs current flow step\'s status'
+  param :step, :number, desc: 'The step number of the current flow step, to verify that given job is in proper flow step', required: true
+  param :status, String, desc: 'The status of the update, one of: [success, fail, progress]', required: true
+  param :msg, String, desc: 'Sets a message for update, i.e. progress message'
   def update_process
     job = Job.find_by_id(params[:job_id])
 
