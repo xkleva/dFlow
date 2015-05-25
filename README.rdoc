@@ -1,28 +1,123 @@
-== README
+== dFlow 
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+dFlow is a Management and Production Support System for Digitization production units.
+dFlow is created and maintained by Gothenburg University Library.
 
-Things you may want to cover:
+== Installation
 
-* Ruby version
+== Update system
+  sudo apt-get update
 
-* System dependencies
+== Install RVM (Ruby Version Manager)
+RVM is a tool for managing several ruby versions on a single production/development unit.
 
-* Configuration
+Install RVM stable with ruby:
+  sudo gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3 
+  \curl -sSL https://get.rvm.io | sudo bash -s stable --ruby
+Follow any instructions for adding signatures that may appear.
 
-* Database creation
+Add user to group ‘rvm’:
+  sudo adduser [username] rvm
 
-* Database initialization
+run the rvm script via home folder: 
+  source /usr/local/rvm/scripts/rvm
 
-* How to run the test suite
+LOG OUT (because role memberships are processed upon login)
+  exit
+LOG BACK IN
 
-* Services (job queues, cache servers, search engines, etc.)
+Install correct version for dFlow
+  rvm install 1.9.3
+  rvm use 1.9.3 --default
 
-* Deployment instructions
+== Install PostgreSQL
+  sudo apt-get install postgresql postgresql-contrib
 
-* ...
+A Locales Error might require you to do the following:
+  Add LC_ALL="en_US.utf-8" to the end of /etc/environment
+  sudo pg_createcluster 9.3 main --start
 
+Create user:
+  sudo su - postgres
+  createuser <username> --createdb --createrole --pwprompt
 
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+Create database:
+  sudo su - postgres
+  createdb dflow
+
+Add the following line to /etc/postgresql/<version>/main/pg_hba.conf (will allow all localhost connections to access database):
+  ..
+  local    all     all    trust
+  ..
+Restart postgresql
+  sudo service postgresql restart
+
+== Create config file
+
+    
+== Create database config file
+
+  1. Copy /config/database.yml.sample to /config/database.yml
+  2. Update config values to match your database setup
+
+== Install Apache
+  
+  sudo apt-get install apache2
+
+== Publish web application through Apache
+  
+Create the file /etc/apache2/sites-available/dflow.conf
+Add the following content, change the fields marked by asterisks
+
+  <VirtualHost *:80>
+      ServerName *dflow.mydomain.com*
+      PassengerRuby /usr/local/rvm/gems/ruby-1.9.3-p550/wrappers/ruby
+      DocumentRoot /srv/rails/dig_flow_public/public
+      <Directory /srv/rails/dig_flow_public/public>
+         AllowOverride all
+         Options -MultiViews
+    Require all granted
+      </Directory>
+  </VirtualHost>
+
+Disable standard site:
+  sudo a2dissite 000-default
+
+Enable site: 
+  sudo a2ensite dflow
+
+Reload apache: 
+  sudo service apache2 reload
+
+== Install Passenger
+
+Passenger is required for Apache to be able to interpret a rails application.
+
+  gem install passenger
+  sudo apt-get install libcurl4-openssl-dev
+  sudo apt-get install apache2-threaded-dev
+  passenger-install-apache2-module
+
+You might need to install some missing libraries at this point, follow instructions
+
+Create the following files with the corresponding information:
+/etc/apache2/mods-available/passenger.load
+  LoadModule passenger_module /usr/local/rvm/gems/ruby-1.9.3-p550/gems/passenger-4.0.53/buildout/apache2/mod_passenger.so
+
+/etc/apache2/mods-available/passenger.conf
+  <IfModule mod_passenger.c>
+    PassengerRoot /usr/local/rvm/gems/ruby-1.9.3-p550/gems/passenger-4.0.53
+    PassengerDefaultRuby /usr/local/rvm/gems/ruby-1.9.3-p550/wrappers/ruby
+  </IfModule>
+
+Enable mod passenger:
+  sudo a2enmod passenger
+
+Reload apache:
+  sudo service apache2 reload
+
+== Error files
+Apache error file: 
+  /var/log/apache2/error.log
+Rails error file:  
+  /srv/rails/dig_flow_public/log/production.log
