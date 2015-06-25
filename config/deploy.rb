@@ -2,7 +2,8 @@
 lock '3.4.0'
 
 set :application, 'dFlow'
-set :repo_url, 'git@github.com:ub-digit/dFlow.git'
+#set :repo_url, 'git@github.com:ub-digit/dFlow.git'
+set :repo_url, 'https://github.com/ub-digit/dFlow.git'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
