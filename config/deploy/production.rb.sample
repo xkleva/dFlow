@@ -10,6 +10,8 @@ server 'stagingserver.com', user: 'user', roles: %w{app db web}
 
 set :deploy_to, '/remote/path/to/app'
 
+set :tmp_dir, '/home/user/tmp'
+
 # role-based syntax
 # ==================
 
