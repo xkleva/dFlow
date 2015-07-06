@@ -144,6 +144,7 @@ class FlowStep < ActiveRecord::Base
     return if started?
     self.started_at = DateTime.now
     self.save!
+    job.set_current_flow_step(self)
     job.create_log_entry("STARTED", self.description)
     job.update_attribute('state', main_state)
   end
