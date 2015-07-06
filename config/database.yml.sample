@@ -17,7 +17,7 @@ production:
   username: root
   password: your_pass
   host: localhost
-  port: 3306     
+  port: 5432  
 
 staging:
   adapter: sqlite3

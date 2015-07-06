@@ -2,7 +2,8 @@
 lock '3.4.0'
 
 set :application, 'dFlow'
-set :repo_url, 'git@github.com:ub-digit/dFlow.git'
+#set :repo_url, 'git@github.com:ub-digit/dFlow.git'
+set :repo_url, 'https://github.com/ub-digit/dFlow.git'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
@@ -34,7 +35,7 @@ set :repo_url, 'git@github.com:ub-digit/dFlow.git'
 # Default value for keep_releases is 5
 # set :keep_releases, 5
 
-set :tmp_dir, '/home/rails/tmp'
+#set :tmp_dir, '/home/rails/tmp'
 
 # Copied into /{app}/shared/config from respective sample file
 set :linked_files, %w{config/database.yml config/config_secret.yml config/passwd}
