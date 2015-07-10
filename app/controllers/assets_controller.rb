@@ -32,7 +32,7 @@ class AssetsController < ApplicationController
       
       respond_to do |format|
         format.json { render_json }
-        format.pdf { send_data job_pdf.read, type: "application/pdf", disposition: "inline" }
+        format.pdf { send_data job_pdf.read, type: "application/pdf", disposition: "attachment" }
       end
     end
   end
