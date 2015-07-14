@@ -1,6 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe PublicationLog, :type => :model do
+
+  describe "publication_type" do
+    it { should allow_value("OTHER").for(:publication_type) }
+    it { should_not allow_value("NOTATYPE").for(:publication_type) }
+  end
+
   describe "self.types" do
     context "with types configured" do
       it "should return a list of types" do
@@ -8,7 +14,7 @@ RSpec.describe PublicationLog, :type => :model do
 
         types = PublicationLog.types
 
-        expect(types).to eq ['WIKIPEDIA', 'TWO', 'THREE']
+        expect(types).to eq ['WIKIPEDIA', 'TWO', 'THREE', 'OTHER']
       end
     end
     context "with types unconfigured" do
@@ -17,7 +23,7 @@ RSpec.describe PublicationLog, :type => :model do
 
         types = PublicationLog.types
 
-        expect(types).to eq []
+        expect(types).to eq ['OTHER']
       end
     end
   end

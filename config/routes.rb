@@ -37,6 +37,9 @@ Rails.application.routes.draw do
     get 'process/request_job/:code', to: 'process#request_job'
     get 'process/:job_id', to: 'process#update_process'
 
+    # Publication log API
+    resources :publication_log
+
     # Statuses API
     #get 'statuses/:id/new/:status', to: 'statuses#new'
     #get 'statuses/:id/complete/:status', to: 'statuses#complete'

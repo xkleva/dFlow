@@ -1,8 +1,8 @@
 FactoryGirl.define do
   factory :publication_log do
-    type ""
-username ""
-comment ""
+    publication_type "OTHER"
+    username ""
+    comment ""
   end
 
 end

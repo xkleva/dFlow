@@ -1,0 +1,2 @@
+module Api::PublicationLogHelper
+end

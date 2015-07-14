@@ -9,6 +9,7 @@ class Job < ActiveRecord::Base
 
   belongs_to :treenode
   has_many :job_activities, :dependent => :destroy
+  has_many :publication_logs, :dependent => :destroy
 
   has_many :flow_steps, -> {where(aborted_at: nil)}, :dependent => :destroy
 
@@ -67,7 +68,8 @@ class Job < ActiveRecord::Base
         is_periodical: is_periodical,
         status: flow_step.description,
         flow_step: flow_step,
-        flow_steps: flow_steps
+        flow_steps: flow_steps,
+        publication_logs: publication_logs
         })
     end
   end
