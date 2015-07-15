@@ -151,3 +151,10 @@ pdf_settings:
   operators: "[ ] Maria     [ ] Grim     [ ] Ingela"
   equipments: "[ ] Robot    [ ] Zeutschel    [ ] Canon "
 
+# Defines the selectable publicationLog types
+publication_types:
+  - 'MANUSCRIPT'
+  - 'WIKIPEDIA'
+  - 'GUPEA'
+  - 'LIBRIS'
+    

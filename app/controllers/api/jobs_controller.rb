@@ -31,6 +31,17 @@ class Api::JobsController < Api::ApiController
       jobs = jobs.where("search_title LIKE ?", "%#{params[:query].norm}%")
     end
 
+    # Filter by source
+    if params.has_key?(:sources) && params[:sources] != []
+      jobs = jobs.where(source: params[:sources])
+    end
+
+    # Filter by missing publication type
+    if params.has_key?(:missing_publication_type) && params[:missing_publication_type] != ''
+      ids_with_publication_type = jobs.includes(:publication_logs).where(publication_logs: {publication_type: params[:missing_publication_type]}).map(&:id)
+      jobs = jobs.where('id not in (?)', ids_with_publication_type)
+    end
+
     # Filter by quarantined flag if it exists and is a boolean value
     if params.has_key?(:quarantined) && params[:quarantined] != ''
       # If parameter is a string, cast to boolean
