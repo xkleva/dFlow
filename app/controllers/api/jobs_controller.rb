@@ -38,8 +38,8 @@ class Api::JobsController < Api::ApiController
 
     # Filter by missing publication type
     if params.has_key?(:missing_publication_type) && params[:missing_publication_type] != ''
-      ids_with_publication_type = jobs.includes(:publication_logs).where(publication_logs: {publication_type: params[:missing_publication_type]}).map(&:id)
-      jobs = jobs.where('id not in (?)', ids_with_publication_type)
+      ids_with_publication_type = jobs.includes(:publication_logs).where(publication_logs: {publication_type: params[:missing_publication_type]}).pluck(:id)
+      jobs = jobs.where('id not in (?)', ids_with_publication_type) unless ids_with_publication_type.empty?
     end
 
     # Filter by quarantined flag if it exists and is a boolean value

@@ -35,7 +35,7 @@ describe Api::JobsController do
     end
 
     context "for jobs missing publication log of specific type" do
-      it "should filter list based on jobs missing the production log type" do
+      it "should filter list based on jobs missing the publication log type" do
         job = create(:job)
         publication_log = create(:publication_log, job_id: job.id, publication_type: 'MANUSCRIPT')
         job2 = create(:job)
@@ -45,6 +45,14 @@ describe Api::JobsController do
 
         expect(json['jobs'].count).to eq 1
         expect(json['jobs'].first['id']).to eq job2.id
+      end
+
+      it "should return all jobs if none has publication log type" do
+        job = create_list(:job, 10)
+
+        get :index, api_key: @api_key, missing_publication_type: 'MANUSCRIPT'
+
+        expect(json['jobs'].count).to eq 10
       end
     end
   end
