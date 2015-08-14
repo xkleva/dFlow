@@ -25,24 +25,30 @@ class DublinCore < DublinCoreXML
     return job_data
   end
 
+  # Builds the xml
   def self.build_xml(dc)
     builder = Nokogiri::XML::Builder.new do |xml|
-      xml.record do
-        xml.title dc[:title]
-        xml.creator dc[:creator]
-        xml.subject_ dc[:subject]
-        xml.description dc[:description]
-        xml.publisher dc[:publisher]
-        xml.contributor dc[:contributor]
-        xml.date dc[:date]
-        xml.type dc[:type]
-        xml.format_ dc[:format]
-        xml.identifier dc[:identifier]
-        xml.source dc[:source]
-        xml.language dc[:language]
-        xml.relation dc[:relation]
-        xml.coverage dc[:coverage]
-        xml.rights dc[:rights]
+      xml.simpledc(
+          'xmlns' => 'http://www.ub.gu.se/xml-schemas/simple-dc/v1/',
+          'xmlns:dc' => 'http://purl.org/dc/elements/1.1/',
+          'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+          'xsi:schemaLocation' => 'http://www.ub.gu.se/xml-schemas/simple-dc/v1/ http://www.ub.gu.se/xml-schemas/simple-dc/gub-simple-dc-20150812.xsd'
+      ) do
+        xml[:dc].title dc[:title] if !dc[:title].empty?
+        xml[:dc].creator dc[:creator] if !dc[:creator].empty?
+        xml[:dc].subject_ dc[:subject] if !dc[:subject].empty?
+        xml[:dc].description dc[:description] if !dc[:description].empty?
+        xml[:dc].publisher dc[:publisher] if !dc[:publisher].empty?
+        xml[:dc].contributor dc[:contributor] if !dc[:contributor].empty?
+        xml[:dc].date dc[:date] if !dc[:date].empty?
+        xml[:dc].type dc[:type] if !dc[:type].empty?
+        xml[:dc].format_ dc[:format] if !dc[:format].empty?
+        xml[:dc].identifier dc[:identifier] if !dc[:identifier].empty?
+        xml[:dc].source dc[:source] if !dc[:source].empty?
+        xml[:dc].language dc[:language] if !dc[:language].empty?
+        xml[:dc].relation dc[:relation] if !dc[:relation].empty?
+        xml[:dc].coverage dc[:coverage] if !dc[:coverage].empty?
+        xml[:dc].rights dc[:rights] if !dc[:rights].empty?
       end
     end
     builder.to_xml

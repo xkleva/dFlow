@@ -55,16 +55,37 @@ RSpec.describe DublinCoreXML, :type => :model do
   END
 
   xml_data_simple = <<-END.gsub(/^ {6}/, '')
-    <record>
-      <title>The Title is the title is the title</title>
-      <creator>The Creator, Curt</creator>
-      <description>This paper deals with...</description>
-      <date>2005-04-26T12:02:50Z</date>
-      <format>application/pdf</format>
-      <identifier>http://hdl.handle.net/2077/999999999</identifier>
-      <language>en</language>
-    </record>
-  END
+    <simpledc xmlns="http://www.ub.gu.se/xml-schemas/simple-dc/v1/"
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.ub.gu.se/xml-schemas/simple-dc/v1/ http://www.ub.gu.se/xml-schemas/simple-dc/gub-simple-dc-20150812.xsd">
+      <dc:title>The Title</dc:title>
+      <dc:creator>The Creator</dc:creator>
+      <dc:subject>The Subject</dc:subject>
+      <dc:description/>
+      <dc:publisher/>
+      <dc:contributor/>
+      <dc:date/>
+      <dc:type/>
+      <dc:format/>
+      <dc:identifier/>
+      <dc:source/>
+      <dc:language/>
+      <dc:relation/>
+      <dc:coverage/>
+      <dc:rights/>
+    </simpledc>
+END
+  #   <record>
+  #     <title>The Title is the title is the title</title>
+  #     <creator>The Creator, Curt</creator>
+  #     <description>This paper deals with...</description>
+  #     <date>2005-04-26T12:02:50Z</date>
+  #     <format>application/pdf</format>
+  #     <identifier>http://hdl.handle.net/2077/999999999</identifier>
+  #     <language>en</language>
+  #   </record>
+  # END
 
   dc = {
     title: 'The Title',
@@ -86,24 +107,26 @@ RSpec.describe DublinCoreXML, :type => :model do
 
   xml_data_generated = <<-END.gsub(/^ {6}/, '')
     <?xml version="1.0" encoding="UTF-8"?>
-    <record xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:dc="http://purl.org/dc/elements/1.1/">
-      <title>#{dc[:title]}</title>
-      <creator>#{dc[:creator]}</creator>
-      <subject>#{dc[:subject]}</subject>
-      <description>#{dc[:description]}</description>
-      <publisher>#{dc[:publisher]}</publisher>
-      <contributor>#{dc[:contributor]}</contributor>
-      <date>#{dc[:date]}</date>
-      <type>#{dc[:type]}</type>
-      <format>#{dc[:format]}</format>
-      <identifier>#{dc[:identifier]}</identifier>
-      <source>#{dc[:source]}</source>
-      <language>#{dc[:language]}</language>
-      <relation>#{dc[:relation]}</relation>
-      <coverage>#{dc[:coverage]}</coverage>
-      <rights>#{dc[:rights]}</rights>
-    </record>
+    <simpledc xmlns="http://www.ub.gu.se/xml-schemas/simple-dc/v1/"
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.ub.gu.se/xml-schemas/simple-dc/v1/ http://www.ub.gu.se/xml-schemas/simple-dc/gub-simple-dc-20150812.xsd">
+      <dc:title>#{dc[:title]}</dc:title>
+      <dc:creator>#{dc[:creator]}</dc:creator>
+      <dc:subject>#{dc[:subject]}</dc:subject>
+      <dc:description>#{dc[:description]}</dc:description>
+      <dc:publisher>#{dc[:publisher]}</dc:publisher>
+      <dc:contributor>#{dc[:contributor]}</dc:contributor>
+      <dc:date>#{dc[:date]}</dc:date>
+      <dc:type>#{dc[:type]}</dc:type>
+      <dc:format>#{dc[:format]}</dc:format>
+      <dc:identifier>#{dc[:identifier]}</dc:identifier>
+      <dc:source>#{dc[:source]}</dc:source>
+      <dc:language>#{dc[:language]}</dc:language>
+      <dc:relation>#{dc[:relation]}</dc:relation>
+      <dc:coverage>#{dc[:coverage]}</dc:coverage>
+      <dc:rights>#{dc[:rights]}</dc:rights>
+    </simpledc>
   END
 
   dc_data = {
