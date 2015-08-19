@@ -51,7 +51,9 @@ class Job < ActiveRecord::Base
         treenode_id: treenode_id,
         quarantined: quarantined,
         main_status: main_status,
-        status: flow_step.description
+        status: flow_step.description,
+        comment: comment,
+        object_info: object_info
       }
     else
       super.merge({

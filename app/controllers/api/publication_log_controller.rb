@@ -40,7 +40,7 @@ class Api::PublicationLogController < ApplicationController
   private
 
   def publication_log_params
-    params.require(:publication_log).permit(:job_id, :publication_type, :username, :comment)
+    params.require(:publication_log).permit(:job_id, :publication_type, :username, :comment, :created_at)
   end
 
 end
