@@ -1,5 +1,7 @@
 class Api::PublicationLogController < ApplicationController
 
+  before_filter -> { validate_rights 'manage_jobs' }, only: [:create]
+
   api!
   def index
     job_id = params[:job_id]
