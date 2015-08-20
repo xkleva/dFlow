@@ -430,6 +430,12 @@ class Job < ActiveRecord::Base
     self.reload
   end
 
+  # Sets jobs to finished
+  def finish_job
+    self.update_attribute('current_flow_step', Flow.find(self.flow).last_step)
+    self.update_attribute('state', 'FINISH')
+  end
+
   def flow_object
     Flow.find(self.flow)
   end

@@ -37,22 +37,38 @@ describe Api::JobsController do
     context "for jobs missing publication log of specific type" do
       it "should filter list based on jobs missing the publication log type" do
         job = create(:job)
+        job.finish_job
         publication_log = create(:publication_log, job_id: job.id, publication_type: 'MANUSCRIPT')
         job2 = create(:job)
+        job2.finish_job
         publication_log = create(:publication_log, job_id: job2.id, publication_type: 'OTHER')
 
-        get :index, api_key: @api_key, missing_publication_type: 'MANUSCRIPT'
+        get :unpublished_jobs, api_key: @api_key, publication_type: 'MANUSCRIPT'
 
         expect(json['jobs'].count).to eq 1
         expect(json['jobs'].first['id']).to eq job2.id
       end
 
       it "should return all jobs if none has publication log type" do
-        job = create_list(:job, 10)
+        jobs = create_list(:job, 10)
+        jobs.each {|job| job.finish_job}
 
-        get :index, api_key: @api_key, missing_publication_type: 'MANUSCRIPT'
+        get :unpublished_jobs, api_key: @api_key, publication_type: 'MANUSCRIPT'
 
         expect(json['jobs'].count).to eq 10
+      end
+
+      it "should return only free jobs if copyright flag is set to false" do
+        jobs = create_list(:job, 2, copyright: true)
+        job = create(:job, copyright: false)
+
+        jobs.each {|job| job.finish_job}
+        job.finish_job
+
+        get :unpublished_jobs, api_key: @api_key, publication_type: 'MANUSCRIPT', copyright: 'false'
+
+        expect(json['jobs'].count).to eq 1
+        expect(json['jobs'].first['id']).to eq job.id
       end
     end
   end

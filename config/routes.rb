@@ -22,6 +22,7 @@ Rails.application.routes.draw do
     resources :treenodes
 
     # Jobs API
+    get 'jobs/unpublished_jobs', to: 'jobs#unpublished_jobs'
     resources :jobs
     get 'jobs/:id/restart', to: 'jobs#restart'
     get 'jobs/:id/quarantine', to: 'jobs#quarantine'

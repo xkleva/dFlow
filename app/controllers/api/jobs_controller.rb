@@ -36,12 +36,7 @@ class Api::JobsController < Api::ApiController
       jobs = jobs.where(source: params[:sources])
     end
 
-    # Filter by missing publication type
-    if params.has_key?(:missing_publication_type) && params[:missing_publication_type] != ''
-      ids_with_publication_type = jobs.includes(:publication_logs).where(publication_logs: {publication_type: params[:missing_publication_type]}).pluck(:id)
-      jobs = jobs.where('id not in (?)', ids_with_publication_type) unless ids_with_publication_type.empty?
-    end
-
+    
     # Filter by quarantined flag if it exists and is a boolean value
     if params.has_key?(:quarantined) && params[:quarantined] != ''
       # If parameter is a string, cast to boolean
@@ -218,6 +213,53 @@ class Api::JobsController < Api::ApiController
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not unquarantine job.", job.errors)
     end
+    render_json
+  end
+
+  # Returns jobs missing with given publication type missing from publication log
+  api!
+  def unpublished_jobs
+    
+    # Check if publication_type is given
+    if params.has_key?(:publication_type) && params[:publication_type] != ''
+      publication_type = params[:publication_type]
+    else
+      error_msg(ErrorCodes::REQUEST_ERROR, "Missing publication type")
+      render_json
+      return
+    end
+
+    # Check if publication type is configured
+    if !PublicationLog.types.include?(publication_type)
+      error_msg(ErrorCodes::REQUEST_ERROR, "Invalid publication type #{publication_type}")
+      render_json
+      return
+    end
+    
+    jobs = Job.all
+    # Filter by source
+    if params.has_key?(:sources) && params[:sources] != []
+      jobs = jobs.where(source: params[:sources])
+    end
+
+    # Exclude quarantined jobs
+    jobs = jobs.where(quarantined: false)
+
+    # Exclude jobs that are not done
+    jobs = jobs.where(state: 'FINISH')
+
+    # Exclude copyrighted if param given
+    if params.has_key?(:copyright) && params[:copyright] != ''
+      value = params[:copyright]
+      value = params[:copyright].to_boolean if params[:copyright].is_a? String
+      jobs = jobs.where(copyright: value)
+    end
+
+    # Filter by missing publication type
+    ids_with_publication_type = jobs.includes(:publication_logs).where(publication_logs: {publication_type: params[:publication_type]}).pluck(:id)
+    jobs = jobs.where('id not in (?)', ids_with_publication_type) unless ids_with_publication_type.empty?
+
+    @response[:jobs] = jobs.as_json(list: true)
     render_json
   end
 

@@ -117,6 +117,11 @@ class Flow
     @flow_steps_hash.find{|x| x["params"]["start"]}
   end
 
+  # Returns final step
+  def last_step
+    @flow_steps_hash.find{|x| x["goto_true"].nil? && x["goto_false"].nil?}
+  end
+
   def step_nr_valid?(step_nr)
     @flow_steps_hash.map{|x| x["step"]}.include?(step_nr)
   end
