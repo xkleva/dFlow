@@ -1,6 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe Api::PublicationLogController, :type => :controller do
+  
+  before :each do
+    WebMock.disable_net_connect! 
+    @api_key = APP_CONFIG["api_key_users"].first["api_key"]
+  end
+  after :each do
+    WebMock.allow_net_connect!
+  end
 
   describe "index" do
     context "for a valid job id with publication logs" do
@@ -31,10 +39,10 @@ RSpec.describe Api::PublicationLogController, :type => :controller do
         job = create(:job)
         publication_log = build(:publication_log, job_id: job.id)
 
-        post :create, publication_log: publication_log.as_json
+        post :create, publication_log: publication_log.as_json, api_key: @api_key
 
         expect(response).to be_success
-        
+
         job.reload
 
         expect(job.publication_logs.count).to eq 1
