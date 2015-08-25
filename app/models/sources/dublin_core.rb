@@ -34,21 +34,21 @@ class DublinCore < DublinCoreXML
           'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
           'xsi:schemaLocation' => 'http://www.ub.gu.se/xml-schemas/simple-dc/v1/ http://www.ub.gu.se/xml-schemas/simple-dc/gub-simple-dc-20150812.xsd'
       ) do
-        xml[:dc].title dc[:title] if !dc[:title].empty?
-        xml[:dc].creator dc[:creator] if !dc[:creator].empty?
-        xml[:dc].subject_ dc[:subject] if !dc[:subject].empty?
-        xml[:dc].description dc[:description] if !dc[:description].empty?
-        xml[:dc].publisher dc[:publisher] if !dc[:publisher].empty?
-        xml[:dc].contributor dc[:contributor] if !dc[:contributor].empty?
-        xml[:dc].date dc[:date] if !dc[:date].empty?
-        xml[:dc].type dc[:type] if !dc[:type].empty?
-        xml[:dc].format_ dc[:format] if !dc[:format].empty?
-        xml[:dc].identifier dc[:identifier] if !dc[:identifier].empty?
-        xml[:dc].source dc[:source] if !dc[:source].empty?
-        xml[:dc].language dc[:language] if !dc[:language].empty?
-        xml[:dc].relation dc[:relation] if !dc[:relation].empty?
-        xml[:dc].coverage dc[:coverage] if !dc[:coverage].empty?
-        xml[:dc].rights dc[:rights] if !dc[:rights].empty?
+        xml[:dc].title dc[:title] if !dc[:title].blank?
+        xml[:dc].creator dc[:creator] if !dc[:creator].blank?
+        xml[:dc].subject_ dc[:subject] if !dc[:subject].blank?
+        xml[:dc].description dc[:description] if !dc[:description].blank?
+        xml[:dc].publisher dc[:publisher] if !dc[:publisher].blank?
+        xml[:dc].contributor dc[:contributor] if !dc[:contributor].blank?
+        xml[:dc].date dc[:date] if !dc[:date].blank?
+        xml[:dc].type dc[:type] if !dc[:type].blank?
+        xml[:dc].format_ dc[:format] if !dc[:format].blank?
+        xml[:dc].identifier dc[:identifier] if !dc[:identifier].blank?
+        xml[:dc].source dc[:source] if !dc[:source].blank?
+        xml[:dc].language dc[:language] if !dc[:language].blank?
+        xml[:dc].relation dc[:relation] if !dc[:relation].blank?
+        xml[:dc].coverage dc[:coverage] if !dc[:coverage].blank?
+        xml[:dc].rights dc[:rights] if !dc[:rights].blank?
       end
     end
     builder.to_xml
