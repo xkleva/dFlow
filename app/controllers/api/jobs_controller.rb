@@ -124,19 +124,21 @@ class Api::JobsController < Api::ApiController
 
     if (!validate_only && !job.save) || (validate_only && !job.valid?)
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job.", job.errors)
+      render_json
+      return
     end
 
     if !validate_only
       job.reload
       job_url = url_for(controller: 'jobs', action: 'create', only_path: true)
-      headers['location'] = "#{job_url}/#{job.id}"
+      #headers['location'] = "#{job_url}/#{job.id}"
     end
     
     @response[:job] = job
     render_json(201)
-  rescue => e
-    error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job, this is why: [#{e.message}].")
-    render_json
+  #rescue => e
+    #error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job, this is why: [#{e.message}].")
+    #render_json
   end
 
   api :PUT, '/jobs/:id', 'Updates a Job object'
