@@ -59,7 +59,7 @@ class DublinCoreXML < Source
   # a catalog_id
   def self.build_job_data(dc, xml)
     metadata = {
-      type_of_record: '',
+      type_of_record: dc[:type],
       dc: dc
     }
     job_data = {
