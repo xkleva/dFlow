@@ -218,6 +218,17 @@ class Api::JobsController < Api::ApiController
     render_json
   end
 
+  api!
+  def thumbnail
+    source = params[:source] || "web"
+    size = params[:size] || "700"
+    
+    @response[:thumbnail] = FileAdapter.thumbnail(params[:package_location], params[:package_name], source, size, params[:image])['thumbnail']
+
+    render_json
+
+  end
+
   # Returns jobs missing with given publication type missing from publication log
   api!
   def unpublished_jobs

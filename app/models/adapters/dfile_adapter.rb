@@ -66,4 +66,16 @@ class DfileAdapter
       return response
     end
   end
+
+  # Returns a thumbnail object of specified source (master, web et c) and size
+  def thumbnail(location, path, source, size, image)
+    source_dir = "#{location}:#{path}"
+    url = api_url(:thumbnail, params: {source_dir: source_dir, source: source, size: size, image: image})
+    response = HTTParty.get(url)
+    if response.success?
+      return response
+    else
+      return response
+    end
+  end
 end

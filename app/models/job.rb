@@ -35,12 +35,12 @@ class Job < ActiveRecord::Base
 
   def as_json(options = {})
     if !id 
-      {
+      json = {
         name: name,
         title: title
       }
     elsif options[:list]
-      {
+      json = {
         id: id,
         name: name,
         title: title,
@@ -56,7 +56,7 @@ class Job < ActiveRecord::Base
         object_info: object_info
       }
     else
-      super.merge({
+      json = super.merge({
         display: display,
         source_label: source_label,
         breadcrumb: treenode_breadcrumb(include_self: true),
@@ -71,9 +71,13 @@ class Job < ActiveRecord::Base
         status: flow_step.description,
         flow_step: flow_step,
         flow_steps: flow_steps,
-        publication_logs: publication_logs
+        publication_logs: publication_logs,
+        package_location: package_location,
+        package_name: package_name
         })
     end
+
+    return json
   end
 
   def treenode_breadcrumb(params)
