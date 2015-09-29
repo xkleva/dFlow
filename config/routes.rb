@@ -23,7 +23,7 @@ Rails.application.routes.draw do
 
     # Jobs API
     get 'jobs/unpublished_jobs', to: 'jobs#unpublished_jobs'
-    get 'thumbnails', to: 'jobs#thumbnail'
+    get 'thumbnails/:id', to: 'jobs#thumbnail'
     resources :jobs
     get 'jobs/:id/restart', to: 'jobs#restart'
     get 'jobs/:id/quarantine', to: 'jobs#quarantine'
