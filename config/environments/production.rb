@@ -51,7 +51,10 @@ Rails.application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
   # If LOG_FILE_PATH is set, use it to define log path
   if ENV['LOG_FILE_PATH'].present?
+    puts "DFLOW HITTADE LOG_FILE_PATH: #{ENV['LOG_FILE_PATH']}"
     config.logger = ActiveSupport::Logger.new(ENV['LOG_FILE_PATH'])
+  else
+    puts "DFLOW HITTADE INTE LOG_FILE_PATH: #{ENV['LOG_FILE_PATH']}"
   end
 
   # Use a different cache store in production.
