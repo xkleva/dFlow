@@ -26,12 +26,15 @@ class SessionController < ApplicationController
         @response[:token_type] = "bearer"
         render_json
         return
+      else
+        error_msg(ErrorCodes::AUTH_ERROR, "Invalid credentials")
       end
-    end
-    if service != :local
-      error_msg(ErrorCodes::AUTH_ERROR, "User #{username} doesn't exist in database")
     else
-      error_msg(ErrorCodes::AUTH_ERROR, "Invalid credentials")
+      if service != :local
+        error_msg(ErrorCodes::AUTH_ERROR, "User #{username} doesn't exist in database")
+      else
+        error_msg(ErrorCodes::AUTH_ERROR, "Invalid credentials")
+      end
     end
     render_json
   end
