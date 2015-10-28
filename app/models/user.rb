@@ -56,7 +56,12 @@ class User < ActiveRecord::Base
   end
 
   # Authenticate user against password sources
-  def authenticate(provided_password)
+  def authenticate(provided_password, force_authenticate=false)
+    if force_authenticate
+      token_object = generate_token
+      return token_object.token
+    end
+
     user_file_data = authenticate_get_local_user
     auth_status = false
     if user_file_data

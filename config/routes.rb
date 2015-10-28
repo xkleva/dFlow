@@ -11,9 +11,10 @@ Rails.application.routes.draw do
     get 'check_connection' , to: 'process#check_connection'
 
     # Config API
-    get 'config/role_list', to: 'config#role_list'
+    get 'config/roles', to: 'config#role_list'
     get 'config/status_list', to: 'config#status_list'
-    get 'config/state_list', to: 'config#state_list'
+    get 'config/states', to: 'config#state_list'
+    get 'config/cas_url', to: 'config#cas_url'
 
     # User API
     resources :users

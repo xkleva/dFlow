@@ -19,7 +19,7 @@ class Api::ConfigController < Api::ApiController
     if role_list.empty?
       error_msg(ErrorCodes::ERROR, "No User Roles are defined")
     else
-      @response[:roles] = role_list
+      @response[:config] = {roles: role_list}
     end
     render_json
   end
@@ -36,8 +36,16 @@ class Api::ConfigController < Api::ApiController
     if states_list.empty?
       error_msg(ErrorCodes::ERROR, "No States are defined")
     else
-      @response[:states] = states_list.uniq
+      @response[:config] = {states: states_list.uniq}
     end
+    render_json
+  end
+
+  # Returns cas_url if it is defined
+  api!
+  def cas_url
+    url = APP_CONFIG['cas_url']
+    @response[:config] = {cas_url: url}
     render_json
   end
 

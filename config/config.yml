@@ -36,7 +36,7 @@ user_roles:
     unassignable: true
 
 # Flags for using external authentication source
-external_auth: true
+external_auth: false
 
 # Adapter for file management
 file_adapter: dfile
