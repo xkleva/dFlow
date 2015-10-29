@@ -108,6 +108,15 @@ class Job < ActiveRecord::Base
     create_log_entry("UNQUARANTINE","_UNQUARANTINED")
   end
 
+  # Moves job to given flow step
+  def new_flow_step!(flow_step:)
+    old_flow_step_string = self.flow_step.info_string
+    self.current_flow_step = flow_step
+    create_flow_steps
+    self.save
+    create_log_entry("FLOW_STEP", "Old: #{old_flow_step_string} New: #{self.flow_step.info_string}")
+  end
+
   # Mark job as deleted
   def delete
     self.update_attribute(:deleted_at, Time.now)

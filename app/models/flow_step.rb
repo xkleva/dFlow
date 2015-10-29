@@ -13,6 +13,12 @@ class FlowStep < ActiveRecord::Base
       params: params_hash
     })
   end
+
+  # Short string representation of flow step
+  def info_string
+    "#{step}: #{process}"
+  end
+
   # Returns true if step has not been aborted
   def is_active?
     aborted_at.nil?

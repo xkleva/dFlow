@@ -425,4 +425,18 @@ describe Api::JobsController do
     end
   end
 
+  describe "GET new_flow_step" do
+    context "for a job with flow steps finished" do
+      it "should return job to given flow step" do
+        job = create(:job, current_flow_step: 30)
+        
+        get :new_flow_step, api_key: @api_key, id: job.id, step: 20
+
+        expect(response.status).to eq 200
+        job.reload
+        expect(job.flow_step.step).to eq 20
+      end
+    end
+  end
+
 end

@@ -1,7 +1,7 @@
 
 class Api::JobsController < Api::ApiController
   before_filter :check_params
-  before_filter -> { validate_rights 'manage_jobs' }, only: [:create, :update, :destroy, :restart, :quarantine, :unquarantine]
+  before_filter -> { validate_rights 'manage_jobs' }, only: [:create, :update, :destroy, :restart, :quarantine, :unquarantine, :new_flow_step]
   respond_to :json, :pdf
   require 'pp'
   
@@ -214,6 +214,18 @@ class Api::JobsController < Api::ApiController
       @response[:job] = job
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not unquarantine job.", job.errors)
+    end
+    render_json
+  end
+
+  api!
+  def new_flow_step
+    job = Job.find_by_id(params[:id])
+    job.created_by = @current_user.username
+    if job.new_flow_step!(flow_step: params[:step])
+      @response[:job] = job
+    else
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not update flow step for job", job.errors)
     end
     render_json
   end

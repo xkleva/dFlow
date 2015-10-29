@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     get 'jobs/:id/restart', to: 'jobs#restart'
     get 'jobs/:id/quarantine', to: 'jobs#quarantine'
     get 'jobs/:id/unquarantine', to: 'jobs#unquarantine'
+    get 'jobs/:id/new_flow_step', to: 'jobs#new_flow_step'
 
     # Sources API
     get 'sources/fetch_source_data', to: 'sources#fetch_source_data'
