@@ -4,6 +4,8 @@ require 'spec_helper'
 require File.expand_path("../../config/environment", __FILE__)
 Dir[Rails.root.join("app/models/sources/*.rb")].each { |f| require f }
 Dir[Rails.root.join("app/models/adapters/*.rb")].each { |f| require f }
+Dir[Rails.root.join("app/models/helpers/*.rb")].each { |f| require f }
+Dir[Rails.root.join("app/models/processes/**/*.rb")].each { |f| require f }
 require 'rspec/rails'
 WebMock.allow_net_connect! 
 
