@@ -114,7 +114,7 @@ describe ImportPackageMetadata::Image do
       it "should set physical to 'LeftPage' and logical to 'TitlePage'" do
 
         stub_request(:get, 'http://dfile.example.org'+'/download_file')
-        .with(query: {source_file: "PACKAGING:/1/page_metadata/0003.xml", api_key: @dfile_api_key})
+        .with(query: {source_file: "PACKAGING:1/page_metadata/0003.xml", api_key: @dfile_api_key})
         .to_return(:body => File.new('spec/models/processes/import_package_metadata/stubs/0003.xml'), :status => 200)
 
         image = ImportPackageMetadata::Image.new(dfile_api: @dfile_api, job_id: 1, group_names: [], image_count: 10, image_num: 3, source: 'libris')
@@ -130,7 +130,7 @@ describe ImportPackageMetadata::Image do
       it "should invalidate object" do
 
         stub_request(:get, 'http://dfile.example.org'+'/download_file')
-        .with(query: {source_file: "PACKAGING:/999/page_metadata/0001.xml", api_key: @dfile_api_key})
+        .with(query: {source_file: "PACKAGING:999/page_metadata/0001.xml", api_key: @dfile_api_key})
         .to_return(:body => File.new('spec/models/processes/import_package_metadata/stubs/no-data.xml'), :status => 200)
 
         image = ImportPackageMetadata::Image.new(dfile_api: @dfile_api, job_id: 999, group_names: [], image_count: 10, image_num: 1, source: 'libris')
@@ -145,7 +145,7 @@ describe ImportPackageMetadata::Image do
     context "for a valid image" do
       it "should return a valid object" do
         stub_request(:get, 'http://dfile.example.org'+'/download_file')
-        .with(query: {source_file: "PACKAGING:/1/page_metadata/0003.xml", api_key: @dfile_api_key})
+        .with(query: {source_file: "PACKAGING:1/page_metadata/0003.xml", api_key: @dfile_api_key})
         .to_return(:body => File.new('spec/models/processes/import_package_metadata/stubs/0003.xml'), :status => 200)
 
         image = ImportPackageMetadata::Image.new(dfile_api: @dfile_api, job_id: 1, group_names: [], image_count: 10, image_num: 3, source: 'libris')
@@ -160,7 +160,7 @@ describe ImportPackageMetadata::Image do
     context "for an invalid message" do
       it "should raise an error" do
         stub_request(:get, 'http://dfile.example.org'+'/download_file')
-        .with(query: {source_file: "PACKAGING:/999/page_metadata/0001.xml", api_key: @dfile_api_key})
+        .with(query: {source_file: "PACKAGING:999/page_metadata/0001.xml", api_key: @dfile_api_key})
         .to_return(:body => File.new('spec/models/processes/import_package_metadata/stubs/no-data.xml'), :status => 200)
 
         image = ImportPackageMetadata::Image.new(dfile_api: @dfile_api, job_id: 999, group_names: [], image_count: 10, image_num: 1, source: 'libris')
