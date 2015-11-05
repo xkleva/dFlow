@@ -1,5 +1,8 @@
 namespace :queue do
   desc "Starts a queue manager if process is not already running"
+  require 'queue_manager'
+  #Rails.application.eager_load!
+  $rails_rake_task = true
   task run: :environment do
     PID_FILE_LOCATION = APP_CONFIG['pid_file_location']
     

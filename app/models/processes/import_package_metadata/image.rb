@@ -207,7 +207,7 @@ module ImportPackageMetadata
         error = {}
         error[:code] = "PAGE_COUNT_ERROR"
         error[:msg] = "Page count #{@page_count}"
-        @errors << errore
+        @errors << error
       end
       @images.each do |image|
         if !image.valid?

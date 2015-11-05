@@ -31,7 +31,7 @@ module Dflow
       end
     end
 
-    config.paths.add 'app/models/helpers', eager_load: true
-    config.paths.add 'app/models/processes', eager_load: true
+    #config.paths.add 'app/models/helpers', eager_load: true
+    #config.paths.add 'app/models/processes', eager_load: true
   end
 end
