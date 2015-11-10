@@ -123,8 +123,7 @@ private
     def get_process_result(process_id)
 
       # Load Redis config
-      config = YAML.load( File.open("redis.yml") )
-      @redis = Redis.new(db: config['db'], host: config['host'])
+      @redis = Redis.new(db: APP_CONFIG['redis_db']['db'], host: APP_CONFIG['redis_db']['host'])
 
       @helper.log("Redis settings: #{@redis.inspect}")
       while !@redis.get("dFile:processes:#{process_id}:state:done") do

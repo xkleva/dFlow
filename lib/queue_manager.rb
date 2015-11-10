@@ -62,6 +62,22 @@ class QueueManager
   # Creates a METS package
   def create_mets_package(job:)
 
+    @sh = DFlowProcess::ScriptHelper.new()
+    @dfile_api = DFlowProcess::DFileAPI.new(@sh, "CREATE_METS_PACKAGE")
+
+    puts "running create mets package"
+
+    begin
+      mets = CreateMETSPackage::METS.new(dfile_api: @dfile_api, job: job)
+      mets.create_mets_xml_file
+      mets.move_metadata_folders
+      mets.move_mets_package
+      job.flow_step.finish!
+    rescue StandardError => e
+      job.quarantine!(msg: e.message)
+      @sh.terminate(e.message + " " + e.backtrace.inspect)
+    end
+
   end
 
   # Imports package metadata
