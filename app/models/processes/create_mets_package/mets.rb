@@ -2,14 +2,25 @@ require_relative 'sources/dublin_core'
 require_relative 'sources/libris'
 require_relative 'sources/manuscript'
 require_relative 'config'
+require 'yaml'
 
-module CreateMETSPackage
+class CreateMETSPackage
+
+  def self.run(job:, logger:)
+
+    DfileApi.logger = logger
+    
+    mets = CreateMETSPackage::METS.new(job: job, logger: logger)
+    mets.create_mets_xml_file
+    mets.move_metadata_folders
+    mets.move_mets_package
+    
+  end
 
   # Describing one file, used for handling locations, checksums, renaming
   class FileObject
     attr_accessor :number, :checksum, :name
-    def initialize(dfile_api:, job_id:, path:, filename:, size:)
-      @dfile_api = dfile_api
+    def initialize(job_id:, path:, filename:, size:)
       @job_id = job_id
       @path = path
       @name = filename
@@ -17,7 +28,7 @@ module CreateMETSPackage
       set_full_path
       @extension = filename.gsub(/^.*\.([^\.]+)$/,'\1')
       @number = filename.gsub(/^(\d+)\.[^\.]+$/,'\1')
-      @checksum = @dfile_api.checksum("PACKAGING", @full_path)
+      @checksum = DfileApi.checksum("PACKAGING", @full_path)
     end
 
     # Setting full path definition. Used both in initialize and renameing
@@ -29,7 +40,7 @@ module CreateMETSPackage
     # and recompute full path
     def rename_to_gub
       gubname = sprintf("GUB%07d.%s", @job_id, @extension)
-      @dfile_api.move_file(from_source: "PACKAGING", from_file: @full_path, to_source: "PACKAGING", to_file: "#{@job_id}/#{@path}/#{gubname}")
+      DfileApi.move_file(from_source: "PACKAGING", from_file: @full_path, to_source: "PACKAGING", to_file: "#{@job_id}/#{@path}/#{gubname}")
       @name = gubname
       set_full_path
     end
@@ -40,8 +51,7 @@ module CreateMETSPackage
   # and whether or not there should be multiple or single file entries
   class FileGroup
     attr_accessor :files, :name, :mimetype
-    def initialize(dfile_api:, job:, name:, mimetype:, extension:, single: false)
-      @dfile_api = dfile_api
+    def initialize(job:, name:, mimetype:, extension:, single: false)
       @job = job
       @job_id = job.id
       @name = name
@@ -58,8 +68,8 @@ module CreateMETSPackage
 
     # Keep track of all relevant files in the directory
     def add_files
-      @dfile_api.list_files("PACKAGING", "#{@job_id}/#{@name}", @extension).each do |file|
-        @files << FileObject.new(dfile_api: @dfile_api, job_id: @job_id, path: @name, filename: file['name'], size: file['size'])
+      DfileApi.list_files("PACKAGING", "#{@job_id}/#{@name}", @extension).each do |file|
+        @files << FileObject.new(job_id: @job_id, path: @name, filename: file['name'], size: file['size'])
       end
       if single? && !@files.empty?
         @files.first.rename_to_gub
@@ -75,9 +85,9 @@ module CreateMETSPackage
   # Setup all necessary parts for creating METS XML
   class METS
 
-    def initialize(dfile_api:, job:)
-      @dfile_api = dfile_api
+    def initialize(job:, logger: Logger.new("#{Rails.root}/log/create_mets_package.log"))
       @job = job
+      @logger = logger
 
       case @job.source
       when 'libris'
@@ -91,10 +101,10 @@ module CreateMETSPackage
       end
 
       @file_groups = []
-      @file_groups << FileGroup.new(dfile_api: @dfile_api, job: @job, name: "master",mimetype: "image/tiff",extension: "tif")
-      @file_groups << FileGroup.new(dfile_api: @dfile_api, job: @job, name: "web", mimetype: "image/jpeg", extension: "jpg")
-      @file_groups << FileGroup.new(dfile_api: @dfile_api, job: @job, name: "alto", mimetype: "text/xml", extension: "xml")
-      @file_groups << FileGroup.new(dfile_api: @dfile_api, job: @job, name: "pdf", mimetype: "text/pdf", extension: "pdf", single: true)
+      @file_groups << FileGroup.new(job: @job, name: "master",mimetype: "image/tiff",extension: "tif")
+      @file_groups << FileGroup.new(job: @job, name: "web", mimetype: "image/jpeg", extension: "jpg")
+      @file_groups << FileGroup.new(job: @job, name: "alto", mimetype: "text/xml", extension: "xml")
+      @file_groups << FileGroup.new(job: @job, name: "pdf", mimetype: "text/pdf", extension: "pdf", single: true)
     end
 
     # Creates the mets xml file in package folder
@@ -103,7 +113,7 @@ module CreateMETSPackage
       if !xml_valid?(content)
         raise StandardError, "Invalid XML"
       end
-      @dfile_api.create_file(source: "PACKAGING", filename: "#{@job.id}/#{mets_data[:id]}_mets.xml", content: mets_xml)
+      DfileApi.create_file(source: "PACKAGING", filename: "#{@job.id}/#{mets_data[:id]}_mets.xml", content: mets_xml)
     end
 
     def xml_valid?(xml)
@@ -114,18 +124,18 @@ module CreateMETSPackage
 
     # Moves package folder to store catalogue
     def move_mets_package
-      if !@dfile_api.move_folder(from_source: "PACKAGING", from_dir: @job.id, to_source: "STORE", to_dir: mets_data[:id])
+      if !DfileApi.move_folder(from_source: "PACKAGING", from_dir: @job.id, to_source: "STORE", to_dir: mets_data[:id])
         raise StandardError, "Could not move mets folder to store for job: #{@job.id}"
       end
     end
 
     # Moves metadata folders to backup folder outside of mets package
     def move_metadata_folders
-      if !@dfile_api.move_folder(from_source: "PACKAGING", from_dir: @job.id.to_s + "/page_metadata", to_source: "PACKAGING", to_dir: "metadata/" + mets_data[:id] + "/page_metadata")
+      if !DfileApi.move_folder(from_source: "PACKAGING", from_dir: @job.id.to_s + "/page_metadata", to_source: "PACKAGING", to_dir: "metadata/" + mets_data[:id] + "/page_metadata")
         raise StandardError, "Could not move page_metadata folder for job: #{@job.id}"
       end
 
-      if !@dfile_api.move_folder(from_source: "PACKAGING", from_dir: @job.id.to_s + "/page_count", to_source: "PACKAGING", to_dir: "metadata/" + mets_data[:id] + "/page_count")
+      if !DfileApi.move_folder(from_source: "PACKAGING", from_dir: @job.id.to_s + "/page_count", to_source: "PACKAGING", to_dir: "metadata/" + mets_data[:id] + "/page_count")
         raise StandardError, "Could not move page_count folder for job: #{@job.id}"
       end
     end
@@ -136,12 +146,12 @@ module CreateMETSPackage
         id: sprintf("GUB%07d", @job.id),
         created_at: DateTime.parse(@job.created_at.to_s).strftime("%FT%T"),
         updated_at: DateTime.parse(@job.updated_at.to_s).strftime("%FT%T"),
-        creator_sigel: CreateMETSPackage::CREATOR[:sigel],
-        creator_name: CreateMETSPackage::CREATOR[:name],
-        archivist_sigel: CreateMETSPackage::ARCHIVIST[:sigel],
-        archivist_name: CreateMETSPackage::ARCHIVIST[:name],
-        copyright_status: CreateMETSPackage::COPYRIGHT_STATUS[@job.copyright],
-        publication_status: CreateMETSPackage::PUBLICATION_STATUS[@job.copyright]
+        creator_sigel: METS_CONFIG['CREATOR']['sigel'],
+        creator_name: METS_CONFIG['CREATOR']['name'],
+        archivist_sigel: METS_CONFIG['ARCHIVIST']['sigel'],
+        archivist_name: METS_CONFIG['ARCHIVIST']['name'],
+        copyright_status: METS_CONFIG['COPYRIGHT_STATUS'][@job.copyright],
+        publication_status: METS_CONFIG['PUBLICATION_STATUS'][@job.copyright]
       }
     end
 

@@ -31,13 +31,11 @@ describe CreateMETSPackage::METS do
     @redis.set('dFile:processes:123:state:done', "123")
     @redis.set('dFile:processes:123:value', "df9790310fb3875ab66e05b06be5d445df0f6634f1a08c04e33130d9c9488c902687a15761e45891eb34963c42c92a3cf92c964454c665acfadc330bcb387f23")
     
-    @sh = DFlowProcess::ScriptHelper.new
-    @dfile_api = DFlowProcess::DFileAPI.new(@sh, "PACKAGE_METADATA_IMPORT")
     @dfile_api_key = "test_key"
 
     @xml_job = JSON.parse(File.new('spec/models/processes/create_mets_package/spec/fixtures/1001006.json', 'r:utf-8').read)['job']
     @job = create(:job, id: 1001006, package_metadata: @xml_job['package_metadata'].to_json, xml: @xml_job['xml'], copyright: true)
-    @mets = CreateMETSPackage::METS.new(dfile_api: @dfile_api, job: @job)
+    @mets = CreateMETSPackage::METS.new(job: @job)
     # puts @mets.mets_xml
   end
 

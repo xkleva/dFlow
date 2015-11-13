@@ -1,4 +1,4 @@
-module CreateMETSPackage
+class CreateMETSPackage
   class Manuscript
     XML_SCHEMA="http://www.ub.gu.se/handskriftsdatabasen/api/schema.xsd"
     TYPE_OF_RECORD = {

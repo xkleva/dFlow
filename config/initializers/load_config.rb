@@ -13,3 +13,9 @@ APP_CONFIG = main_config.merge(secret_config).merge(workflows_config)
 if Rails.env != "test" && (ActiveRecord::Base.connection.table_exists? 'users') # Checks if table exists to be able to migrate a new db
   User.create_missing_users_from_file("#{Rails.root}/config/passwd")
 end
+
+# Load QueueManager config
+
+QUEUE_MANAGER_CONFIG = YAML.load_file("#{Rails.root}/config/queue_manager/queue_manager.yml")
+
+METS_CONFIG = YAML.load_file("#{Rails.root}/config/queue_manager/processes/create_mets_package/mets_config.yml")

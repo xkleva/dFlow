@@ -1,4 +1,4 @@
-module CreateMETSPackage
+class CreateMETSPackage
   class DublinCore
     XML_SCHEMA="http://www.ub.gu.se/xml-schemas/simple-dc/v1/gub-simple-dc-20150812.xsd"
     attr_reader :mets_data

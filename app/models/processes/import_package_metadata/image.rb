@@ -1,6 +1,22 @@
 require 'nokogiri'
 
-module ImportPackageMetadata
+class ImportPackageMetadata
+
+  def self.run(job:, logger:)
+    
+    DfileApi.logger = logger
+    
+    images = ImportPackageMetadata::Images.new(job: job)
+    images.run
+
+    if images.valid?
+      # Store metadata information to job
+      job.update_attribute('package_metadata', {images: images.images.map(&:as_json), image_count: images.images.size}.to_json)
+    else
+      raise StandardError, images.errors.inspect 
+    end
+  end
+
   class Image
     attr_accessor :physical, :logical, :error, :image_num, :group_name
 
@@ -35,8 +51,7 @@ module ImportPackageMetadata
       32 => "EmptyPage"
     }
 
-    def initialize(dfile_api:, job_id:, group_names:, image_count:, image_num:, source:)
-      @dfile_api = dfile_api
+    def initialize(job_id:, group_names:, image_count:, image_num:, source:)
       @job_id = job_id
       @group_names = group_names
       @image_count = image_count
@@ -65,7 +80,7 @@ module ImportPackageMetadata
     # Fetch XML metadata for image and extract relevant information
     def fetch_metadata
       image_name = sprintf("%04d.xml", @image_num)
-      image_data = @dfile_api.download_file("PACKAGING", 
+      image_data = DfileApi.download_file("PACKAGING", 
         "#{@job_id}/page_metadata/#{image_name}")
       
       doc = Nokogiri::XML(image_data)
@@ -155,8 +170,7 @@ module ImportPackageMetadata
     #  {images: images.map(&:as_json)}
     #end
 
-    def initialize(dfile_api: dfile_api, job: job)
-      @dfile_api = dfile_api
+    def initialize(job: job)
       @images = []
       @errors = []
       @job = job
@@ -172,7 +186,7 @@ module ImportPackageMetadata
     def fetch_page_count
       page_count_file_path = "#{@job.id}/page_count/#{@job.id}.txt"
       puts "Looking for file: #{page_count_file_path}"
-      page_count_data = @dfile_api.download_file("PACKAGING", page_count_file_path)
+      page_count_data = DfileApi.download_file("PACKAGING", page_count_file_path)
       @page_count = page_count_data.to_i
       if @page_count == 0
         error = {}
@@ -196,7 +210,7 @@ module ImportPackageMetadata
     # Creates image objects for each page number
     def fetch_images
       @page_count.times do |page_num| 
-        image = Image.new(dfile_api: @dfile_api, job_id: @job.id, group_names: @group_names, image_count: @page_count, image_num: page_num+1, source: @job.source)
+        image = Image.new(job_id: @job.id, group_names: @group_names, image_count: @page_count, image_num: page_num+1, source: @job.source)
         image.run
         @images << image
       end

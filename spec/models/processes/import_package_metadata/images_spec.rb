@@ -4,8 +4,6 @@ require 'webmock/rspec'
 
 describe ImportPackageMetadata::Images do
   before :all do
-    @sh = DFlowProcess::ScriptHelper.new
-    @dfile_api = DFlowProcess::DFileAPI.new(@sh, "PACKAGE_METADATA_IMPORT")
     @dfile_api_key = "test_key"
     WebMock.disable_net_connect!
   end
@@ -23,7 +21,7 @@ describe ImportPackageMetadata::Images do
           to_return(:status => 200, :body => "10", :headers => {})
 
         job = create(:job, id: 1)
-        images = ImportPackageMetadata::Images.new(dfile_api: @dfile_api, job: job)
+        images = ImportPackageMetadata::Images.new(job: job)
         images.fetch_page_count
 
         expect(images.page_count).to eq 10
@@ -39,7 +37,7 @@ describe ImportPackageMetadata::Images do
           to_return(:status => 200, :body => File.open(Rails.root + 'spec/models/processes/import_package_metadata/stubs/0001.xml').read, :headers => {})
 
         job = create(:job, id: 1)
-        images = ImportPackageMetadata::Images.new(dfile_api: @dfile_api, job: job)
+        images = ImportPackageMetadata::Images.new(job: job)
         images.page_count = 10
         images.fetch_images
         expect(images.images.count).to eq 10

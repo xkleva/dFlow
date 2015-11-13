@@ -1,4 +1,4 @@
-module CreateMETSPackage
+class CreateMETSPackage
   CREATOR = {
    name: "GUB, Göteborgs universitetsbibliotek, Digitala tjänster",
     sigel: "Gdig"

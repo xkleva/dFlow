@@ -1,6 +1,6 @@
 require 'nokogiri'
 
-module CreateMETSPackage
+class CreateMETSPackage
   class Libris
     TYPE_OF_RECORD = {
       "as" => "Serial",
