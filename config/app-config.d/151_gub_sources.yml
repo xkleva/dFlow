@@ -1,0 +1,24 @@
+# List of available sources
+sources:
+  -
+    name: libris
+    label: Libris
+    class_name: Libris
+  -
+    name: dc
+    label: DC
+    class_name: DublinCore
+  -
+    name: dcxml
+    label: DC-XML
+    class_name: DublinCoreXML
+  -
+    name: document
+    label: Document
+    class_name: Document
+  -
+    name: letter
+    label: Letter
+    class_name: Letter
+
+

@@ -1,7 +1,6 @@
 require_relative 'sources/dublin_core'
 require_relative 'sources/libris'
 require_relative 'sources/manuscript'
-require_relative 'config'
 require 'yaml'
 
 class CreateMETSPackage

@@ -31,11 +31,7 @@ module Dflow
       end
     end
 
-    #config.paths.add 'app/models/helpers', eager_load: true
-    #config.paths.add 'app/models/processes', eager_load: true
-
     config.autoload_paths << "#{Rails.root}/app/models/processes"
     config.autoload_paths << "#{Rails.root}/app/models/processes/create_mets_package"
-    config.autoload_paths << "#{Rails.root}/app/models/helpers"
   end
 end

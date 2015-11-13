@@ -1,0 +1,32 @@
+
+user_roles:
+  -
+    name: ADMIN
+    rights:
+      - view_users
+      - manage_users
+      - view_tree
+      - manage_tree
+      - manage_tree_root
+      - manage_jobs
+  -
+    name: GUEST
+    rights:
+      - view_tree
+    unassignable: true
+  -
+    name: OPERATOR
+    rights:
+      - view_tree
+      - manage_tree
+      - manage_jobs
+  -
+    name: API_KEY
+    rights:
+      - view_tree
+      - manage_tree
+      - manage_tree_root
+      - manage_jobs
+      - manage_users
+      - view_users
+    unassignable: true
