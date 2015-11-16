@@ -26,7 +26,7 @@ class ConfigLoader
     d_folder = Pathname.new("#{base_file.dirname.to_s}/#{base_file.basename('.*')}.d")
 
     if d_folder.exist? && d_folder.directory?
-      files = d_folder.children.sort_by { |x| x.basename.to_s[/^(\d+)\./,1].to_i }.reverse
+      files = d_folder.children.sort_by { |x| x.basename.to_s }
       files.each do |file|
         main_config = load_config_file(path: file, config_hash: main_config)
       end
@@ -97,8 +97,20 @@ class ConfigLoader
 
   end
 
+  # Generates a combined config/config_full.yml file containing all config data
+  def self.generate_file(base_file_path:)
+    app_config = load_config_structure(base_file_path: base_file_path)
+    config_file = File.open("#{Rails.root}/config/config_full.yml", "w:utf-8") do |file|
+      file.write(app_config.to_yaml)
+    end
+  end
+
 end
 
-# Load app-config.yml file
-main_config = ConfigLoader.load_config_structure(base_file_path: "#{Rails.root}/config/app-config.yml")
+# If in test environment, generate file. Otherwise it should already exist.
+if Rails.env == 'test'
+  ConfigLoader.generate_file(base_file_path: "#{Rails.root}/config/app-config.yml")
+end
+main_config = YAML.load_file("#{Rails.root}/config/config_full.yml")
+
 APP_CONFIG = main_config

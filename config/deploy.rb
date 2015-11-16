@@ -58,7 +58,7 @@ set :deploy_to, deploy_config['path']
 #set :tmp_dir, '/home/rails/tmp'
 
 # Copied into /{app}/shared/config from respective sample file
-set :linked_files, %w{config/database.yml config/config_secret.yml config/passwd}
+set :linked_files, %w{config/database.yml config/config_full.yml config/passwd}
 
 namespace :deploy do
   namespace :assets do
