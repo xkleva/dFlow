@@ -53,18 +53,18 @@ describe CreateMETSPackage::METS do
     context "head" do
       it "should check for relevant information in header" do
         expect(@mets.head).to include("mets:metsHdr")
-        expect(@mets.head).to include(METS_CONFIG['CREATOR']['name'])
-        expect(@mets.head).to match(METS_CONFIG['CREATOR']['sigel'])
-        expect(@mets.head).to match(METS_CONFIG['ARCHIVIST']['name'])
-        expect(@mets.head).to match(METS_CONFIG['ARCHIVIST']['sigel'])
+        expect(@mets.head).to include(CreateMETSPackage::METS_CONFIG['CREATOR']['name'])
+        expect(@mets.head).to match(CreateMETSPackage::METS_CONFIG['CREATOR']['sigel'])
+        expect(@mets.head).to match(CreateMETSPackage::METS_CONFIG['ARCHIVIST']['name'])
+        expect(@mets.head).to match(CreateMETSPackage::METS_CONFIG['ARCHIVIST']['sigel'])
       end
     end
 
     context "administrative" do
       it "should check for relevant information in administrative" do
         expect(@mets.administrative).to include("mets:amdSec")
-        expect(@mets.administrative).to include(METS_CONFIG['COPYRIGHT_STATUS'][true])
-        expect(@mets.administrative).to match(METS_CONFIG['PUBLICATION_STATUS'][true])
+        expect(@mets.administrative).to include(CreateMETSPackage::METS_CONFIG['COPYRIGHT_STATUS'][true])
+        expect(@mets.administrative).to match(CreateMETSPackage::METS_CONFIG['PUBLICATION_STATUS'][true])
       end
     end
 
