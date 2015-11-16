@@ -17,6 +17,7 @@
 
 config/config_secret.yml
 config/database.yml
+config/deploy.yml
 *~
 \#*#
 .#*
@@ -32,7 +33,6 @@ config/database.yml
 nbproject/
 
 config/passwd
-config/deploy/*.rb
 
 config/app-config.d/501_authentication.yml
 config/app-config.d/601_processes_mets.yml
