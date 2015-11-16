@@ -1,9 +1,10 @@
-require_relative 'sources/dublin_core'
-require_relative 'sources/libris'
-require_relative 'sources/manuscript'
+#require_relative 'sources/dublin_core'
+#require_relative 'sources/libris'
+#require_relative 'sources/manuscript'
 require 'yaml'
 
 class CreateMETSPackage
+  METS_CONFIG = APP_CONFIG['queue_manager']['processes']['mets']
 
   def self.run(job:, logger:)
 

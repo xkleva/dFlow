@@ -1,14 +1,14 @@
 #Dir[Rails.root.join("app/models/processes/**/*.rb")].each { |f| require f }
-#Dir[Rails.root.join("app/models/helpers/*.rb")].each { |f| require f }
 #Dir[Rails.root.join("app/models/sources/*.rb")].each { |f| require f }
 #Dir[Rails.root.join("app/models/adapters/*.rb")].each { |f| require f }
 
 class QueueManager
+  QUEUE_MANAGER_CONFIG = APP_CONFIG['queue_manager']
 
   def self.run
     while(true) do
       # Check if PID file exists
-      pid_file = Pathname.new(APP_CONFIG['pid_file_location']) #Should be QUEUE_MANAGER_CONFIG['pid_file_location']
+      pid_file = Pathname.new(QUEUE_MANAGER_CONFIG['pid_file_location'])
 
       # If PID file doesn't exist, exit
       if !pid_file.exist?
@@ -24,12 +24,14 @@ class QueueManager
       end
 
       job = get_job_waiting_for_automatic_process
-
-      logger.info "Starting #{job.flow_step.process} for job #{job.id}"
-      
-      execute_process(job: job)
-      
-      logger.info "Done processing, repeating"
+      if job
+        logger.info "Starting #{job.flow_step.process} for job #{job.id}"
+        execute_process(job: job)
+        logger.info "Done processing, repeating"
+      else
+        logger.debug "No job to process at this time"
+        sleep 10
+      end
     end
 
   end
@@ -74,7 +76,7 @@ class QueueManager
   end
 
   # Runs a given process for a given job
-  def self.process_runner(job:, process_object:, logger: logger)
+  def self.process_runner(job:, process_object:, logger: self.logger)
     process_object.run(job: job, logger: logger)
     job.flow_step.finish!
   rescue StandardError => e
@@ -84,8 +86,9 @@ class QueueManager
 
   # Creates a logger object
   def self.logger
-    @@logger ||= Logger.new("#{Rails.root}/logs/queue_manager.log")
-    @@logger.level = Logger::INFO
+    #@@logger ||= Logger.new(STDOUT)
+    @@logger ||= Logger.new("#{Rails.root}/log/queue_manager.log")
+    @@logger.level = ENV['LOG_LEVEL'].to_i || Logger::INFO
     @@logger
   end
 

@@ -31,7 +31,7 @@ module Dflow
       end
     end
 
-    config.autoload_paths << "#{Rails.root}/app/models/processes"
-    config.autoload_paths << "#{Rails.root}/app/models/processes/create_mets_package"
+    config.autoload_paths << "#{Rails.root}/app/models/sources"
+    config.autoload_paths += Dir.glob("#{Rails.root}/app/models/processes/*")
   end
 end

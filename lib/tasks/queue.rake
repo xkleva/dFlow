@@ -3,8 +3,9 @@ namespace :queue_manager do
   $rails_rake_task = true
   task run: :environment do
 
+    Dir[Rails.root.join("app/models/processes/**/*.rb")].each { |f| require f }
     # Load config for queue manager
-    PID_FILE_LOCATION = QUEUE_MANAGER_CONFIG['pid_file_location']
+    PID_FILE_LOCATION = APP_CONFIG['queue_manager']['pid_file_location']
     
     QueueManager.logger.info "Checking if a new queuemanager should be started"
 

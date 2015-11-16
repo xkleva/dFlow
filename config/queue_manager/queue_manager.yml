@@ -1,2 +1,0 @@
-# Location of pid file for queue manager
-pid_file_location: '/tmp/dflow_queue_manager_pid'
