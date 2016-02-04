@@ -37,7 +37,7 @@ class ConfigLoader
 
       # Load files specific to current environment (eg test, development), separated to make sure environment files overwrite generic configuration files
         
-      files = d_folder.children.sort_by { |x| x.basename.to_s[/^(\d+)\./,1].to_i }.reverse
+      files = d_folder.children.sort_by { |x| x.basename.to_s[/(\d+)_/,1].to_i }
       files.each do |file|
         if file.basename.to_s.downcase.start_with?(Rails.env)
           main_config = load_config_file(path: file, config_hash: main_config, environment_file: true)
@@ -116,6 +116,12 @@ end
 if Rails.env == 'test' || Rails.env == 'development'
   ConfigLoader.generate_file(base_file_path: "#{Rails.root}/config/app-config.yml")
 end
-main_config = YAML.load_file("#{Rails.root}/config/config_full_#{Rails.env}.yml")
+
+# If run from config rake task, config should not be loaded
+if $do_not_load_config
+  main_config = {}
+else
+  main_config = YAML.load_file("#{Rails.root}/config/config_full_#{Rails.env}.yml")
+end
 
 APP_CONFIG = main_config
