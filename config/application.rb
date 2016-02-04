@@ -30,5 +30,8 @@ module Dflow
         resource '*', :headers => :any, :methods => [:get, :post, :options, :put, :delete]
       end
     end
+
+    config.autoload_paths << "#{Rails.root}/app/models/sources"
+    config.autoload_paths += Dir.glob("#{Rails.root}/app/models/processes/*")
   end
 end

@@ -32,6 +32,10 @@ Rails.application.configure do
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
 
+  config.dependency_loading = true if $rails_rake_task
+
+  config.logger = Logger.new(STDOUT)
+  config.log_level = :info
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 end

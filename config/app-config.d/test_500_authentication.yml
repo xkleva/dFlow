@@ -6,8 +6,14 @@ api_key_users:
     role: API_KEY
     api_key: test_key
 # External authentication source
-cas_url: "https://login.example.com"
+external_auth_url: "https://login-server.example.org/auth"
 
 ## dFile Parameters
-dfile_base_url: "http://dfile.example.org/"
+dfile_base_url: "http://dfile.example.org"
 dfile_api_key: test_key
+
+external_auth: true
+
+redis_db:
+  db: 1
+  host: localhost

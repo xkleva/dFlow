@@ -1,0 +1,26 @@
+production:
+  host: host1.example.come
+  user: username
+  roles:
+    - app
+    - db
+    - web
+  path: '/path/on/server'
+
+staging:
+  host: host2.example.com
+  user: username
+  roles:
+    - app
+    - db
+    - web
+  path: '/path/on/server'
+
+lab:
+  host: host3.example.com 
+  user: username
+  roles:
+    - app
+    - db
+    - web
+  path: '/path/on/server/

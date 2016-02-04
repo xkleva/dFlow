@@ -1,0 +1,18 @@
+queue_manager:
+  processes:
+    mets:
+      CREATOR:
+        name: "A library institution"
+        sigel: "Sig"
+
+      ARCHIVIST:
+        name: "Another library institution"
+        sigel: "Sig"
+
+      COPYRIGHT_STATUS:
+        true: "copyrighted"
+        false: "pd"
+
+      PUBLICATION_STATUS:
+        true: "unpublished"
+        false: "unpublished"

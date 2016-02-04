@@ -1,0 +1,26 @@
+# List of available sources
+sources:
+  -
+    name: libris
+    label: Libris
+    class_name: Libris
+  -
+    name: dc
+    label: DC
+    class_name: DublinCore
+  -
+    name: dcxml
+    label: DC-XML
+    class_name: DublinCoreXML
+
+# The following sources are created for GUB's manuscript database
+#  -
+#    name: document
+#    label: Document
+#    class_name: Document
+#  -
+#    name: letter
+#    label: Letter
+#    class_name: Letter
+
+

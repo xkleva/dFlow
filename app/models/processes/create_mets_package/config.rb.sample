@@ -1,0 +1,21 @@
+module CreateMETSPackage
+  CREATOR = {
+   name: "Generic University",
+   sigel: "Genuni"
+ }
+
+  ARCHIVIST = {
+    name: "Generic Archive",
+    sigel: "Genarch"
+  }
+
+  COPYRIGHT_STATUS = {
+    true => "copyrighted",
+    false => "pd"
+  }
+
+  PUBLICATION_STATUS = {
+    true => "unpublished",
+    false => "unpublished"
+  }
+end

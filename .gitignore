@@ -17,6 +17,8 @@
 
 config/config_secret.yml
 config/database.yml
+config/deploy.yml
+*config_full*
 *~
 \#*#
 .#*
@@ -31,10 +33,10 @@ config/database.yml
 #Ignore nbproject
 nbproject/
 
-config/initializers/api_key.rb
-config/initializers/config.rb
 config/passwd
-config/deploy/*.rb
+
+config/app-config.d/501_authentication.yml
+config/app-config.d/601_processes_mets.yml
 
 # Ignore test coverage
 coverage/
