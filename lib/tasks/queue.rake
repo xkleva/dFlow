@@ -20,7 +20,7 @@ namespace :queue_manager do
       running_process = `ps -p #{old_pid} -o comm=`
       QueueManager.logger.info "Running process: #{running_process}"
       
-      if running_process.strip == "ruby"
+      if running_process.strip.start_with? "ruby"
         # Process is still running, abort startup of new process
         QueueManager.logger.info "Process #{old_pid} is still running, aborting!"
         next
