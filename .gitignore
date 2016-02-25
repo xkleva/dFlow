@@ -19,6 +19,9 @@ config/config_secret.yml
 config/database.yml
 config/deploy.yml
 *config_full*
+config/production*
+config/lab*
+config/staging*
 *~
 \#*#
 .#*
