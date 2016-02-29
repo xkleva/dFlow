@@ -146,19 +146,25 @@ class FlowStep < ActiveRecord::Base
     job.update_attribute('state', main_state)
   end
 
-  def start!
+  def start!(username: nil)
     return if started?
     self.started_at = DateTime.now
     self.save!
     job.set_current_flow_step(self)
+    if username
+      job.created_by = username
+    end
     job.create_log_entry("STARTED", self.description)
     job.update_attribute('state', main_state)
   end
 
-  def finish!
+  def finish!(username: nil)
     return if finished?
     self.finished_at = DateTime.now
     self.save!
+    if username
+      job.created_by = username
+    end
     job.create_log_entry("FINISHED", self.description)
     job.update_attribute('state', main_state)
     if next_step

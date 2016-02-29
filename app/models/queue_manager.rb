@@ -56,10 +56,10 @@ class QueueManager
   # Starts correct process for chosen job
   def self.execute_process(job:)
 
-    if job.flow_step.start!
-      job.created_by = job.flow_step.process
+    process = job.flow_step.process
+    if job.flow_step.start!(username: process)
 
-      case job.flow_step.process
+      case process
       when "CREATE_METS_PACKAGE"
         process_runner(job: job, process_object: CreateMETSPackage)
       when "PACKAGE_METADATA_IMPORT"
@@ -78,7 +78,7 @@ class QueueManager
   # Runs a given process for a given job
   def self.process_runner(job:, process_object:, logger: self.logger)
     process_object.run(job: job, logger: logger)
-    job.flow_step.finish!
+    job.flow_step.finish!(username: job.flow_step.process)
   rescue StandardError => e
     logger.fatal e.message + " " + e.backtrace.inspect
     job.quarantine!(msg: e.message)
