@@ -57,9 +57,9 @@ class QueueManager
   def self.execute_process(job:)
 
     if job.flow_step.start!
-      @@process ||= job.flow_step.process
+      job.created_by = job.flow_step.process
 
-      case @@process
+      case job.flow_step.process
       when "CREATE_METS_PACKAGE"
         process_runner(job: job, process_object: CreateMETSPackage)
       when "PACKAGE_METADATA_IMPORT"

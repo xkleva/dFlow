@@ -52,7 +52,6 @@ class DfileApi
     return response
   end
 
-  # TODO: Needs error handling
   def self.move_file(from_source:, from_file:, to_source:, to_file:)
     response = HTTParty.get("#{host}/move_file", query: {
       source_file: "#{from_source}:#{from_file}",
@@ -60,10 +59,13 @@ class DfileApi
       api_key: api_key
     })
 
-    return response.body
+    if response.success?
+      return response.body
+    else
+      raise StandardError, "Couldn't move file #{from_source} #{from_file} to #{to_source} #{to_file}, with message: #{response['error']}"
+    end
   end
 
-  # TODO: Needs error handling
   def self.move_folder(from_source:, from_dir:, to_source:, to_dir:)
     response = HTTParty.get("#{host}/move_folder", query: {
       source_dir: "#{from_source}:#{from_dir}",
@@ -71,32 +73,37 @@ class DfileApi
       api_key: api_key
     })
 
-    return response.success?
+    if response.success?
+      return true
+    else 
+      raise StandardError, "Couldn't move folder #{from_source} #{from_dir} to #{to_source} #{to_dir}, with response #{response['error']}"
+    end
+
   end
 
   # TODO: Needs error handling
   # returns {:checksum, :msg}
   def self.checksum(source, filename)
-    logger.info "#########  Starting checksum request for: #{source}:#{filename} #########"
+    logger.debug "#########  Starting checksum request for: #{source}:#{filename} #########"
     response = HTTParty.get("#{host}/checksum", query: {
       source_file: "#{source}:#{filename}",
       api_key: api_key
     })
 
-    logger.info "Response from dFile: #{response.inspect}"
+    logger.debug "Response from dFile: #{response.inspect}"
     if !response.success?
       raise StandardError, "Could not start a process through dFile: #{response['error']}"
     end
 
     process_id = response['id']
 
-    logger.info "Process id: #{process_id}"
+    logger.debug "Process id: #{process_id}"
     if !process_id || process_id == ''
       raise StandardError, "Did not get a valid Process ID: #{process_id}"
     end
 
     process_result = get_process_result(process_id)
-    logger.info "Process result: #{process_result}"
+    logger.debug "Process result: #{process_result}"
 
     return process_result
   end
@@ -113,7 +120,11 @@ class DfileApi
 
     response = HTTParty.post("#{host}/create_file", body: body)
 
-    return response.success?
+    if response.success?
+      return true
+    else
+      raise StandardError, "DFileApi: Could not create file: #{source} #{filename}"
+    end
   end
 
   # Copies a file
@@ -124,7 +135,11 @@ class DfileApi
       api_key: api_key
     })
 
-    return response.success?
+    if response.success?
+      return true
+    else
+      raise StandardError, "Couldn't copy file: #{from_source} #{from_file} to #{to_source} #{to_file}, with message: #{response['error']}"
+    end
   end
 
   private
