@@ -1,0 +1,40 @@
+<% if @is_setup %>
+  Du har redan angett inställningarna. Sätt 'is_setup' till false i config/config_full.yml för att åter kunna ange inställningarna här.
+<% else %>
+  <h1>Ange inställningar</h1>
+  <%= form_tag("/setup", method: "post") do %>
+    <% APP_CONFIG.each do |key,value| %>
+      <% if value.kind_of?(Hash) %>
+        <div style="margin-left:10px;margin-bottom:20px;border-bottom:1px solid black;border-top:1px solid black;padding-bottom:10px">
+        <h3><%=key%></h3>
+        <% value.each do |key2,value2| %>
+          <% if !value2.kind_of?(Hash) %>    
+            <%= label_tag("config[#{key}][#{key2.to_sym}]", key2) %>
+            <%= text_field_tag("config[#{key.to_s}][#{key2.to_sym}]", value2) %>
+            <br/>
+          <% end %>
+        <% end %>
+        </div>
+      <% elsif value.kind_of?(Array) %>
+        <% if @error_fields[key] %>
+          <h1>Fel syntax!</h1>
+        <% end %>
+        <%= label_tag("config[#{key.to_sym}]", key) %>
+        <br/>
+        <% if @error_fields[key] %>
+          <%= text_area_tag("config[#{key.to_sym}]", params[:config][key], cols: 50, rows: 20) %>
+        <% else %>
+          <%= text_area_tag("config[#{key.to_sym}]", JSON.pretty_generate(value), cols: 50, rows: 20) %>
+        <% end %>
+        <%= hidden_field_tag("json_fields[#{key.to_sym}]", 1) %>
+        <br/>
+      <% else %>
+        <%= label_tag("config[#{key.to_sym}]", key) %>
+        <%= text_field_tag("config[#{key.to_sym}]", value) %>
+        <br/>
+      <% end %>
+    <% end %>
+    <br />
+    <%= submit_tag("Spara inställningar") %>
+  <% end %>
+<% end %>

@@ -4,7 +4,7 @@
 require 'yaml'
 
 class CreateMETSPackage
-  METS_CONFIG = APP_CONFIG['queue_manager']['processes']['mets']
+  METS_CONFIG = APP_CONFIG.try('queue_manager').try('processes').try('mets')
 
   def self.run(job:, logger:)
 

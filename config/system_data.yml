@@ -1,0 +1,71 @@
+---
+# CONTAINS SYSTEM DATA, DO NOT CHANGE PER APPLICATION INSTANCE
+
+user_roles:
+- name: ADMIN
+  rights:
+  - view_users
+  - manage_users
+  - view_tree
+  - manage_tree
+  - manage_tree_root
+  - manage_jobs
+- name: GUEST
+  rights:
+  - view_tree
+  unassignable: true
+- name: API_KEY
+  rights:
+  - view_tree
+  - manage_tree
+  - manage_tree_root
+  - manage_jobs
+  - manage_users
+  - view_users
+  unassignable: true
+publication_types:
+- MANUSCRIPT
+- WIKIPEDIA
+- GUPEA
+- LIBRIS
+sources:
+- name: libris
+  label: Libris
+  class_name: Libris
+- name: dc
+  label: DC
+  class_name: DublinCore
+- name: dcxml
+  label: DC-XML
+  class_name: DublinCoreXML
+- name: document
+  label: Document
+  class_name: Document
+- name: letter
+  label: Letter
+  class_name: Letter
+events:
+- name: QUARANTINE
+- name: UNQUARANTINE
+- name: CREATE
+- name: UPDATE
+- name: CHANGE_STATUS
+- name: DELETE
+- name: FLOW_STEP
+- name: RESTART
+- name: STATUS
+- name: STARTED
+- name: FINISHED
+processes:
+- code: CONFIRMATION
+  state: ACTION
+  required_params:
+  - manual
+- code: PACKAGE_METADATA_IMPORT
+  state: PROCESS
+- code: CREATE_METS_PACKAGE
+  state: PROCESS
+- code: QUALITY_CONTROL
+  state: ACTION
+queue_manager:
+  pid_file_location: "/tmp/dflow_queue_manager_pid"
