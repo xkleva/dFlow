@@ -1,0 +1,25 @@
+<% if meta['system'] && @is_setup%>
+  <strong><%= "#{key} : #{value}" %></strong> Du har redan sparat systeminställningarna. För att ändra dessa, sätt 'is_setup' till 'false' i config/config_full.yml
+<% else %>
+  <div class="form-inline">
+    <div class="form-group">
+      <%= label_tag("config#{path}", key.to_s) %>
+      <% case meta['type'] %>
+      <% when 'radio' %>
+        <% meta['options'].each do |option| %>
+          <label>
+            <%= radio_button_tag("config#{path}", option, value.to_s == option.to_s)%>
+            <%= option %>
+          </label>
+        <% end %>
+      <% when 'selectone' %>
+        <%= select_tag("config#{path}", options_for_select(meta['options'], value.to_s)) %>
+      <% else %>
+        <%= text_field_tag("config#{path}", value, class: "form-control") %>
+      <% end %>
+    </div>
+  <% if meta['info'] %>
+    <span id="helpBlock" class="help-block"><%= meta['info'] %></span>
+  <% end %>
+  </div>
+<% end %>

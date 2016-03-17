@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :session
   get 'setup', to: 'setup#index'
   post 'setup', to: 'setup#update'
+  get 'config', to: 'setup#configindex'
 
   # Assets routes
   get 'assets/work_order/:asset_id', to: 'assets#work_order'

@@ -41,7 +41,7 @@ class QueueManager
       job_ids = Job.where(quarantined: false, deleted_at: nil).where.not(state: "FINISH").select(:id)
       steps = FlowStep.where.not(entered_at: nil).where(started_at: nil, finished_at: nil, aborted_at: nil).where(job_id: job_ids)
 
-      processes = APP_CONFIG['processes'].select {|x| x['state'] == 'PROCESS'}.map {|x| x['code']}
+      processes = SYSTEM_DATA['processes'].select {|x| x['state'] == 'PROCESS'}.map {|x| x['code']}
       automatic_steps = steps.select {|x| processes.include? x.process}
       if automatic_steps.empty?
         logger.info "There are no jobs to process at this time."

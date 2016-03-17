@@ -12,7 +12,7 @@ class Api::ConfigController < Api::ApiController
   def role_list
     role_list = []
 		# Select role name from config list of roles
-    roles = APP_CONFIG["user_roles"].select{|role| !role["unassignable"]}
+    roles = (SYSTEM_DATA["user_roles"]+APP_CONFIG["user_roles"]).select{|role| !role["unassignable"]}
     roles.each {|role| role_list << {name: role["name"]}}
 
 		# Set response
@@ -28,7 +28,7 @@ class Api::ConfigController < Api::ApiController
   api :GET, '/config/states', 'Returns a list of possible states for flow step processes'
   def state_list
     # Select role name from config list of roles
-    states_list = APP_CONFIG["processes"].map{|x| x["state"]}.uniq
+    states_list = SYSTEM_DATA["processes"].map{|x| x["state"]}.uniq
     states_list.unshift("START")
     states_list << "FINISH"
 

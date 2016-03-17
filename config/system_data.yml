@@ -61,6 +61,8 @@ processes:
   state: ACTION
   required_params:
   - manual
+- code: AUTOMATIC_PROCESS
+  state: ACTION
 - code: PACKAGE_METADATA_IMPORT
   state: PROCESS
 - code: CREATE_METS_PACKAGE

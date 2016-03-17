@@ -10,7 +10,7 @@ RSpec.describe PublicationLog, :type => :model do
   describe "self.types" do
     context "with types configured" do
       it "should return a list of types" do
-        APP_CONFIG['publication_types'] = ['WIKIPEDIA', 'TWO', 'THREE']
+        SYSTEM_DATA['publication_types'] = ['WIKIPEDIA', 'TWO', 'THREE']
 
         types = PublicationLog.types
 
@@ -19,7 +19,7 @@ RSpec.describe PublicationLog, :type => :model do
     end
     context "with types unconfigured" do
       it "should return an empty array" do
-        APP_CONFIG['publication_types'] = nil
+        SYSTEM_DATA['publication_types'] = nil
 
         types = PublicationLog.types
 

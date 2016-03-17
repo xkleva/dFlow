@@ -37,13 +37,13 @@ class FlowStep < ActiveRecord::Base
 
   # Check if status is in list of configured sources
   def process_in_list
-    if !APP_CONFIG["processes"].map { |x| x["code"] }.include?(process)
+    if !SYSTEM_DATA["processes"].map { |x| x["code"] }.include?(process)
       errors.add(:process, "#{process} not included in list of valid statuses")
     end
   end
 
   def process_object
-    @process_object ||= APP_CONFIG["processes"].find { |x| x["code"] == process}
+    @process_object ||= SYSTEM_DATA["processes"].find { |x| x["code"] == process}
   end
 
   def params_hash

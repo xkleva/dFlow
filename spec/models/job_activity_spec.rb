@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe JobActivity, :type => :model do
 
   describe "event" do
-    it {should validate_inclusion_of(:event).in_array(APP_CONFIG["events"].map {|x| x["name"]})}
+    it {should validate_inclusion_of(:event).in_array(SYSTEM_DATA["events"].map {|x| x["name"]})}
   end
 
   describe "job" do
