@@ -1,37 +1,6 @@
 ---
 username: 'admin'
 password: '1234'
-_db:
-  info: "Ange databasinställningar nedan"
-db:
-  _host:
-    info: "Ange adress till databasen, ex. localhost"
-    system: true
-  host:
-  _port: 
-    info: "Ange portnummer för databasen, default: 5432"
-    system: true
-  port: '5432'
-  _username:
-    info: "Ange användarnamn till databasen, default: postgres"
-    system: true
-  username:
-  _password: 
-    info: "Ange lösenord till databasen, default: <tomt>"
-    system: true
-  password:
-  _database:
-    info: "Ange databasens namn, ex. dflow_production"
-    system: true
-  database:
-  _pool:
-    info: "Pool"
-    system: true
-  pool: 5
-  _timeout:
-    info: "Timeout i ms"
-    system: true
-  timeout: 5000
 
 _external_auth:
   info: "Välj ifall en extern inloggningstjänst skall användas"
