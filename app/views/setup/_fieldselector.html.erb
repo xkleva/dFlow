@@ -1,0 +1,10 @@
+<% if key.to_s.start_with?('_') %>
+<% elsif value.kind_of?(Hash) %>
+  <%= render partial: "hash", locals: {key: key, value: value, path: path, meta: meta} %>
+<% elsif value.kind_of?(Array) %>
+  <%= render partial: "array", locals: {key: key, value: value, path: path, meta: meta} %>
+  <br/>
+<% else %>
+  <%= render partial: "string", locals: {key: key, value: value, path: path, meta: meta} %>
+  <br/>
+<% end %>

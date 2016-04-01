@@ -191,7 +191,7 @@ class Job < ActiveRecord::Base
 
   # Check if source is in list of configured sources
   def source_in_list
-    if !APP_CONFIG["sources"].map { |x| x["name"] }.include?(source)
+    if !SYSTEM_DATA["sources"].map { |x| x["name"] }.include?(source)
       errors.add(:source, "not included in list of valid sources")
     end
   end

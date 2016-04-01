@@ -13,7 +13,7 @@ class Api::ProcessController < Api::ApiController
   description 'Returns a Job where its current flow step has given process code as process name. Returns no job  if a process of given code is currently running, or if there are no applicable jobs'
   def request_job
     code = params[:code]
-    process = APP_CONFIG["processes"].find{|x| x["code"] == code}
+    process = SYSTEM_DATA["processes"].find{|x| x["code"] == code}
 
     # If process does not exist in config, return error
     if !process

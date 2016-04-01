@@ -1,14 +1,62 @@
-# List of processes and their calling status
-processes:
-  -
-    code: CONFIRMATION
-    state: ACTION
-    required_params: 
-      - manual
-  -
-    code: AUTOMATIC_PROCESS
-    state: PROCESS
+---
+_is_setup: true
+username: 'admin'
+password: '1234'
+_db:
+  info: "Ange databasinställningar nedan"
+  system: true
+db:
+  _host:
+    info: "Ange adress till databasen, ex. localhost"
+  host: 'localhost'
+  port: '5432'
+  username: postgres
+  password:
+  database: dflow_test
+  pool: 5
+  timeout: 5000
 
+_external_auth:
+  info: "Välj ifall en extern inloggningstjänst skall användas"
+  type: radio
+  options:
+    - true
+    - false
+  system: true
+_cas_url:
+  system: true
+cas_url: https://example.com/login
+_file_adapter:
+  system: true
+file_adapter: dfile
+package_name: GUB%07d
+pdf_settings:
+  operators: "[ ] Maria     [ ] Grim     [ ] Ingela"
+  equipments: "[ ] Robot    [ ] Zeutschel    [ ] Canon "
+user_roles:
+- name: OPERATOR
+  rights:
+  - view_tree
+  - manage_tree
+  - manage_jobs
+api_key_users:
+  -
+    username: test_key_user
+    name: Test key User
+    role: API_KEY
+    api_key: test_key
+# External authentication source
+external_auth_url: "https://login-server.example.org/auth"
+
+## dFile Parameters
+dfile_base_url: "http://dfile.example.org"
+dfile_api_key: test_key
+
+external_auth: true
+
+redis_db:
+  db: 1
+  host: localhost
 workflows:
   -
     name: VALID_FLOW
@@ -140,3 +188,21 @@ workflows:
           manual: false
 
 default_workflow: VALID_FLOW
+queue_manager:
+  processes:
+    mets:
+      CREATOR:
+        name: "Test library" 
+        sigel: "Sig"
+
+      ARCHIVIST:
+        name: "Test archivist"
+        sigel: "Sig"
+
+      COPYRIGHT_STATUS:
+        true: "copyrighted"
+        false: "pd"
+
+      PUBLICATION_STATUS:
+        true: "unpublished"
+        false: "unpublished"

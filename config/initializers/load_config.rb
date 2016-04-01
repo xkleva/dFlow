@@ -1,12 +1,17 @@
+# Define config location
+APP_CONFIG_FILE_LOCATION = "#{Rails.root}/config/config_full.yml"
+APP_CONFIG_TEST_FILE_LOCATION = "#{Rails.root}/config/config_full_test.yml"
+SYSTEM_DATA_FILE_LOCATION = "#{Rails.root}/config/system_data.yml"
 
-# If in test environment, generate file. Otherwise it should already exist.
-if Rails.env == 'test' || Rails.env == 'development'
-  ConfigLoader.generate_file(base_file_path: "#{Rails.root}/config/app-config.yml", environment: Rails.env)
+main_config = YAML.load_file(SYSTEM_DATA_FILE_LOCATION)
+SYSTEM_DATA = main_config || {}
+
+if Rails.env == 'test'
+  main_config = YAML.load_file(APP_CONFIG_TEST_FILE_LOCATION)
+else
+  main_config = YAML.load_file(APP_CONFIG_FILE_LOCATION)
 end
-
-main_config = YAML.load_file("#{Rails.root}/config/config_full_#{Rails.env}.yml")
-
-APP_CONFIG = main_config
+APP_CONFIG = main_config || {}
 
 # Read all users from passwd file and create users that do not already exist
 if Rails.env != "test" && (ActiveRecord::Base.connection.table_exists? 'users') # Checks if table exists to be able to migrate a new db

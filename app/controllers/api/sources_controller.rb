@@ -7,7 +7,7 @@ class Api::SourcesController < Api::ApiController
 
   api :GET, '/sources', 'Returns a list of all available sources'
   def index
-    @response[:sources] = APP_CONFIG["sources"]
+    @response[:sources] = SYSTEM_DATA["sources"]
     if @response[:sources].nil?
       error_msg(ErrorCodes::REQUEST_ERROR, "Could not find any sources")
     end

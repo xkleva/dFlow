@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
 
   # Validates that role exists in config file
   def role_valid
-    if APP_CONFIG["user_roles"].select{|role| role["name"] == self.role}.empty?
+    if (APP_CONFIG["user_roles"]+SYSTEM_DATA["user_roles"]).select{|role| role["name"] == self.role}.empty?
       errors.add(:role, "Role does not exist in config")
     end
   end
@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
 
   # Returns role hash from config file
   def role_object
-    APP_CONFIG["user_roles"].select{|role| role["name"] == self.role}.first
+    (APP_CONFIG["user_roles"]+SYSTEM_DATA["user_roles"]).select{|role| role["name"] == self.role}.first
   end
 
   # Checks if users role has given right value

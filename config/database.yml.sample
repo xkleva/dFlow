@@ -1,32 +1,23 @@
-development:
-  adapter: sqlite3
-  database: db/development.sqlite3
-  pool: 5
-  timeout: 5000
+development: &default
+  adapter: postgresql
+  encoding: unicode
+  database: dflow_development
+  username: postgres
+  password:
+  host: localhost
 
 test:
-  adapter: sqlite3
-  database: db/test.sqlite3
-  pool: 5
-  timeout: 5000
+  <<: *default
+  database: dflow_test
 
-production:
-  adapter: postgresql
-  encoding: utf8
-  database: dflow
-  username: root
-  password: your_pass
-  host: localhost
-  port: 5432  
+production: &live
+  <<: *default
+  database: dflow_production
 
 staging:
-  adapter: sqlite3
-  database: db/staging.sqlite3
-  pool: 5
-  timeout: 5000  
+  <<: *live
+  database: dflow_staging
 
 lab:
-  adapter: sqlite3
-  database: db/lab.sqlite3
-  pool: 5
-  timeout: 5000  
+  <<: *live
+  database: dflow_lab

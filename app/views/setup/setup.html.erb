@@ -1,0 +1,10 @@
+<div class="container-fluid" style="margin-bottom:20px">
+<h1>Systeminställningar</h1>
+  <%= form_tag("/setup", method: "post") do %>
+    <% APP_CONFIG.each do |key,value| %>
+      <%= render partial: 'fieldselector', locals: {key: key, value: value, path: "[#{key}]", meta: (APP_CONFIG['_'+key.to_s] || {}) } %>
+    <% end %>
+    <br />
+    <%= submit_tag("Spara inställningar", class: "btn btn-primary") %>
+  <% end %>
+</div>

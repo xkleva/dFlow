@@ -18,10 +18,7 @@
 config/config_secret.yml
 config/database.yml
 config/deploy.yml
-*config_full*
-config/app-config.d/production*
-config/app-config.d/lab*
-config/app-config.d/staging*
+config/config_full.yml
 *~
 \#*#
 .#*
@@ -37,9 +34,6 @@ config/app-config.d/staging*
 nbproject/
 
 config/passwd
-
-config/app-config.d/501_authentication.yml
-config/app-config.d/601_processes_mets.yml
 
 # Ignore test coverage
 coverage/

@@ -1,0 +1,12 @@
+<div class="form-group <%= if @error_fields[key] then "has-error" end %>">
+<%= label_tag(path, key, class: 'control-label') %>
+<% if @error_fields[key] %>
+  <div class="alert alert-danger">Fel syntax!</div>
+<% end %>
+<% if @error_fields[key] %>
+  <%= text_area_tag("config#{path}", @error_fields[key], cols: 50, rows: 20, class: "form-control has-error") %>
+<% else %>
+  <%= text_area_tag("config#{path}", JSON.pretty_generate(value), cols: 50, rows: 20, class: "form-control") %>
+<% end %>
+<%= hidden_field_tag("json_fields#{path}", 1) %>
+</div>
