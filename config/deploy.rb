@@ -16,7 +16,7 @@ end
 # Copied into /{app}/shared/config from respective sample file
 set :linked_files, deploy_config['linked_files']
 
-server deploy_config['host'], user: deploy_config['user'], roles: deploy_config['roles']
+server deploy_config['host'], user: deploy_config['user'], roles: deploy_config['roles'], port: deploy_config['port']
 
 set :deploy_to, deploy_config['path']
 
