@@ -1,5 +1,5 @@
 production:
-  host: host1.example.come
+  host: host1.example.com
   user: username
   roles:
     - app
@@ -23,4 +23,4 @@ lab:
     - app
     - db
     - web
-  path: '/path/on/server/
+  path: '/path/on/server/'
