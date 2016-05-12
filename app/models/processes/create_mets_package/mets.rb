@@ -150,8 +150,8 @@ class CreateMETSPackage
         creator_name: METS_CONFIG['CREATOR']['name'],
         archivist_sigel: METS_CONFIG['ARCHIVIST']['sigel'],
         archivist_name: METS_CONFIG['ARCHIVIST']['name'],
-        copyright_status: METS_CONFIG['COPYRIGHT_STATUS'][@job.copyright],
-        publication_status: METS_CONFIG['PUBLICATION_STATUS'][@job.copyright]
+        copyright_status: METS_CONFIG['COPYRIGHT_STATUS'][@job.copyright.to_s],
+        publication_status: METS_CONFIG['PUBLICATION_STATUS'][@job.copyright.to_s]
       }
     end
 
