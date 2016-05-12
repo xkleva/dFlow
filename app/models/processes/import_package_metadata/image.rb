@@ -155,7 +155,7 @@ class ImportPackageMetadata
     end
 
     def validate_group_name(group_name:)
-      if !APP_CONFIG['queue_manage']['processes']['import_metadata']['validate_group_name']
+      if !APP_CONFIG['queue_manager']['processes']['import_metadata']['validate_group_name']
         return true
       end
       if !@group_names.include?(group_name)

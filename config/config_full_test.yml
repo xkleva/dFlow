@@ -200,9 +200,12 @@ queue_manager:
         sigel: "Sig"
 
       COPYRIGHT_STATUS:
-        true: "copyrighted"
-        false: "pd"
+        'true': "copyrighted"
+        'false': "pd"
 
       PUBLICATION_STATUS:
-        true: "unpublished"
-        false: "unpublished"
+        'true': "unpublished"
+        'false': "unpublished"
+    import_metadata:
+      require_physical: true
+      validate_group_name: true

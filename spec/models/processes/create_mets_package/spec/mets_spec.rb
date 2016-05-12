@@ -63,8 +63,8 @@ describe CreateMETSPackage::METS do
     context "administrative" do
       it "should check for relevant information in administrative" do
         expect(@mets.administrative).to include("mets:amdSec")
-        expect(@mets.administrative).to include(CreateMETSPackage::METS_CONFIG['COPYRIGHT_STATUS'][true])
-        expect(@mets.administrative).to match(CreateMETSPackage::METS_CONFIG['PUBLICATION_STATUS'][true])
+        expect(@mets.administrative).to include(CreateMETSPackage::METS_CONFIG['COPYRIGHT_STATUS']['true'])
+        expect(@mets.administrative).to match(CreateMETSPackage::METS_CONFIG['PUBLICATION_STATUS']['true'])
       end
     end
 
