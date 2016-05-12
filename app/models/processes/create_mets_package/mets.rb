@@ -39,7 +39,7 @@ class CreateMETSPackage
     # Rename single file from <JOBID>.xxx to GUB00<JOBID>.xxx
     # and recompute full path
     def rename_to_gub
-      gubname = sprintf("GUB%07d.%s", @job_id, @extension)
+      gubname = sprintf("#{APP_CONFIG['package_name']}.%s", @job_id, @extension)
       DfileApi.move_file(from_source: "PACKAGING", from_file: @full_path, to_source: "PACKAGING", to_file: "#{@job_id}/#{@path}/#{gubname}")
       @name = gubname
       set_full_path
@@ -143,7 +143,7 @@ class CreateMETSPackage
     # Collect global data used by METS production in various places
     def mets_data
       {
-        id: sprintf("GUB%07d", @job.id),
+        id: sprintf(APP_CONFIG['package_name'], @job.id),
         created_at: DateTime.parse(@job.created_at.to_s).strftime("%FT%T"),
         updated_at: DateTime.parse(@job.updated_at.to_s).strftime("%FT%T"),
         creator_sigel: METS_CONFIG['CREATOR']['sigel'],
