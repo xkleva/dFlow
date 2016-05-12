@@ -123,7 +123,7 @@ describe ImportPackageMetadata::Image do
         expect(image.logical).to eq 'TitlePage'
       end
     end
-
+    
     context "for an image without page type" do
       it "should invalidate object" do
 
@@ -134,6 +134,25 @@ describe ImportPackageMetadata::Image do
         image = ImportPackageMetadata::Image.new(job_id: 999, group_names: [], image_count: 10, image_num: 1, source: 'libris')
 
         expect{image.fetch_metadata}.to raise_error StandardError
+      end
+    end
+
+    context "for an image without page type and no force physical setting" do
+      before :each do
+        APP_CONFIG['queue_manager']['processes']['import_metadata']['require_physical'] = false
+      end
+      after :each do
+        APP_CONFIG['queue_manager']['processes']['import_metadata']['require_physical'] = true
+      end
+      it "should validate object" do
+
+        stub_request(:get, 'http://dfile.example.org'+'/download_file')
+        .with(query: {source_file: "PACKAGING:999/page_metadata/0001.xml", api_key: @dfile_api_key})
+        .to_return(:body => File.new('spec/models/processes/import_package_metadata/stubs/no-data.xml'), :status => 200)
+
+        image = ImportPackageMetadata::Image.new(job_id: 999, group_names: [], image_count: 10, image_num: 1, source: 'libris')
+
+        expect{image.fetch_metadata}.not_to raise_error
       end
     end
   end
