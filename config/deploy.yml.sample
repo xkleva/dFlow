@@ -7,6 +7,10 @@ production:
     - db
     - web
   path: '/path/on/server'
+  linked_files:
+    - 'config/database.yml'
+    - 'config/config_full.yml'
+    - 'config/passwd'
 
 staging:
   host: host2.example.com
@@ -17,6 +21,10 @@ staging:
     - db
     - web
   path: '/path/on/server'
+  linked_files:
+    - 'config/database.yml'
+    - 'config/config_full.yml'
+    - 'config/passwd'
 
 lab:
   host: host3.example.com 
@@ -27,3 +35,7 @@ lab:
     - db
     - web
   path: '/path/on/server/'
+  linked_files:
+    - 'config/database.yml'
+    - 'config/config_full.yml'
+    - 'config/passwd'

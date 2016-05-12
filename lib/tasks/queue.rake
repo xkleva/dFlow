@@ -5,7 +5,7 @@ namespace :queue_manager do
 
     Dir[Rails.root.join("app/models/processes/**/*.rb")].each { |f| require f }
     # Load config for queue manager
-    PID_FILE_LOCATION = APP_CONFIG['queue_manager']['pid_file_location']
+    PID_FILE_LOCATION = SYSTEM_DATA['queue_manager']['pid_file_location']
     
     QueueManager.logger.info "Checking if a new queuemanager should be started"
 

@@ -3,7 +3,7 @@
 #Dir[Rails.root.join("app/models/adapters/*.rb")].each { |f| require f }
 
 class QueueManager
-  QUEUE_MANAGER_CONFIG = APP_CONFIG['queue_manager']
+  QUEUE_MANAGER_CONFIG = APP_CONFIG['queue_manager'].merge(SYSTEM_DATA['queue_manager'])
 
   def self.run
     while(true) do
