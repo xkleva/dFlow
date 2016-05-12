@@ -197,3 +197,20 @@ queue_manager:
         _false:
           info: "Ange vilken text som ska anges ifall paketet ej är publicerat"
         'false': unpublished
+    _import_metadata:
+      info: Inställningar som rör import av metadata som exporterats från ScanGate
+    import_metadata:
+      _require_physical: 
+        info: Ange ifall physical ska krävas av importscript
+        type: radio
+        options:
+          - true
+          - false
+      require_physical: false
+      _validate_group_name: 
+        info: Ange ifall gruppnamn ska valideras mot information från källan
+        type: radio
+        options:
+          - true
+          - false
+      validate_group_name: false

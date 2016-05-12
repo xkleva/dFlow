@@ -136,11 +136,13 @@ class ImportPackageMetadata
         end
       end
       if !physical
-        physical = "Undefined" 
-        @error ||= {}
-        @error[:code] = "IMAGE_PHYSICAL_ERROR"
-        @error[:msg] = "Image missing physical page definition: #{@image_num}"
-        raise StandardError, "Image missing physical page definition: #{@image_num}"
+        physical = "Undefined"
+        if APP_CONFIG['queue_manager']['processes']['import_metadata']['require_physical']
+          @error ||= {}
+          @error[:code] = "IMAGE_PHYSICAL_ERROR"
+          @error[:msg] = "Image missing physical page definition: #{@image_num}"
+          raise StandardError, "Image missing physical page definition: #{@image_num}"
+        end
       end
       physical
     end
@@ -153,6 +155,9 @@ class ImportPackageMetadata
     end
 
     def validate_group_name(group_name:)
+      if !APP_CONFIG['queue_manage']['processes']['import_metadata']['validate_group_name']
+        return true
+      end
       if !@group_names.include?(group_name)
         @error[:code] = "IMAGE_GROUP_NAME_ERROR"
         @error[:msg] = "Image group name missing: #{@image_num} - #{group_name}"
