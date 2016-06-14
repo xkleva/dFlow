@@ -30,11 +30,12 @@ class QueueManager
         logger.info "Done processing, repeating"
       else
         logger.debug "No job to process at this time"
-        if !loop 
-            return
-        end
-        sleep 10
       end
+
+      if !loop 
+        return
+      end
+      sleep 10
     end
 
   end

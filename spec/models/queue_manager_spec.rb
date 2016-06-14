@@ -35,19 +35,54 @@ RSpec.describe QueueManager, :type => :model do
                QueueManager.run(loop: false)
            end
        end
-      #context "existing job process" do
-      #    it "should return info msg" do 
-      #        #SYSTEM_DATA['processes'] << {"code" => "TEST_PROCESS", "state" => "PROCESS"}
-      #        flow_step = create(:flow_step, entered_at: DateTime.now) 
-      #        job = flow_step.job
-      #        current_pid = Process.pid
-      #        file = File.open(@pid_file, "w:utf-8") do |file|
-      #            file.write(current_pid)
-      #        end
-      #        expect(QueueManager.logger).to receive(:info).with("Starting #{job.flow_step.process} for job #{job.id}")
-      #        QueueManager.run
-      #    end
-      #end
+      context "existing job process" do
+          it "should return info msg" do 
+            job = create(:job)
+            SYSTEM_DATA['processes'] << {"code" => "TEST_PROCESS", "state" => "PROCESS"}
+            flow_step = create(:flow_step, process: "TEST_PROCESS", step: 999, job: job, entered_at: DateTime.now)
+            job.set_current_flow_step(flow_step)
+            current_pid = Process.pid
+            file = File.open(@pid_file, "w:utf-8") do |file|
+              file.write(current_pid)
+            end
+            expect(QueueManager.logger).to_not receive(:debug).with("No job to process at this time")
+            QueueManager.run(loop: false)
+          end
+      end
+   end
+
+   describe "self.get_job_for_automatic_process" do
+     context "for no existing jobs" do
+       it "should return nil" do
+         Job.delete_all
+
+         result = QueueManager.get_job_waiting_for_automatic_process
+
+         expect(result).to be nil
+       end
+     end
+     context "for an existing job with current flow step not being an automatic process" do
+       it "should return nil" do
+         job = create(:job)
+
+         result = QueueManager.get_job_waiting_for_automatic_process
+
+         expect(result).to be nil
+       end
+     end
+     context "for an existing job with current flow step being an automatic process" do
+       it "should return the job object" do
+         job = create(:job)
+         SYSTEM_DATA['processes'] << {"code" => "TEST_PROCESS", "state" => "PROCESS"}
+         flow_step = create(:flow_step, process: "TEST_PROCESS", step: 999, job: job, entered_at: DateTime.now)
+         job.set_current_flow_step(flow_step)
+
+         result = QueueManager.get_job_waiting_for_automatic_process
+
+         expect(result).to be_a Job
+         expect(result.id).to eq job.id
+       end
+     end
    end
 end
 
