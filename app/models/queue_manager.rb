@@ -5,7 +5,7 @@
 class QueueManager
   QUEUE_MANAGER_CONFIG = APP_CONFIG['queue_manager'].merge(SYSTEM_DATA['queue_manager'])
 
-  def self.run
+  def self.run(loop: true)
     while(true) do
       # Check if PID file exists
       pid_file = Pathname.new(QUEUE_MANAGER_CONFIG['pid_file_location'])
@@ -19,7 +19,7 @@ class QueueManager
       # If PID is not current PID, exit
       current_pid = File.open(pid_file.to_s).read.to_s.strip
       if current_pid != Process.pid.to_s
-        logger.fatal "PID file #{current_pid} doesn't match my process #{Process.pid}, aborting QueueManager"
+        logger.fatal "PID #{current_pid} - from file #{pid_file} doesn't match my process #{Process.pid}, aborting QueueManager"
         return
       end
 
@@ -30,6 +30,9 @@ class QueueManager
         logger.info "Done processing, repeating"
       else
         logger.debug "No job to process at this time"
+        if !loop 
+            return
+        end
         sleep 10
       end
     end
