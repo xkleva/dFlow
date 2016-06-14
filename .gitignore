@@ -28,7 +28,11 @@ config/config_full.yml
 .project
 
 # Ignore all vim and vi files.
-.swp
+*~
+\#*#
+.#*
+.~*#
+*.sw*
 
 #Ignore nbproject
 nbproject/
