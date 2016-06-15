@@ -49,7 +49,7 @@ class DfileApi
         api_key: api_key
     })
 
-    return response
+    return JSON.parse(response.body)
   end
 
   def self.move_file(from_source:, from_file:, to_source:, to_file:)

@@ -69,5 +69,15 @@ processes:
   state: PROCESS
 - code: QUALITY_CONTROL
   state: ACTION
+- code: WAIT_FOR_FILES
+  state: WAITFOR
+  required_params:
+    - folder_path
+    - filetype
+    - count
+- code: WAIT_FOR_FILE
+  state: WAITFOR
+  required_params:
+    - file_path
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"

@@ -43,12 +43,12 @@ class QueueManager
   # Returns a single job with a configured automatic process waiting
   def self.get_job_waiting_for_automatic_process
       job_ids = Job.where(quarantined: false, deleted_at: nil).where.not(state: "FINISH").select(:id)
-      steps = FlowStep.where.not(entered_at: nil).where(started_at: nil, finished_at: nil, aborted_at: nil).where(job_id: job_ids)
+      steps = FlowStep.where.not(entered_at: nil).where(finished_at: nil, aborted_at: nil).where(job_id: job_ids)
+      steps = steps.where('started_at IS NULL OR process IN (?)', ["WAIT_FOR_FILES"])
 
-      processes = SYSTEM_DATA['processes'].select {|x| x['state'] == 'PROCESS'}.map {|x| x['code']}
+      processes = SYSTEM_DATA['processes'].select {|x| ['PROCESS', 'WAITFOR'].include? x['state']}.map {|x| x['code']}
       automatic_steps = steps.select {|x| processes.include? x.process}
       if automatic_steps.empty?
-        logger.info "There are no jobs to process at this time."
         return
       end
 
@@ -68,21 +68,38 @@ class QueueManager
         process_runner(job: job, process_object: CreateMETSPackage)
       when "PACKAGE_METADATA_IMPORT"
         process_runner(job: job, process_object: ImportPackageMetadata)
+      when "WAIT_FOR_FILES"
+        waitfor_runner(job: job, waitfor_object: WaitForFiles)
       else
         logger.fatal "Couldn't find process!"
         job.quarantine!(msg: "Couldn't find process!")
       end
-      logger.info "PROCESS DONE!"
     else
       logger.fatal "Couldn't start process!"
       job.quarantine!(msg: "Couldn't start process!")
     end
+  rescue StandardError => e
+    logger.fatal e.message + " " + e.backtrace.inspect
+    job.quarantine!(msg: e.message)
   end
 
   # Runs a given process for a given job
   def self.process_runner(job:, process_object:, logger: self.logger)
     process_object.run(job: job, logger: logger)
     job.flow_step.finish!(username: job.flow_step.process)
+  rescue StandardError => e
+    logger.fatal e.message + " " + e.backtrace.inspect
+    job.quarantine!(msg: e.message)
+  end
+
+
+  def self.waitfor_runner(job:, waitfor_object:, logger: self.logger)
+    result = waitfor_object.run(job: job, logger: logger)
+    if result == true
+      job.flow_step.finish!(username: job.flow_step.process)
+    else
+      logger.info "Process not done"
+    end
   rescue StandardError => e
     logger.fatal e.message + " " + e.backtrace.inspect
     job.quarantine!(msg: e.message)

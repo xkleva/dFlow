@@ -138,7 +138,7 @@ class FlowStep < ActiveRecord::Base
   end
 
   def enter!
-    return if entered?
+    return true if entered?
     self.entered_at = DateTime.now
     self.save!
     job.nolog = true
@@ -147,7 +147,7 @@ class FlowStep < ActiveRecord::Base
   end
 
   def start!(username: nil)
-    return if started?
+    return true if started?
     self.started_at = DateTime.now
     self.save!
     job.set_current_flow_step(self)
@@ -159,7 +159,7 @@ class FlowStep < ActiveRecord::Base
   end
 
   def finish!(username: nil)
-    return if finished?
+    return true if finished?
     self.finished_at = DateTime.now
     self.save!
     if username
@@ -186,6 +186,8 @@ class FlowStep < ActiveRecord::Base
       return "FINISH"
     elsif state == "ACTION" && !params_hash["manual"]
       return "PROCESS"
+    elsif state == "WAITFOR"
+      return "PROCESS"
     else
       return state
     end
@@ -207,6 +209,20 @@ class FlowStep < ActiveRecord::Base
 
   def self.job_flow_step(job_id:, flow_step:)
     FlowStep.where(job_id: job_id, step: flow_step, aborted_at: nil).first
+  end
+
+  def parsed_params
+    hash = params_hash
+    hash.each do |key, value|
+      if value.kind_of? String
+        hash[key] = substitute_parameters(value)
+      end
+    end
+    return hash
+  end
+
+  def substitute_parameters(string)
+    string % {job_id: job.id, page_count: job.metadata_value('page_count') || '-1'}
   end
 
 

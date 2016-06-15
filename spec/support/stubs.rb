@@ -57,6 +57,10 @@ module Requests
       stub_request(:get, /http:\/\/dfile\.example\.org\/download_file\?api_key=test_key&source_file=PACKAGING:\d+\/page_metadata\/\d+\.xml/).
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
       to_return(:status => 200, :body => File.open('spec/models/processes/import_package_metadata/stubs/0001.xml').read, :headers => {})
+
+      stub_request(:get, "http://dfile.example.org/list_files?api_key=test_key&ext=tif&source_dir=TEST:/12345/").
+      with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+      to_return(:status => 200, :body => File.open("spec/support/stub_files/dfile_list_files_8_tif.json").read, :headers => {})
     end
   end
 end
