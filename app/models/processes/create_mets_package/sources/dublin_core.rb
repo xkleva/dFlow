@@ -1,4 +1,4 @@
-class CreateMETSPackage
+class CreateMetsPackage
   class DublinCore
     XML_SCHEMA="http://www.ub.gu.se/xml-schemas/simple-dc/v1/gub-simple-dc-20150812.xsd"
     attr_reader :mets_data
@@ -8,7 +8,7 @@ class CreateMETSPackage
       "tm" => "Manuscript"
     }
 
-    # mets_data is global mets_data from CreateMETSPackage::METS
+    # mets_data is global mets_data from CreateMetsPackage::METS
     def initialize(job, mets_data)
       @job = job
       @mets_data = mets_data

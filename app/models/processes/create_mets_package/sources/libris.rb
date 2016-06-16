@@ -1,6 +1,6 @@
 require 'nokogiri'
 
-class CreateMETSPackage
+class CreateMetsPackage
   class Libris
     TYPE_OF_RECORD = {
       "as" => "Serial",
@@ -9,7 +9,7 @@ class CreateMETSPackage
     }
     attr_reader :mets_data
 
-    # mets_data is global mets_data from CreateMETSPackage::METS
+    # mets_data is global mets_data from CreateMetsPackage::METS
     def initialize(job, mets_data)
       @job = job
       @mets_data = mets_data

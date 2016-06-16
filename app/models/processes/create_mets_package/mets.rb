@@ -3,14 +3,14 @@
 #require_relative 'sources/manuscript'
 require 'yaml'
 
-class CreateMETSPackage
+class CreateMetsPackage
   METS_CONFIG = APP_CONFIG['queue_manager']['processes']['mets']
 
   def self.run(job:, logger:)
 
     DfileApi.logger = logger
     
-    mets = CreateMETSPackage::METS.new(job: job, logger: logger)
+    mets = CreateMetsPackage::METS.new(job: job, logger: logger)
     mets.create_mets_xml_file
     mets.move_metadata_folders
     mets.move_mets_package

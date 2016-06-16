@@ -33,6 +33,7 @@ module Dflow
 
     config.autoload_paths << "#{Rails.root}/app/models/sources"
     config.autoload_paths += Dir.glob("#{Rails.root}/app/models/processes/*")
+    config.autoload_paths += Dir.glob("#{Rails.root}/app/models/adapters")
     config.autoload_paths += %W(#{Rails.root}/lib)
     config.autoload_paths += Dir["#{Rails.root}/lib/**/"]
   end

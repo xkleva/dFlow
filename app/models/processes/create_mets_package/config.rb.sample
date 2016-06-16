@@ -1,4 +1,4 @@
-module CreateMETSPackage
+module CreateMetsPackage
   CREATOR = {
    name: "Generic University",
    sigel: "Genuni"

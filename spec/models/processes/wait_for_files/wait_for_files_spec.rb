@@ -2,13 +2,6 @@
 require 'rails_helper'
 
 RSpec.describe WaitForFiles, :type => :model do
-  before :each do
-    WebMock.disable_net_connect!
-  end
-  after :each do
-    WebMock.allow_net_connect!
-  end
-
 
   describe "self.run" do
     context "for a folder with less files than given count" do

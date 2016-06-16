@@ -52,6 +52,11 @@ RSpec.configure do |config|
   config.include Requests::StubRequests
   config.before(:each) do
     global_stubs
+    WebMock.disable_net_connect!
+  end
+
+  config.after(:each) do
+    WebMock.allow_net_connect!
   end
 
   config.before(:suite) do

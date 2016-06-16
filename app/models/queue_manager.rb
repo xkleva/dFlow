@@ -44,7 +44,8 @@ class QueueManager
   def self.get_job_waiting_for_automatic_process
       job_ids = Job.where(quarantined: false, deleted_at: nil).where.not(state: "FINISH").select(:id)
       steps = FlowStep.where.not(entered_at: nil).where(finished_at: nil, aborted_at: nil).where(job_id: job_ids)
-      steps = steps.where('started_at IS NULL OR process IN (?)', ["WAIT_FOR_FILES"])
+      steps = steps.where('started_at IS NULL OR process IN (?)', SYSTEM_DATA["processes"].select { |x| x["state"] == "WAITFOR"}.map {|x| x["code"]})
+      steps = steps.order(updated_at: :asc)
 
       processes = SYSTEM_DATA['processes'].select {|x| ['PROCESS', 'WAITFOR'].include? x['state']}.map {|x| x['code']}
       automatic_steps = steps.select {|x| processes.include? x.process}
@@ -63,13 +64,11 @@ class QueueManager
     process = job.flow_step.process
     if job.flow_step.start!(username: process)
 
-      case process
-      when "CREATE_METS_PACKAGE"
-        process_runner(job: job, process_object: CreateMETSPackage)
-      when "PACKAGE_METADATA_IMPORT"
-        process_runner(job: job, process_object: ImportPackageMetadata)
-      when "WAIT_FOR_FILES"
-        waitfor_runner(job: job, waitfor_object: WaitForFiles)
+      case job.flow_step.state
+      when "PROCESS"
+        process_runner(job: job, process_object: Object.const_get(job.flow_step.process.downcase.camelize))
+      when "WAITFOR"
+        waitfor_runner(job: job, waitfor_object: Object.const_get(job.flow_step.process.downcase.camelize))
       else
         logger.fatal "Couldn't find process!"
         job.quarantine!(msg: "Couldn't find process!")
@@ -98,6 +97,7 @@ class QueueManager
     if result == true
       job.flow_step.finish!(username: job.flow_step.process)
     else
+      job.flow_step.touch
       logger.info "Process not done"
     end
   rescue StandardError => e

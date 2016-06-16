@@ -1,7 +1,7 @@
 
 require 'rails_helper'
 
-describe CreateMETSPackage::METS do
+describe CreateMetsPackage::METS do
   before :all do
     WebMock.disable_net_connect!
 
@@ -35,7 +35,7 @@ describe CreateMETSPackage::METS do
 
     @xml_job = JSON.parse(File.new('spec/models/processes/create_mets_package/spec/fixtures/1001006.json', 'r:utf-8').read)['job']
     @job = create(:job, id: 1001006, package_metadata: @xml_job['package_metadata'].to_json, xml: @xml_job['xml'], copyright: true)
-    @mets = CreateMETSPackage::METS.new(job: @job)
+    @mets = CreateMetsPackage::METS.new(job: @job)
     # puts @mets.mets_xml
   end
 
@@ -53,18 +53,18 @@ describe CreateMETSPackage::METS do
     context "head" do
       it "should check for relevant information in header" do
         expect(@mets.head).to include("mets:metsHdr")
-        expect(@mets.head).to include(CreateMETSPackage::METS_CONFIG['CREATOR']['name'])
-        expect(@mets.head).to match(CreateMETSPackage::METS_CONFIG['CREATOR']['sigel'])
-        expect(@mets.head).to match(CreateMETSPackage::METS_CONFIG['ARCHIVIST']['name'])
-        expect(@mets.head).to match(CreateMETSPackage::METS_CONFIG['ARCHIVIST']['sigel'])
+        expect(@mets.head).to include(CreateMetsPackage::METS_CONFIG['CREATOR']['name'])
+        expect(@mets.head).to match(CreateMetsPackage::METS_CONFIG['CREATOR']['sigel'])
+        expect(@mets.head).to match(CreateMetsPackage::METS_CONFIG['ARCHIVIST']['name'])
+        expect(@mets.head).to match(CreateMetsPackage::METS_CONFIG['ARCHIVIST']['sigel'])
       end
     end
 
     context "administrative" do
       it "should check for relevant information in administrative" do
         expect(@mets.administrative).to include("mets:amdSec")
-        expect(@mets.administrative).to include(CreateMETSPackage::METS_CONFIG['COPYRIGHT_STATUS']['true'])
-        expect(@mets.administrative).to match(CreateMETSPackage::METS_CONFIG['PUBLICATION_STATUS']['true'])
+        expect(@mets.administrative).to include(CreateMetsPackage::METS_CONFIG['COPYRIGHT_STATUS']['true'])
+        expect(@mets.administrative).to match(CreateMetsPackage::METS_CONFIG['PUBLICATION_STATUS']['true'])
       end
     end
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns="http://www.ub.gu.se/xml-schemas/simple-dc/v1/"
+            targetNamespace="http://www.ub.gu.se/xml-schemas/simple-dc/v1/"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+
+  <xs:annotation>
+    <xs:documentation xml:lang="en">
+      This XML Schema is using the Simple XML Schema provided by dublincore.org
+      it incorporates the relevant schema for validating simple dublincore
+      as described in http://dublincore.org/schemas/xmls/qdc/2008/02/11/notes/
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:include schemaLocation="http://dublincore.org/schemas/xmls/qdc/2008/02/11/simpledc.xsd"/>
+
+</xs:schema>

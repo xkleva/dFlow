@@ -1,4 +1,4 @@
-class CreateMETSPackage
+class CreateMetsPackage
   class Manuscript
     XML_SCHEMA="http://www.ub.gu.se/handskriftsdatabasen/api/schema.xsd"
     TYPE_OF_RECORD = {
@@ -8,7 +8,7 @@ class CreateMETSPackage
     }
     attr_reader :mets_data
 
-    # mets_data is global mets_data from CreateMETSPackage::METS
+    # mets_data is global mets_data from CreateMetsPackage::METS
     def initialize(job, mets_data, source)
       @job = job
       @mets_data = mets_data
