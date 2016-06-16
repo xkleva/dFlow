@@ -79,5 +79,10 @@ processes:
   state: WAITFOR
   required_params:
     - file_path
+- code: COPY_FOLDER
+  state: PROCESS
+  required_params:
+    - source_folder_path
+    - destination_folder_path
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"

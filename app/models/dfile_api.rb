@@ -81,6 +81,34 @@ class DfileApi
 
   end
 
+  def self.copy_folder_ind(source_dir:, dest_dir:, flow_step: nil)
+    logger.debug "#########  Starting copy_folder request from #{source_dir} to #{dest_dir} #########"
+    response = HTTParty.get("#{host}/copy_folder_ind", query: {
+      source_dir: source_dir,
+      dest_dir: dest_dir,
+      api_key: api_key
+    })
+
+
+    logger.debug "Response from dFile: #{response.inspect}"
+    if !response.success?
+      raise StandardError, "Could not start a process through dFile: #{response['error']}"
+    end
+
+    process_id = response['id']
+
+    logger.debug "Process id: #{process_id}"
+    if !process_id || process_id == ''
+      raise StandardError, "Did not get a valid Process ID: #{process_id}"
+    end
+
+    process_result = get_process_result(process_id: process_id, flow_step: flow_step)
+    logger.debug "Process result: #{process_result}"
+
+    return process_result
+
+  end
+
   # TODO: Needs error handling
   # returns {:checksum, :msg}
   def self.checksum(source, filename)
@@ -102,7 +130,7 @@ class DfileApi
       raise StandardError, "Did not get a valid Process ID: #{process_id}"
     end
 
-    process_result = get_process_result(process_id)
+    process_result = get_process_result(process_id: process_id)
     logger.debug "Process result: #{process_result}"
 
     return process_result
@@ -144,20 +172,28 @@ class DfileApi
 
   private
   # Returns result from redis db
-  def self.get_process_result(process_id)
+  def self.get_process_result(process_id:, flow_step: nil)
 
     # Load Redis config
     redis = Redis.new(db: APP_CONFIG['redis_db']['db'], host: APP_CONFIG['redis_db']['host'])
 
     logger.info "Redis settings: #{redis.inspect}"
+    logger.info "Flowstep: #{flow_step.as_json}"
     while !redis.get("dFile:processes:#{process_id}:state:done") do
-      sleep 0.1
+      if flow_step
+        logger.info "Updating flow_step"
+        flow_step.update_attribute('status', redis.get("dFile:processes:#{process_id}:progress"))
+      end
+      sleep 1
     end
 
     value = redis.get("dFile:processes:#{process_id}:value")
 
     logger.info "Value from Redis for #{process_id}: #{value}"
-    if !value
+    if !value || value == "error"
+      if flow_step
+        flow_step.update_attribute('status', redis.get("dFile:processes#{process_id}:error"))
+      end
       raise StandardError, redis.get("dFile:processes:#{process_id}:error")
     end
 
