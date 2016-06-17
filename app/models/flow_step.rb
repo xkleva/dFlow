@@ -222,7 +222,7 @@ class FlowStep < ActiveRecord::Base
   end
 
   def substitute_parameters(string)
-    string % {job_id: job.id, page_count: job.metadata_value('page_count') || '-1'}
+    string % {job_id: job.id, page_count: job.metadata_value('image_count') || '-1'}
   end
 
 

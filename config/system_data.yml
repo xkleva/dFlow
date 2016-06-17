@@ -94,5 +94,10 @@ processes:
   required_params:
     - source_file_path
     - destination_file_path
+- code: COLLECT_JOB_METADATA
+  state: PROCESS
+  required_params:
+    - folder_path
+    - filetype
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"
