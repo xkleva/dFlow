@@ -198,6 +198,20 @@ class DfileApi
     end
   end
 
+  def self.rename_files(source_dir:, format:)
+    response = HTTParty.get("#{host}/rename_files", query: {
+      source_dir: source_dir,
+      string_format: format,
+      api_key: api_key
+    })
+
+    if response.success?
+      return true
+    else
+      raise StandardError, "Couldn't rename files in: #{source_dir} #{response['error']}"
+    end
+  end
+
   private
   # Returns result from redis db
   def self.get_process_result(process_id:, flow_step: nil)

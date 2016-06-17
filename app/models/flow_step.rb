@@ -214,8 +214,10 @@ class FlowStep < ActiveRecord::Base
   def parsed_params
     hash = params_hash
     hash.each do |key, value|
-      if value.kind_of? String
+      if (value.kind_of? String) && (key != "format")
         hash[key] = substitute_parameters(value)
+      else
+        hash[key] = value
       end
     end
     return hash
