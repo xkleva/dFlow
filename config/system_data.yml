@@ -84,5 +84,10 @@ processes:
   required_params:
     - source_folder_path
     - destination_folder_path
+- code: MOVE_FOLDER
+  state: PROCESS
+  required_params:
+    - source_folder_path
+    - destination_folder_path
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"
