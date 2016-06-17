@@ -104,5 +104,12 @@ processes:
   required_params:
     - folder_path
     - format
+- code: CREATE_FORMAT
+  state: PROCESS
+  required_params:
+    - source_folder_path
+    - destination_folder_path
+    - to_filetype
+    - format
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"

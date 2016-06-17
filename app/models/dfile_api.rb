@@ -109,6 +109,36 @@ class DfileApi
 
   end
 
+  def self.create_format(source_dir:, dest_dir:, to_filetype:, format_params:, flow_step: nil)
+    logger.debug "#########  Starting create_format request from #{source_dir} to #{dest_dir} with #{format_params} #########"
+    response = HTTParty.get("#{host}/convert_images", query: {
+      source_dir: source_dir,
+      dest_dir: dest_dir,
+      to_filetype: to_filetype, 
+      format_params: format_params,
+      api_key: api_key
+    })
+
+
+    logger.debug "Response from dFile: #{response.inspect}"
+    if !response.success?
+      raise StandardError, "Could not start a process through dFile: #{response['error']}"
+    end
+
+    process_id = response['id']
+
+    logger.debug "Process id: #{process_id}"
+    if !process_id || process_id == ''
+      raise StandardError, "Did not get a valid Process ID: #{process_id}"
+    end
+
+    process_result = get_process_result(process_id: process_id, flow_step: flow_step)
+    logger.debug "Process result: #{process_result}"
+
+    return process_result
+
+  end
+
   def self.move_folder_ind(source_dir:, dest_dir:, flow_step: nil)
     logger.debug "#########  Starting move_folder request from #{source_dir} to #{dest_dir} #########"
     response = HTTParty.get("#{host}/move_folder_ind", query: {
@@ -211,6 +241,7 @@ class DfileApi
       raise StandardError, "Couldn't rename files in: #{source_dir} #{response['error']}"
     end
   end
+
 
   private
   # Returns result from redis db
