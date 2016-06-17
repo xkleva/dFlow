@@ -27,7 +27,6 @@ class DfileAdapter
   def file_exists?(location, path)
     source_file = "#{location}:#{path}"
     url = api_url(:download_file, params: {format: :json, source_file: source_file})
-    pp url
     begin
       open(url.to_s) do |u| 
       end

@@ -6,6 +6,7 @@ class QueueManager
   QUEUE_MANAGER_CONFIG = APP_CONFIG['queue_manager'].merge(SYSTEM_DATA['queue_manager'])
 
   def self.run(loop: true)
+    DfileApi.logger = QueueManager.logger
     while(true) do
       # Check if PID file exists
       pid_file = Pathname.new(QUEUE_MANAGER_CONFIG['pid_file_location'])

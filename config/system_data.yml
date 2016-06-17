@@ -89,5 +89,10 @@ processes:
   required_params:
     - source_folder_path
     - destination_folder_path
+- code: COPY_FILE
+  state: PROCESS
+  required_params:
+    - source_file_path
+    - destination_file_path
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"
