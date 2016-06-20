@@ -29,7 +29,7 @@ class FlowStep < ActiveRecord::Base
     if process_object && process_object["required_params"]
       process_object["required_params"].each do |param|
         if !params_hash.has_key?(param)
-          errors.add(:params, "Missing mandatory param #{param}")
+          errors.add(:params, "#{step} Missing mandatory param #{param}")
         end
       end
     end

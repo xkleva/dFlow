@@ -129,7 +129,7 @@ class Job < ActiveRecord::Base
 
   def default_values
     @created_by ||= 'not_set'
-    @flow ||= 'SCANGATE_FLOW'
+    @flow ||= 'REPORT_FLOW'
   end
 
   # Creates a JobActivity object for CREATE event
@@ -392,27 +392,12 @@ class Job < ActiveRecord::Base
 
   # Returns current flow step object
   def flow_step
-    #if !flow_steps.present?
-    #  create_flow_steps
-    #end
     FlowStep.job_flow_step(job_id: id, flow_step: current_flow_step || 10)
   end
 
   # Run on create
   def create_initial_flow_steps
-    ###### For migration purposes ONLY!
-    if status.present?
-      flow_step_status_map = {
-        'waiting_for_digitizing' => 10,
-        'digitizing' => 20,
-        'post_processing' => 30,
-        'post_processing_user_input' => 40,
-        'quality_control' => 60,
-        'waiting_for_mets_control' => 80,
-        'mets_control' => 80,
-        'done' => 80
-      }
-
+    if flow_steps.present?
       flow_steps.each do |flow_step|
         flow_step.destroy
       end
@@ -423,13 +408,6 @@ class Job < ActiveRecord::Base
 
       create_flow_steps
 
-      if status == 'done'
-        flow_step.job = self
-        flow_step.start!
-        flow_step.finish!
-      end
-      self.status = nil
-      self.save!
     elsif flow_steps.blank?
       create_flow_steps
     end
@@ -451,35 +429,6 @@ class Job < ActiveRecord::Base
 
   def flow_object
     Flow.find(self.flow)
-  end
-
-  # ONLY FOR MIGRATION PURPOSES, DELETE WHEN IN PRODUCTION
-  def translate_status_to_flow
-    flow_step_status_map = {
-      'waiting_for_digitizing' => 10,
-      'digitizing' => 20,
-      'post_processing' => 30,
-      'post_processing_user_input' => 40,
-      'done' => 80
-    }
-
-    flow_steps.each do |flow_step|
-      flow_step.destroy
-    end
-
-    self.reload
-
-    self.current_flow_step = flow_step_status_map[status]
-
-    create_flow_steps
-
-    if status == 'done'
-      flow_step.job = self
-      flow_step.finish!
-    end
-
-    return "done"
-
   end
 end
 
