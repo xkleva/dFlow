@@ -111,5 +111,14 @@ processes:
     - destination_folder_path
     - to_filetype
     - format
+- code: DELETE_JOB_FILES
+  state: PROCESS
+  required_params:
+    - job_parent_path
+- code: COMBINE_PDF_FILES
+  state: PROCESS
+  required_params:
+    - source_folder_path
+    - destination_file_path
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"

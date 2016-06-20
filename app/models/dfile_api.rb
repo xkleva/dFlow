@@ -242,6 +242,34 @@ class DfileApi
     end
   end
 
+  def self.delete_job_files(job_path:)
+    
+    response = HTTParty.get("#{host}/delete_files", query: {
+      source_dir: job_path,
+      api_key: api_key
+    })
+
+    if response.success?
+      return true
+    else
+      raise StandardError, "Couldn't delete job files files in: #{job_path} #{response['error']}"
+    end
+  end
+
+  def self.combine_pdf_files(source_dir:, dest_file:)
+    response = HTTParty.get("#{host}/combine_pdf_files", query: {
+      source_dir: source_dir,
+      dest_file: dest_file,
+      api_key: api_key
+    })
+
+    if response.success?
+      return true
+    else
+      raise StandardError, "Couldn't combine pdf files in #{source_dir} as #{dest_file} #{response['error']}"
+    end
+  end
+
 
   private
   # Returns result from redis db
