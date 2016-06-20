@@ -285,7 +285,7 @@ class DfileApi
         logger.info "Updating flow_step"
         flow_step.update_attribute('status', redis.get("dFile:processes:#{process_id}:progress"))
       end
-      sleep 1
+      sleep 0.1
     end
 
     value = redis.get("dFile:processes:#{process_id}:value")

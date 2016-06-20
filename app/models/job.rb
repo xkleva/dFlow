@@ -318,17 +318,21 @@ class Job < ActiveRecord::Base
   end
 
   # Returns current package name, depending on status
-  def package_name
+  def current_package_name
     package_name = id.to_s
-    package_name = sprintf(APP_CONFIG['package_name'], id) if is_done?
+    package_name = package_name if is_done?
     return package_name
+  end
+
+  def package_name
+    return sprintf(APP_CONFIG['package_name'], id)
   end
 
   # Returns path to pdf file
   def pdf_path
     #job_id = id.to_s
     #job_id = sprintf("GUB%07d", job_id.to_i) if done?
-    return sprintf("/%s/pdf/%s.pdf", package_name, package_name)
+    return sprintf("/%s/pdf/%s.pdf", current_package_name, current_package_name)
   end
 
   # True if PDF can be found based on config
@@ -338,8 +342,9 @@ class Job < ActiveRecord::Base
 
   # Restarts job by setting status and moving files
   def restart
+    create_flow_steps
     self.current_flow_step = flow_object.first_step_nr
-    if FileAdapter.move_to_trash(package_location, package_name) && create_flow_steps
+    if FileAdapter.move_to_trash(package_location, current_package_name) && create_flow_steps
       create_log_entry("RESTART", message)
       save!
     end
@@ -397,20 +402,7 @@ class Job < ActiveRecord::Base
 
   # Run on create
   def create_initial_flow_steps
-    if flow_steps.present?
-      flow_steps.each do |flow_step|
-        flow_step.destroy
-      end
-
-      self.reload
-
-      self.current_flow_step = flow_step_status_map[status]
-
-      create_flow_steps
-
-    elsif flow_steps.blank?
-      create_flow_steps
-    end
+    create_flow_steps
   end
 
    # Creates flow_steps for flow
@@ -429,6 +421,10 @@ class Job < ActiveRecord::Base
 
   def flow_object
     Flow.find(self.flow)
+  end
+
+  def page_count
+    package_metadata_hash['image_count'] || -1
   end
 end
 

@@ -12,7 +12,7 @@ class CreateMetsPackage
     
     mets = CreateMetsPackage::METS.new(job: job, logger: logger)
     mets.create_mets_xml_file
-    mets.move_metadata_folders
+    #mets.move_metadata_folders
     mets.move_mets_package
     
   end
@@ -267,7 +267,7 @@ class CreateMetsPackage
     #  Single entry for one image, and its logical content information
     #  Titlepage/Image/Text
     def structure_image_logical(image)
-      image_num = image['num']
+      image_num = image['num'].to_i
       image_group = image['group_name']
       dmdid = @source.dmdid_attribute(image_group)
 
@@ -287,7 +287,7 @@ class CreateMetsPackage
     #  Single entry for one image, and its physical type information
     #  Right/Left/"Cover"/...
     def structure_image_physical(image)
-      image_num = image['num']
+      image_num = image['num'].to_i
       image_filegroup_data = @file_groups.map do |file_group|
         next '' if file_group.single?
         "<mets:fptr FILEID=\"#{file_group.name}#{sprintf("%04d", image_num)}\"/>"

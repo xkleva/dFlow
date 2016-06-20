@@ -1,0 +1,448 @@
+---
+username: admin
+password: '1234'
+_external_auth:
+  info: Välj ifall en extern inloggningstjänst skall användas
+  type: radio
+  options:
+  - true
+  - false
+  system: true
+external_auth: 'false'
+_cas_url:
+  system: true
+  info: Ange adress till CAS-inloggning
+cas_url: https://login.it.gu.se
+_file_adapter:
+  system: true
+  info: Ange vilken filadapter som ska användas
+  type: selectone
+  options:
+  - dfile
+file_adapter: dfile
+_dfile_base_url:
+  system: true
+  info: Ange adress till dFile
+dfile_base_url: http://localhost:3001
+_dfile_api_key:
+  system: true
+  info: Ange api-nyckel till dFile
+dfile_api_key: test_key
+_redis_db:
+  info: Köhanteraren kräver en redis-databas, ange nedan inställningar för denna
+redis_db:
+  _db:
+    info: Ange vilken redis-databas (0-16) som ska användas av köhanteraren
+    system: true
+    type: selectone
+    options:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+  db: '0'
+  _host:
+    info: 'Ange hostnamn för redis databasen, default: localhost'
+    system: true
+  host: localhost
+_package_name:
+  info: 'Ange vilket format som paket ska lagras som, ex: GUB%07d för GUB0000001'
+package_name: GUB%07d
+_pdf_settings:
+  info: Konfigurerbara inställningar för ett jobbs arbetsorder
+pdf_settings:
+  _operators:
+    info: Ange hur operatörsblocket ska skrivas ut i PDFen
+  operators: "[ ] Maria     [ ] Grim     [ ] Ingela"
+  _equipments:
+    info: Ange hur utrustningsblocket ska skrivas ut i PDFen
+  equipments: "[ ] Robot    [ ] Zeutschel    [ ] Canon "
+_user_roles:
+  info: Definiera ytterligare användarroller här i JSON-format
+user_roles:
+- !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+  name: OPERATOR
+  rights:
+  - view_tree
+  - manage_tree
+  - manage_jobs
+_api_key_users:
+  info: Skapa API-användare här i JSON-format
+api_key_users:
+- !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+  username: test_key_user
+  name: Test key User
+  role: API_KEY
+  api_key: test_key
+_workflows:
+  info: Skapa arbetsflöden här i JSON-format
+workflows:
+- !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+  name: REPORT_FLOW
+  steps:
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 10
+    process: CONFIRMATION
+    description: Väntar på digitalisering
+    goto_true: 20
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      start: true
+      manual: true
+      msg: Starta digitalisering
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 20
+    process: CONFIRMATION
+    description: Digitalisering pågår
+    goto_true: 30
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      manual: true
+      msg: Digitalisering klar!
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 30
+    process: MOVE_FOLDER
+    description: Flytta masterfiler till DIG-PROCESS
+    goto_true: 40
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_folder_path: DIG-ARK:/jobs/%{job_id}
+      destination_folder_path: PROCESSING:/%{job_id}/mst/tif
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 40
+    process: RENAME_FILES
+    description: Döp om masterfiler
+    goto_true: 45
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      folder_path: PROCESSING:/%{job_id}/mst/tif
+      format: "%04d"
+  -
+    step: 45
+    process: COLLECT_JOB_METADATA
+    description: Hämta metadata om filer fråm master katalogen
+    goto_true: 50
+    goto_false:
+    params:
+      folder_path: PROCESSING:/%{job_id}/mst/tif
+      filetype: 'tif'
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 50
+    process: CREATE_FORMAT
+    description: Spara om masterfiler som LZW
+    goto_true: 60
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_folder_path: PROCESSING:/%{job_id}/mst/tif
+      destination_folder_path: PROCESSING:/%{job_id}/mst/tif_lzw
+      to_filetype: tif
+      format: "-compress lzw"
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 60
+    process: COPY_FOLDER
+    description: Kopiera masterfiler till laban
+    goto_true: 70
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_folder_path: PROCESSING:/%{job_id}/mst/tif_lzw
+      destination_folder_path: PACKAGING:/%{job_id}/master
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 70
+    process: CREATE_FORMAT
+    description: Skapa jpg web-filer
+    goto_true: 75 
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_folder_path: PROCESSING:/%{job_id}/mst/tif_lzw
+      destination_folder_path: PROCESSING:/%{job_id}/web/jpg
+      to_filetype: jpg
+      format: "-unsharp 0.3x0.5+4.0+0 -level 10%,93% -quality 96"
+  -
+    step: 75
+    process: COPY_FOLDER
+    description: Kopiera webbfiler till Laban
+    goto_true: 80
+    goto_false:
+    params:
+      source_folder_path: "PROCESSING:/%{job_id}/web/jpg"
+      destination_folder_path: "PACKAGING:/%{job_id}/web"
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 80
+    process: COPY_FOLDER
+    description: Kopiera webbfiler till OCR-servern
+    goto_true: 90
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_folder_path: PROCESSING:/%{job_id}/web/jpg
+      destination_folder_path: OCR-TODO:/rapporter/%{job_id}
+  - 
+    step: 90
+    process: WAIT_FOR_FILES
+    description: Vänta på att PDF-filer är skapade från OCR
+    goto_true: 100
+    goto_false:
+    params:
+      folder_path: "OCR-DONE:/rapporter/pdf/%{job_id}"
+      filetype: 'pdf'
+      count: "%{page_count}"
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 100
+    process: COPY_FOLDER
+    description: Kopiera PDF-filer från OCR-server till jobb-mapp
+    goto_true: 110
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_folder_path: "OCR-DONE:/rapporter/pdf/%{job_id}"
+      destination_folder_path: "PROCESSING:/%{job_id}/pdf"
+  - 
+    step: 110
+    process: WAIT_FOR_FILES
+    description: Vänta på att alto-filer är skapade från OCR
+    goto_true: 120
+    goto_false:
+    params:
+      folder_path: "OCR-DONE:/rapporter/alto/%{job_id}"
+      filetype: 'xml'
+      count: "%{page_count}"
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 120
+    process: COPY_FOLDER
+    description: Kopiera Alto-filer från OCR-server till jobb-mapp
+    goto_true: 130
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_folder_path: "OCR-DONE:/rapporter/alto/%{job_id}"
+      destination_folder_path: "PROCESSING:/%{job_id}/alto"
+  - 
+    step: 130
+    process: WAIT_FOR_FILES
+    description: Vänta på att result-filer är skapade från OCR
+    goto_true: 140
+    goto_false:
+    params:
+      folder_path: "OCR-DONE:/rapporter/result/%{job_id}"
+      filetype: 'xml'
+      count: "%{page_count}"
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 140
+    process: COPY_FOLDER
+    description: Kopiera Result-filer från OCR-server till jobb-mapp
+    goto_true: 150
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_folder_path: "OCR-DONE:/rapporter/result/%{job_id}"
+      destination_folder_path: "PROCESSING:/%{job_id}/result"
+  -
+    step: 150
+    process: COMBINE_PDF_FILES
+    description: Kombinera PDF-filer till en total fil
+    goto_true: 160
+    goto_false:
+    params:
+      source_folder_path: "PROCESSING:/%{job_id}/pdf"
+      destination_file_path: "PROCESSING:/%{job_id}/pdf_full/%{job_id}.pdf"
+  -
+    step: 160
+    process: COPY_FILE
+    description: Kopiera PDF-fil till laban
+    goto_true: 170
+    goto_false:
+    params:
+      source_file_path: "PROCESSING:/%{job_id}/pdf_full/%{job_id}.pdf"
+      destination_file_path: "PACKAGING:/%{job_id}/pdf/%{job_id}.pdf"
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 170
+    process: COPY_FOLDER
+    description: Kopiera Alto-filer till Laban
+    goto_true: 180
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_folder_path: "PROCESSING:/%{job_id}/alto"
+      destination_folder_path: "PACKAGING:/%{job_id}/alto"
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 180
+    process: COPY_FOLDER
+    description: Kopiera Result-filer till Laban
+    goto_true: 190
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_folder_path: "PROCESSING:/%{job_id}/result"
+      destination_folder_path: "PACKAGING:/%{job_id}/result"
+  -
+    step: 190
+    process: CREATE_METS_PACKAGE
+    description: Skapa METS-paket
+    goto_true: 200
+    goto_false:
+    params:
+  -
+    step: 200
+    process: WAIT_FOR_FILE
+    description: Vänta på att mets-fil skapats
+    goto_true: 210
+    goto_false:
+    params:
+      file_path: "STORE:/%{package_name}/%{package_name}_mets.xml"
+  -
+    step: 210
+    process: CONFIRMATION
+    description: Kvalitetskontroll
+    goto_true:
+    goto_false:
+    params:
+      manual: true
+      msg: "Kvalitetskontroll OK!"
+- !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+  name: SCANGATE_FLOW
+  steps:
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 10
+    process: CONFIRMATION
+    description: Väntar på digitalisering
+    goto_true: 20
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      start: true
+      manual: true
+      msg: Starta digitalisering
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 20
+    process: COMBINE_PDF_FILES
+    description: Kombinera PDF filer
+    goto_true: 30
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_folder_path: PACKAGING:/321/pdf
+      destination_file_path: PACKAGING:/321/pdf/full/%{job_id}.pdf
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 30
+    process: COPY_FILE
+    description: Kopiera fil
+    goto_true: 40
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_file_path: PACKAGING:/123/0001.tif
+      destination_file_path: PACKAGING:/123/999.tif
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 40
+    process: COPY_FOLDER
+    description: Kopiera mapp
+    goto_true: 50
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      source_folder_path: PACKAGING:/12345
+      destination_folder_path: PACKAGING:/123123
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 50
+    process: WAIT_FOR_FILES
+    description: Vanta pa filer
+    goto_true: 60
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      folder_path: PACKAGING:/12345/
+      count: 9
+      filetype: tif
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 60
+    process: WAIT_FOR_FILE
+    description: vanta pa fil
+    goto_true: 70
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      file_path: PACKAGING:/12345/0010.tif
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 70
+    process: DELETE_JOB_FILES
+    description: Radera filer
+    goto_true: 80
+    goto_false: 
+    params: !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+      job_parent_path: PACKAGING:/
+  - !ruby/hash:ActiveSupport::HashWithIndifferentAccess
+    step: 80
+    process: CREATE_METS_PACKAGE
+    description: Skapa METS-paket
+    goto_true: 
+    goto_false: 
+    params: 
+_default_workflow:
+  info: Ange vilket arbetsflöde som ska gälla som standardflöde
+default_workflow: REPORT_FLOW
+_queue_manager:
+  info: Inställningar som rör köhanteraren och dess processer
+queue_manager:
+  _processes:
+    info: Inställningar som rör processerna
+  processes:
+    _mets:
+      info: Inställningar som rör metsprocessen
+    mets:
+      _CREATOR:
+        info: Inställningar som ligger till grund för CREATOR-blocket i METS-filen
+      CREATOR:
+        _name:
+          info: Ange namnet på institution som skapat paketet
+        name: GUB, Göteborgs universitetsbibliotek, Digitala tjänster
+        _sigel:
+          info: Ange sigel för institution som skapat paketet
+        sigel: Gdig
+      _ARCHIVIST:
+        info: Inställningar som ligger till grund för ARCHIVIST-blocket i METS-filen
+      ARCHIVIST:
+        _name:
+          info: Ange namnet på institution som arkiverar paketet
+        name: UUB, Uppsala universitetsbibliotek
+        _sigel:
+          info: Ange sigel för den institution som arkiverar paketet
+        sigel: U
+      _COPYRIGHT_STATUS:
+        info: Inställningar som hanterar COPYRIGHT_STATUS-blocket i METS-filen
+      COPYRIGHT_STATUS:
+        _true:
+          info: Ange vilken text som ska ange att ett verk är upphovsrättsskyddat
+            i METS-filen
+        'true': copyrighted
+        _false:
+          info: Ange vilken text som ska ange att ett verk är upphovsrättsfritt i
+            METS-filen
+        'false': pd
+      _PUBLICATION_STATUS:
+        info: Inställningar som hanterar PUBLICATION_STATUS-blocket i METS-filen
+      PUBLICATION_STATUS:
+        _true:
+          info: Ange vilken text som ska anges ifall paketet är publicerat
+        'true': unpublished
+        _false:
+          info: Ange vilken text som ska anges ifall paketet ej är publicerat
+        'false': unpublished
+    _import_metadata:
+      info: Inställningar som rör import av metadata som exporterats från ScanGate
+    import_metadata:
+      _require_physical:
+        info: Ange ifall physical ska krävas av importscript
+        type: radio
+        options:
+        - true
+        - false
+      require_physical: 'true'
+      _validate_group_name:
+        info: Ange ifall gruppnamn ska valideras mot information från källan
+        type: radio
+        options:
+        - true
+        - false
+      validate_group_name: 'true'
+_is_setup: true
