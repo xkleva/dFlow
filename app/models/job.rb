@@ -129,7 +129,6 @@ class Job < ActiveRecord::Base
 
   def default_values
     @created_by ||= 'not_set'
-    @flow ||= 'REPORT_FLOW'
   end
 
   # Creates a JobActivity object for CREATE event
@@ -407,7 +406,15 @@ class Job < ActiveRecord::Base
 
    # Creates flow_steps for flow
   def create_flow_steps
-    if !Flow.find(self.flow).apply_flow(self, self.current_flow_step)
+    if !Flow.find(self.flow).apply_flow(job: self, step_nr: self.current_flow_step)
+      raise StandardError, "Could not create flow for job"
+    end
+    self.reload
+  end
+
+  # Changes the flow, aborts all previous flow steps and creates new ones
+  def change_flow
+    if !Flow.find(self.flow).apply_flow(job: self, step_nr: self.current_flow_step, new_flow: true)
       raise StandardError, "Could not create flow for job"
     end
     self.reload

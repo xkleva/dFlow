@@ -21,6 +21,13 @@ class Flow
     Flow.new(hash)
   end
 
+  def as_json(options={})
+    {
+     name: @name,
+     flow_steps: @workflow_hash['steps'] 
+    }
+  end
+
   def initialize(workflow_hash, job_id=0)
     @workflow_hash = workflow_hash
     @name = workflow_hash["name"]
@@ -127,7 +134,7 @@ class Flow
   end
 
   # Create flow steps for job id
-  def apply_flow(job, step_nr=nil)
+  def apply_flow(job:, step_nr: nil, new_flow: false)
     if !job
       raise StandardError, "Job missing"
     end
@@ -145,6 +152,12 @@ class Flow
 
     job.flow_steps.each do |flow_step|
       flow_step.job = job
+
+      # Abort if new flow is to be applied
+      if new_flow
+        flow_step.abort!
+        next
+      end
 
       # Abort all existing flow_steps after and including given step_nr
       if flow_step.is_after?(step_nr) || flow_step.is_equal?(step_nr)

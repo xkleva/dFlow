@@ -152,7 +152,15 @@ class Api::JobsController < Api::ApiController
     end
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
+    
+    if job.flow != job_params[:flow] && job_params[:flow].present?
+      flow_is_changed = true
+    end
+
     if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow, :current_flow_step))
+      if flow_is_changed
+        job.change_flow
+      end
       @response[:job] = job
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job.", job.errors)
