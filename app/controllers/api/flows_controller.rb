@@ -1,4 +1,4 @@
-class Api::FlowsController < ApplicationController
+class Api::FlowsController < Api::ApiController
 
   def index
     @response[:flows] = Flow.all
