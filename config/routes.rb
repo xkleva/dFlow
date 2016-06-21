@@ -47,7 +47,7 @@ Rails.application.routes.draw do
     # Publication log API
     resources :publication_log
 
-    resources :flows
+    get 'flows', to: 'flows#index'
 
   end
 
