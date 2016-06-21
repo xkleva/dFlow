@@ -42,6 +42,7 @@ FactoryGirl.define do
     flow "VALID_FLOW"
     current_flow_step 10
     state "ACTION"
+    package_location "PACKAGING"
 
     trait :deleted do
       deleted_at Time.now

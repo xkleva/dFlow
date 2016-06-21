@@ -33,12 +33,16 @@ module Requests
       stub_request(:get, "http://dfile.example.org/download_file.json?api_key=test_key&source_file=PACKAGING://pdf/.pdf").
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
       to_return(:status => 404, :body => "", :headers => {})
+      
+      stub_request(:get, "http://dfile.example.org/list_files?api_key=test_key&show_catalogues=true&source_dir=PACKAGING:GUB0000001").
+      with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+      to_return(:status => 200, :body => "", :headers => {})
 
       stub_request(:get, "http://dfile.example.org/list_files?api_key=test_key&show_catalogues=true&source_dir=STORE:GUB0000001").
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
       to_return(:status => 200, :body => "", :headers => {})
 
-      stub_request(:get, /http:\/\/dfile\.example\.org\/list_files\?api_key=test_key&show_catalogues=true&source_dir=PACKAGING:\d+/).
+      stub_request(:get, /http:\/\/dfile\.example\.org\/list_files\?api_key=test_key&show_catalogues=true&source_dir=PACKAGING:(^$|GUB)\d+/).
       with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
       to_return(:status => 200, :body => "", :headers => {})
 
@@ -73,6 +77,7 @@ module Requests
       stub_request(:get, "http://www.ub.gu.se/xml-schemas/simple-dc/v1/gub-simple-dc-20150812.xsd").
         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
         to_return(:status => 200, :body => File.open('spec/support/stub_files/gub-simple-dc-20150812.xsd').read, :headers => {})
+
     end
   end
 end

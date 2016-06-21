@@ -76,7 +76,7 @@ describe Api::JobsController do
   describe "GET show" do
     context "with existing job" do
       it "should return full job object data" do
-        job = create(:job)
+        job = create(:job, id: 1)
         
         get :show, api_key: @api_key, id: job.id
         
@@ -190,6 +190,7 @@ describe Api::JobsController do
   describe "GET index" do
     context "pagination" do
       it "should return metadata about pagination" do
+        Job.destroy_all
         Job.per_page = 4
         number_of_jobs = 40
         create_list(:job, number_of_jobs)
@@ -207,6 +208,7 @@ describe Api::JobsController do
         expect(json['meta']['pagination']['per_page']).to eq(4)
       end
       it "should return paginated second page when given page number" do
+        Job.destroy_all
         Job.per_page = 4
         number_of_jobs = 40
         create_list(:job, number_of_jobs)
@@ -223,6 +225,7 @@ describe Api::JobsController do
         expect(json['meta']['pagination']['previous']).to eq(1)
       end
       it "should return first page when given out of bounds page number" do
+        Job.destroy_all
         Job.per_page = 4
         number_of_jobs = 40
         create_list(:job, number_of_jobs)

@@ -29,7 +29,7 @@ RSpec.describe WaitForFiles, :type => :model do
     context "for a folder with jobid given as parameter and page count as job parameter" do
       it "should return true" do
         flow_step = create(:flow_step, process: "WAIT_FOR_FILES", params: {count: '%{page_count}', folder_path: "TEST:/%{job_id}/", filetype: "tif"}.to_json)
-        job = create(:job, id: 12345, metadata: {page_count: 8}.to_json)
+        job = create(:job, id: 12345, package_metadata: {image_count: 8}.to_json)
         flow_step.update_attribute('job_id', job.id)
         job.set_current_flow_step(flow_step)
         result = WaitForFiles.run(job: job, logger: QueueManager.logger)

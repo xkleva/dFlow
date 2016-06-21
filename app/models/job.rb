@@ -73,7 +73,7 @@ class Job < ActiveRecord::Base
         flow_steps: flow_steps,
         publication_logs: publication_logs,
         package_location: package_location,
-        package_name: package_name
+        package_name: current_package_name
         })
     end
 
@@ -129,6 +129,7 @@ class Job < ActiveRecord::Base
 
   def default_values
     @created_by ||= 'not_set'
+    @package_location ||= 'PACKAGING'
   end
 
   # Creates a JobActivity object for CREATE event
@@ -309,11 +310,6 @@ class Job < ActiveRecord::Base
   # Generates a work order pdf
   def create_pdf
     PdfHelper.create_work_order(self)
-  end
-
-  def package_location
-    return "STORE" if is_done?
-    "PACKAGING"
   end
 
   # Returns current package name, depending on status

@@ -67,7 +67,7 @@ RSpec.describe Flow, :type => :model do
       it "should generate flow_steps for job" do
         job = create(:job)
         flow = Flow.find("VALID_FLOW")
-        flow.apply_flow(job)
+        flow.apply_flow(job: job)
 
         expect(job.current_flow_step).to eq 10
         
