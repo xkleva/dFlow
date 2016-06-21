@@ -314,9 +314,11 @@ class Job < ActiveRecord::Base
 
   # Returns current package name, depending on status
   def current_package_name
-    package_name = id.to_s
-    package_name = package_name if is_done?
-    return package_name
+    if is_done?
+      return package_name
+    else
+      return id.to_s
+    end
   end
 
   def package_name
@@ -377,7 +379,7 @@ class Job < ActiveRecord::Base
 
   # Returns a list of all files in job package
   def files_list
-    return FileAdapter.files_list(package_location, package_name)
+    return FileAdapter.files_list(package_location, current_package_name)
   end
 
   # Returns true if job is a subset of a periodical
