@@ -14,6 +14,7 @@ class CreateMetsPackage
     mets.create_mets_xml_file
     #mets.move_metadata_folders
     mets.move_mets_package
+    job.update_attributes(package_location: "STORE")
     
   end
 
