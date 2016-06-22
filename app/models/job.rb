@@ -412,7 +412,7 @@ class Job < ActiveRecord::Base
 
   # Changes the flow, aborts all previous flow steps and creates new ones
   def change_flow
-    if !Flow.find(self.flow).apply_flow(job: self, step_nr: self.current_flow_step, new_flow: true)
+    if !Flow.find(self.flow).apply_flow(job: self, step_nr: nil, new_flow: true)
       raise StandardError, "Could not create flow for job"
     end
     self.reload

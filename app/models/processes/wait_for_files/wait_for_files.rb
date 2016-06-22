@@ -9,6 +9,7 @@ class WaitForFiles
     file_list = get_files(folder_path: folder_path, filetype: filetype)
 
     logger.info "File count for #{folder_path} *.#{filetype} : #{file_list.count}/#{count}"
+    job.flow_step.update_attribute('status', "File count: #{file_list.count}/#{count}"))
 
     if file_list.count != count
       return false
@@ -18,7 +19,7 @@ class WaitForFiles
 
   end
 
-  def self.get_files(folder_path:, filetype:)
+  def self.get_files(folder_path:, filetype:, job:)
     source,directory = folder_path.split(/:/, 2)
 
     return DfileApi.list_files(source, directory, filetype)
