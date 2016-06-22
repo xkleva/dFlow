@@ -314,7 +314,7 @@ class Job < ActiveRecord::Base
 
   # Returns current package name, depending on status
   def current_package_name
-    if is_done?
+    if package_location == "STORE"
       return package_name
     else
       return id.to_s
