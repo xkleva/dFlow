@@ -12,7 +12,7 @@ class Api::ProcessController < Api::ApiController
   # Returns a list of jobs waiting to be automatically processed
   def queued_jobs
     job_ids = Job.where(quarantined: false, deleted_at: nil).where.not(state: "FINISH").select(:id)
-    steps = FlowStep.where.not(entered_at: nil).where(finished_at: nil, aborted_at: nil).where(job_id: job_ids).where('process in (?)', SYSTEM_DATA['processes'].select {|x| ['PROCESS', 'WAITFOR'].include? x['state']}.map {|x| x['code']}).order(updated_at: :asc)
+    steps = FlowStep.where.not(entered_at: nil).where(finished_at: nil, aborted_at: nil).where(job_id: job_ids).where('process in (?)', SYSTEM_DATA['processes'].select {|x| ['PROCESS', 'WAITFOR'].include? x['state']}.map {|x| x['code']}).order(:started_at, updated_at: :asc)
 
     @response[:flow_steps] = steps
     render_json
