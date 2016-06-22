@@ -42,6 +42,7 @@ Rails.application.routes.draw do
 
     #Process API
     get 'process/request_job/:code', to: 'process#request_job'
+    get 'queued_jobs', to: 'process#queued_jobs'
     get 'process/:job_id', to: 'process#update_process'
 
     # Publication log API

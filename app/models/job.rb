@@ -355,6 +355,7 @@ class Job < ActiveRecord::Base
     return "DONE" if is_done?
     return "WAITING_FOR_ACTION" if is_waiting_for_action?
     return "PROCESSING" if is_processing?
+    return "PENDING" if is_pending?
   end
 
   def is_start?
@@ -374,7 +375,11 @@ class Job < ActiveRecord::Base
   end
 
   def is_processing?
-    state == "PROCESS"
+    state == "PROCESS" && flow_step.is_active? && flow_step.running?
+  end
+
+  def is_pending?
+    state == "PROCESS" && flow_step.is_active? && flow_step.pending?
   end
 
   # Returns a list of all files in job package

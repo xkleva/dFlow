@@ -9,6 +9,16 @@ class Api::ProcessController < Api::ApiController
     render_json
   end
 
+  # Returns a list of jobs waiting to be automatically processed
+  def queued_jobs
+    job_ids = Job.where(quarantined: false, deleted_at: nil).where.not(state: "FINISH").select(:id)
+    steps = FlowStep.where.not(entered_at: nil).where(finished_at: nil, aborted_at: nil).where(job_id: job_ids).where('started_at IS NULL OR process IN (?)', SYSTEM_DATA["processes"].select { |x| x["state"] == "WAITFOR"}.map {|x| x["code"]}).where('process in (?)', SYSTEM_DATA['processes'].select {|x| ['PROCESS', 'WAITFOR'].include? x['state']}.map {|x| x['code']}).order(updated_at: :asc)
+
+    @response[:flow_steps] = steps
+    render_json
+
+  end
+
   api :GET, '/process/request_job/:code', ' Returns a job for given code'
   description 'Returns a Job where its current flow step has given process code as process name. Returns no job  if a process of given code is currently running, or if there are no applicable jobs'
   def request_job
