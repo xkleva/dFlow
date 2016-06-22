@@ -51,6 +51,7 @@ class Job < ActiveRecord::Base
         treenode_id: treenode_id,
         quarantined: quarantined,
         main_status: main_status,
+        is_processing: is_processing?,
         status: flow_step.description,
         comment: comment,
         object_info: object_info
@@ -354,8 +355,7 @@ class Job < ActiveRecord::Base
     return "NOT_STARTED" if is_start?
     return "DONE" if is_done?
     return "WAITING_FOR_ACTION" if is_waiting_for_action?
-    return "PROCESSING" if is_processing?
-    return "PENDING" if is_pending?
+    return "PROCESSING" if is_processing? || is_pending?
   end
 
   def is_start?
