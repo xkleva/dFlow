@@ -63,7 +63,7 @@ processes:
   - manual
 - code: AUTOMATIC_PROCESS
   state: ACTION
-- code: PACKAGE_METADATA_IMPORT
+- code: IMPORT_PACKAGE_METADATA
   state: PROCESS
 - code: CREATE_METS_PACKAGE
   state: PROCESS
