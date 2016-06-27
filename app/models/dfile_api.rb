@@ -263,11 +263,22 @@ class DfileApi
       api_key: api_key
     })
 
-    if response.success?
-      return true
-    else
-      raise StandardError, "Couldn't combine pdf files in #{source_dir} as #{dest_file} #{response['error']}"
+    logger.debug "Response from dFile: #{response.inspect}"
+    if !response.success?
+      raise StandardError, "Could not start a process through dFile: #{response['error']}"
     end
+
+    process_id = response['id']
+
+    logger.debug "Process id: #{process_id}"
+    if !process_id || process_id == ''
+      raise StandardError, "Did not get a valid Process ID: #{process_id}"
+    end
+
+    process_result = get_process_result(process_id: process_id)
+    logger.debug "Process result: #{process_result}"
+
+    return process_result
   end
 
 
