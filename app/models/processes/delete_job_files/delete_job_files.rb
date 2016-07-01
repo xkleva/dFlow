@@ -1,12 +1,10 @@
 class DeleteJobFiles
 
-  def self.run(job:, logger:)
-    params = job.flow_step.parsed_params
-    job_parent_path = params['job_parent_path']
+  def self.run(job:, logger: QueueManager.logger, job_parent_path:)
 
     job_id = job.id
 
-    if job_id.nil? || job_id <= 0 || Job.find(job_id).nil? 
+    if job_id.nil? || job_id <= 0 || Job.find(job_id).nil? || !job_parent_path.present? 
       return false
     end
 

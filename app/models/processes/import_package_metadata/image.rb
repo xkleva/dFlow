@@ -2,7 +2,7 @@ require 'nokogiri'
 
 class ImportPackageMetadata
 
-  def self.run(job:, logger:)
+  def self.run(job:, logger: QueueManager.logger)
     
     DfileApi.logger = logger
     

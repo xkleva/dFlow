@@ -1,11 +1,8 @@
 class RenameFiles
 
-  def self.run(job:, logger:)
-    params = job.flow_step.parsed_params
-    folder_path = params['folder_path']
-    format = params['format']
+  def self.run(job:, logger: QueueManager.logger, folder_path:, format_params:)
 
-    if DfileApi.rename_files(source_dir: folder_path, format: format)
+    if DfileApi.rename_files(source_dir: folder_path, format: format_params)
       return true
     else
       return false

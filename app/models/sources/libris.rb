@@ -41,16 +41,16 @@ class Libris < Source
     job_data = {}
     open(url) do |conn|
       librisdata = conn.read
-      librisdoc = Nokogiri::XML(librisdata)
-      librisdoc.remove_namespaces!
-      record = librisdoc.search("/xsearch/collection/record").first
-      job_data = data_from_record(record)
+      job_data = data_from_record(librisdata)
       job_data[:xml] = librisdata if not job_data.blank?
     end
     return job_data
   end
 
-  def self.data_from_record(record)
+  def self.data_from_record(librisdata)
+    librisdoc = Nokogiri::XML(librisdata)
+    librisdoc.remove_namespaces!
+    record = librisdoc.search("/xsearch/collection/record").first
     job_data = {}
     if (record)
       marc_record = MARC::XMLReader.new(StringIO.new(record.to_xml)).first
@@ -58,6 +58,8 @@ class Libris < Source
       job_data[:author] = marc_record['100']['a'] if marc_record['100']
       job_data[:metadata] = {}
       job_data[:metadata][:type_of_record] =  marc_record.leader[6..7]
+      job_data[:metadata][:language] = "swe"
+      job_data[:metadata][:year] = marc_record['260']['c'].to_i if (marc_record['260'] && marc_record['260']['c'])
       job_data[:source_name] = Source.find_name_by_class_name(self.name)
       job_data[:source_label] = Source.find_label_by_name(job_data[:source_name])
       job_data[:is_periodical] = is_periodical(job_data[:metadata][:type_of_record])

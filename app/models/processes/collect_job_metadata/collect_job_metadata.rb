@@ -1,10 +1,6 @@
 class CollectJobMetadata
 
-  def self.run(job:, logger:)
-    params = job.flow_step.parsed_params
-    folder_path = params['folder_path']
-    filetype = params['filetype']
-
+  def self.run(job:, logger: QueueManager.logger, folder_path:, filetype:)
     file_list = get_files(folder_path: folder_path, filetype: filetype)
 
     logger.info "File count for #{folder_path} *.#{filetype} : #{file_list.count}"

@@ -291,11 +291,8 @@ class DfileApi
     # Load Redis config
     redis = Redis.new(db: APP_CONFIG['redis_db']['db'], host: APP_CONFIG['redis_db']['host'])
 
-    logger.info "Redis settings: #{redis.inspect}"
-    logger.info "Flowstep: #{flow_step.as_json}"
     while !redis.get("dFile:processes:#{process_id}:state:done") do
       if flow_step
-        logger.info "Updating flow_step"
         flow_step.update_attribute('status', redis.get("dFile:processes:#{process_id}:progress"))
       end
       sleep 0.1

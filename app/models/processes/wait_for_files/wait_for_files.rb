@@ -1,17 +1,12 @@
 class WaitForFiles
 
-  def self.run(job:, logger:)
-    params = job.flow_step.parsed_params
-    folder_path = params['folder_path']
-    filetype = params['filetype']
-    count = params['count'].to_i
-
+  def self.run(job:, logger: QueueManager.logger, folder_path:, filetype:, count:)
     file_list = get_files(folder_path: folder_path, filetype: filetype)
 
     logger.info "File count for #{folder_path} *.#{filetype} : #{file_list.count}/#{count}"
     job.flow_step.update_attribute('status', "File count: #{file_list.count}/#{count}")
 
-    if file_list.count != count
+    if file_list.count != count.to_i
       return false
     else
       return true

@@ -6,7 +6,7 @@ require 'yaml'
 class CreateMetsPackage
   METS_CONFIG = APP_CONFIG['queue_manager']['processes']['mets']
 
-  def self.run(job:, logger:)
+  def self.run(job:, logger: QueueManager.logger)
 
     DfileApi.logger = logger
     

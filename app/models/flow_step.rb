@@ -216,6 +216,8 @@ class FlowStep < ActiveRecord::Base
     hash.each do |key, value|
       if (value.kind_of? String) && (key != "format")
         hash[key] = substitute_parameters(value)
+      elsif key == "format"
+        hash['format_params'] = value
       else
         hash[key] = value
       end

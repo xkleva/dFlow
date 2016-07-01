@@ -85,7 +85,11 @@ class QueueManager
 
   # Runs a given process for a given job
   def self.process_runner(job:, process_object:, logger: self.logger)
-    process_object.run(job: job, logger: logger)
+    params = job.flow_step.parsed_params || {}
+    params = params.symbolize_keys
+    params[:job] = job
+    params[:logger] = logger
+    process_object.run(params)
     job.flow_step.finish!(username: job.flow_step.process)
   rescue StandardError => e
     logger.fatal e.message + " " + e.backtrace.inspect
