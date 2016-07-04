@@ -114,7 +114,7 @@ class CreateMetsPackage
       if !xml_valid?(content)
         raise StandardError, "Invalid XML"
       end
-      DfileApi.create_file(source: "PACKAGING", filename: "#{@job.id}/#{mets_data[:id]}_mets.xml", content: mets_xml)
+      DfileApi.create_file(dest_file: "PACKAGING:/#{@job.id}/#{mets_data[:id]}_mets.xml", content: mets_xml)
     end
 
     def xml_valid?(xml)

@@ -197,8 +197,8 @@ class DfileApi
   end
 
   # Creates a file with given content
-  def self.create_file(source:, filename:, content:, permission: nil)
-    body = { dest_file: "#{source}:#{filename}",
+  def self.create_file(dest_file:, content:, permission: nil)
+    body = { dest_file: dest_file,
              content: content,
                api_key: api_key
     }

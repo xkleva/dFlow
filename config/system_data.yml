@@ -120,5 +120,11 @@ processes:
   required_params:
     - source_folder_path
     - destination_file_path
+- code: CREATE_GUPEA_PACKAGE
+  state: PROCESS
+  required_params:
+    - gupea_collection
+    - gupea_folder_path
+    - pdf_file_path
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"

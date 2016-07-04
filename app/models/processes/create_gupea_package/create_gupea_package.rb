@@ -1,8 +1,8 @@
 class CreateGupeaPackage
   require 'nokogiri'
 
-  def self.run(job:, logger: QueueManager.logger, gupea_collection:)
-    if self.create_folder(job: job, collection_id: gupea_collection) #&& self.import_package(job: job)
+  def self.run(job:, logger: QueueManager.logger, gupea_collection:, pdf_file_path:, gupea_folder_path:)
+    if self.create_folder(job: job, collection_id: gupea_collection, gupea_folder: gupea_folder_path, pdf_file_path: pdf_file_path) && self.import_package(job: job)
       return true
     else
       return false
@@ -106,18 +106,18 @@ class CreateGupeaPackage
   end
 
   # Creates package folder for delivery
-  def self.create_folder(job:, collection_id:)
+  def self.create_folder(job:, collection_id:, gupea_folder:, pdf_file_path:)
     # Create collection file
-    DfileApi.create_file(source: 'GUPEA', filename: "#{job.id}/collection", content: collection_id, permission: "0777")
+    DfileApi.create_file(dest_file: "#{gupea_folder}/collection", content: collection_id, permission: "0777")
 
     # Copy PDF from package
-    DfileApi.copy_file(source_file: "STORE:/#{job.package_name}/pdf/#{job.package_name}.pdf", dest_file: "GUPEA:/#{job.id}/files/#{job.package_name}.pdf")
+    DfileApi.copy_file(source_file: pdf_file_path, dest_file: "#{gupea_folder}/files/#{job.package_name}.pdf")
 
     # Create contents file
-    DfileApi.create_file(source: 'GUPEA', filename: "#{job.id}/files/contents", content: "#{job.package_name}.pdf")
+    DfileApi.create_file(dest_file: "#{gupea_folder}/files/contents", content: "#{job.package_name}.pdf")
 
     # Create DC file
-    DfileApi.create_file(source: 'GUPEA', filename: "#{job.id}/files/dublin_core.xml", content: create_xml(job: job))
+    DfileApi.create_file(dest_file: "#{gupea_folder}/files/dublin_core.xml", content: create_xml(job: job))
   end
 
   # Sends signal to GUPEA server to import package
