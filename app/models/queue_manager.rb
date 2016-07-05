@@ -98,7 +98,11 @@ class QueueManager
 
 
   def self.waitfor_runner(job:, waitfor_object:, logger: self.logger)
-    result = waitfor_object.run(job: job, logger: logger)
+    params = job.flow_step.parsed_params || {}
+    params = params.symbolize_keys
+    params[:job] = job
+    params[:logger] = logger
+    process_object.run(params)
     if result == true
       job.flow_step.finish!(username: job.flow_step.process)
     else
