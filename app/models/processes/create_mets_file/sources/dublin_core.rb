@@ -30,7 +30,7 @@ class CreateMetsFile
 
     # Text representation of Type of Record, or code if not available. Used in output METS XML
     def type_of_record
-      tor = @job.metadata['type_of_record']
+      tor = @job.metadata_hash['type_of_record']
       TYPE_OF_RECORD[tor] || tor
     end
 

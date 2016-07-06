@@ -34,12 +34,12 @@ class CreateMetsPackage
 
     # Serials have different handling of metadata
     def is_serial?
-      @job.metadata['type_of_record'] == "as"
+      @job.metadata_hash['type_of_record'] == "as"
     end
 
     # Text representation of Type of Record, or code if not available. Used in output METS XML
     def type_of_record
-      tor = @job.metadata['type_of_record']
+      tor = @job.metadata_hash['type_of_record']
       TYPE_OF_RECORD[tor] || tor
     end
 
@@ -112,8 +112,8 @@ class CreateMetsPackage
 
     # Returns an ordinal array for given key
     def seq_metadata_num(name, num)
-      key = @job.metadata["#{name}_#{num}_key"]
-      value = @job.metadata["#{name}_#{num}_value"]
+      key = @job.metadata_hash["#{name}_#{num}_key"]
+      value = @job.metadata_hash["#{name}_#{num}_value"]
       return nil if key.nil? || key.empty? || value.nil? || value.empty?
       [key, value]
     end
