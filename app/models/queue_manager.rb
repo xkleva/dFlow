@@ -102,7 +102,7 @@ class QueueManager
     params = params.symbolize_keys
     params[:job] = job
     params[:logger] = logger
-    process_object.run(params)
+    waitfor_object.run(params)
     if result == true
       job.flow_step.finish!(username: job.flow_step.process)
     else

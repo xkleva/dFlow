@@ -58,8 +58,8 @@ class DfileApi
 
   def self.move_file(from_source:, from_file:, to_source:, to_file:)
     response = HTTParty.get("#{host}/move_file", query: {
-      source_file: "#{from_source}:#{from_file}",
-      dest_file: "#{to_source}:#{to_file}",
+      source_file: "#{from_source}:/#{from_file}",
+      dest_file: "#{to_source}:/#{to_file}",
       api_key: api_key
     })
 
@@ -178,7 +178,7 @@ class DfileApi
   def self.checksum(source, filename)
     logger.debug "#########  Starting checksum request for: #{source}:#{filename} #########"
     response = HTTParty.get("#{host}/checksum", query: {
-      source_file: "#{source}:#{filename}",
+      source_file: "#{source}:/#{filename}",
       api_key: api_key
     })
 
