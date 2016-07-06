@@ -3,23 +3,50 @@
 #require_relative 'sources/manuscript'
 require 'yaml'
 
-class CreateMetsPackage
-  METS_CONFIG = APP_CONFIG['queue_manager']['processes']['mets']
+class CreateMetsFile
 
-  def self.run(job:, logger: QueueManager.logger)
+  def self.run(job:, logger: QueueManager.logger, 
+               job_folder_path:, 
+               mets_file_path:, 
+               formats_required:, 
+               files_required:,
+               creator_name:, 
+               creator_sigel:, 
+               archivist_name: nil, 
+               archivist_sigel: nil, 
+               copyright_true_text: 'copyrighted', 
+               copyright_false_text: 'pd', 
+               require_physical: false, 
+               validate_group_names: false
+              )
 
-    DfileApi.logger = logger
+    # Create arrays for formats and files
+    formats_required = formats_required.split(",")
+    files_required = files_required.split(",")
     
-    mets = CreateMetsPackage::METS.new(job: job, logger: logger)
+    # Set archivist values to creator values if not given
+    archivist_name = creator_name if archivist_name.nil?
+    archivist_sigel = creator_sigel if archivist_sigel.nil?
+
+    copyright_text = copyright_true_text if job.copyright
+    copyright_text = copyright_false_text if !job.copyright
+
+    # Raise error if there is no page count info, needed to be able to validate package contents
+    if job.page_count < 1
+      raise StandardError, "Page count is needs to be a positive number, is: #{job.page_count}"
+    end
+ 
+    mets = MetsObject.new(job: job, logger: logger, job_folder_path: job_folder_path, mets_file_path: mets_file_path, copyright_text: copyright_text, creator_name: creator_name, creator_sigel: creator_sigel, archivist_name: archivist_name, archivist_sigel: archivist_sigel, formats_required: formats_required, files_required: files_required)
     mets.create_mets_xml_file
+   
     #mets.move_metadata_folders
-    mets.move_mets_package
-    job.update_attributes(package_location: "STORE")
+    #mets.move_mets_package
+    #job.update_attributes(package_location: "STORE")
     
   end
 
   # Describing one file, used for handling locations, checksums, renaming
-  class FileObject
+  class MetsFileObject
     attr_accessor :number, :checksum, :name
     def initialize(job_id:, path:, filename:, size:)
       @job_id = job_id
@@ -37,22 +64,14 @@ class CreateMetsPackage
       @full_path = "#{@job_id}/#{@path}/#{@name}"
     end
 
-    # Rename single file from <JOBID>.xxx to GUB00<JOBID>.xxx
-    # and recompute full path
-    def rename_to_gub
-      gubname = sprintf("#{APP_CONFIG['package_name']}.%s", @job_id, @extension)
-      DfileApi.move_file(from_source: "PACKAGING", from_file: @full_path, to_source: "PACKAGING", to_file: "#{@job_id}/#{@path}/#{gubname}")
-      @name = gubname
-      set_full_path
-    end
   end
 
   # Describing a file group containing multiple or single file(s)
   # Keeps track of file type (extension), directory name within job,
   # and whether or not there should be multiple or single file entries
-  class FileGroup
+  class MetsFileGroup
     attr_accessor :files, :name, :mimetype
-    def initialize(job:, name:, mimetype:, extension:, single: false)
+    def initialize(job:, name:, mimetype:, extension:, single: false, folder_path:, file_path: nil)
       @job = job
       @job_id = job.id
       @name = name
@@ -60,20 +79,24 @@ class CreateMetsPackage
       @extension = extension
       @single = single
       @files = []
+      @folder_path = folder_path
+      @file_path = file_path
       add_files
-      # TODO: Raise exception if files do not correspond to jobs file count if single flag is false
-      if @files.count != @job.package_metadata_hash['image_count'] && !single
-        raise StandardError, "Wrong number of files for #{@name}, wanted: #{@job.package_metadata_hash['image_count']}, found: #{@files.size}"
+      count = @job.page_count
+      if @single
+        count = 1
       end
+      # TODO: Raise exception if files do not correspond to jobs file count if single flag is false
+      if @files.count != count
+        raise StandardError, "Wrong number of files for #{@name}, wanted: #{count}, found: #{@files.count}"
+      end
+      
     end
 
     # Keep track of all relevant files in the directory
     def add_files
-      DfileApi.list_files(source_dir: "PACKAGING:/#{@job_id}/#{@name}", extension: @extension).each do |file|
-        @files << FileObject.new(job_id: @job_id, path: @name, filename: file['name'], size: file['size'])
-      end
-      if single? && !@files.empty?
-        @files.first.rename_to_gub
+      DfileApi.list_files(source_dir: @folder_path, extension: @extension).each do |file|
+        @files << MetsFileObject.new(job_id: @job_id, path: @name, filename: file['name'], size: file['size'])
       end
     end
 
@@ -84,28 +107,48 @@ class CreateMetsPackage
   end
 
   # Setup all necessary parts for creating METS XML
-  class METS
+  class MetsObject
 
-    def initialize(job:, logger: Logger.new("#{Rails.root}/log/create_mets_package.log"))
+    def initialize(job:, 
+                   logger: Logger.new("#{Rails.root}/log/create_mets_package.log"), 
+                   job_folder_path:, 
+                   mets_file_path:, 
+                   copyright_text:, 
+                   creator_name:, 
+                   creator_sigel:, 
+                   archivist_name:, 
+                   archivist_sigel:,
+                   formats_required:,
+                   files_required:
+                  )
       @job = job
       @logger = logger
+      @copyright_text = copyright_text
+      @creator_name = creator_name
+      @creator_sigel = creator_sigel
+      @archivist_name = archivist_name
+      @archivist_sigel = archivist_sigel
+      @job_folder_path = job_folder_path
+      @mets_file_path = mets_file_path
+      @formats_required = formats_required
+      @files_required = files_required
 
       case @job.source
       when 'libris'
-        @source = Libris.new(@job, mets_data)
+        @source = CreateMetsFile::Libris.new(@job, mets_data)
       when 'dc'
-        @source = DublinCore.new(@job, mets_data)
+        @source = CreateMetsFile::DublinCore.new(@job, mets_data)
       when 'document'
-        @source = Manuscript.new(@job, mets_data, 'document')
+        @source = CreateMetsFile::Manuscript.new(@job, mets_data, 'document')
       when 'letter'
-        @source = Manuscript.new(@job, mets_data, 'letter')
+        @source = CreateMetsFile::Manuscript.new(@job, mets_data, 'letter')
       end
 
       @file_groups = []
-      @file_groups << FileGroup.new(job: @job, name: "master",mimetype: "image/tiff",extension: "tif")
-      @file_groups << FileGroup.new(job: @job, name: "web", mimetype: "image/jpeg", extension: "jpg")
-      @file_groups << FileGroup.new(job: @job, name: "alto", mimetype: "text/xml", extension: "xml")
-      @file_groups << FileGroup.new(job: @job, name: "pdf", mimetype: "text/pdf", extension: "pdf", single: true)
+      @file_groups << MetsFileGroup.new(job: @job, name: "master",mimetype: "image/tiff",extension: "tif", folder_path: @job_folder_path + "/master") if @formats_required.include?('master')
+      @file_groups << MetsFileGroup.new(job: @job, name: "web", mimetype: "image/jpeg", extension: "jpg", folder_path: @job_folder_path + "/web") if @formats_required.include?('web')
+      @file_groups << MetsFileGroup.new(job: @job, name: "alto", mimetype: "text/xml", extension: "xml", folder_path: @job_folder_path + "/alto") if @formats_required.include?('alto')
+      @file_groups << MetsFileGroup.new(job: @job, name: "pdf", mimetype: "text/pdf", extension: "pdf", single: true, folder_path: @job_folder_path + "/pdf", file_path: @files_required.first) if @files_required.first.present?
     end
 
     # Creates the mets xml file in package folder
@@ -114,45 +157,26 @@ class CreateMetsPackage
       if !xml_valid?(content)
         raise StandardError, "Invalid XML"
       end
-      DfileApi.create_file(dest_file: "PACKAGING:/#{@job.id}/#{mets_data[:id]}_mets.xml", content: mets_xml)
+      DfileApi.create_file(dest_file: @mets_file_path, content: mets_xml)
     end
 
     def xml_valid?(xml)
       test = Nokogiri::XML(xml)
-      pp test.errors if !test.errors.empty?
       test.errors.empty?
-    end
-
-    # Moves package folder to store catalogue
-    def move_mets_package
-      if !DfileApi.move_folder(from_source: "PACKAGING", from_dir: @job.id, to_source: "STORE", to_dir: mets_data[:id])
-        raise StandardError, "Could not move mets folder to store for job: #{@job.id}"
-      end
-    end
-
-    # Moves metadata folders to backup folder outside of mets package
-    def move_metadata_folders
-      if !DfileApi.move_folder(from_source: "PACKAGING", from_dir: @job.id.to_s + "/page_metadata", to_source: "PACKAGING", to_dir: "metadata/" + mets_data[:id] + "/page_metadata")
-        raise StandardError, "Could not move page_metadata folder for job: #{@job.id}"
-      end
-
-      if !DfileApi.move_folder(from_source: "PACKAGING", from_dir: @job.id.to_s + "/page_count", to_source: "PACKAGING", to_dir: "metadata/" + mets_data[:id] + "/page_count")
-        raise StandardError, "Could not move page_count folder for job: #{@job.id}"
-      end
     end
 
     # Collect global data used by METS production in various places
     def mets_data
       {
-        id: sprintf(APP_CONFIG['package_name'], @job.id),
+        id: @job.package_name,
         created_at: DateTime.parse(@job.created_at.to_s).strftime("%FT%T"),
         updated_at: DateTime.parse(@job.updated_at.to_s).strftime("%FT%T"),
-        creator_sigel: METS_CONFIG['CREATOR']['sigel'],
-        creator_name: METS_CONFIG['CREATOR']['name'],
-        archivist_sigel: METS_CONFIG['ARCHIVIST']['sigel'],
-        archivist_name: METS_CONFIG['ARCHIVIST']['name'],
-        copyright_status: METS_CONFIG['COPYRIGHT_STATUS'][@job.copyright.to_s],
-        publication_status: METS_CONFIG['PUBLICATION_STATUS'][@job.copyright.to_s]
+        creator_sigel: @creator_sigel,
+        creator_name: @creator_name,
+        archivist_sigel: @archivist_sigel,
+        archivist_name: @archivist_name,
+        copyright_status: @copyright_text,
+        publication_status: 'unpublished'
       }
     end
 

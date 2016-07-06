@@ -42,14 +42,18 @@ class DfileApi
   # TODO: Needs error handling
   # Returns array of {:name, :size}
   # :name == basename
-  def self.list_files(source, directory, extension)
+  def self.list_files(source_dir:, extension:)
     response = HTTParty.get("#{host}/list_files", query: {
-      source_dir: "#{source}:#{directory}",
+      source_dir: source_dir,
       ext: extension,
         api_key: api_key
     })
 
-    return JSON.parse(response.body)
+    if response.success?
+      return JSON.parse(response.body)
+    else
+      raise StandardError, "Couldn't list files in #{source_dir}, with message #{response['error']}"
+    end
   end
 
   def self.move_file(from_source:, from_file:, to_source:, to_file:)

@@ -26,9 +26,8 @@ class CollectJobMetadata
   end
 
   def self.get_files(folder_path:, filetype:)
-    source,directory = folder_path.split(/:/, 2)
 
-    return DfileApi.list_files(source, directory, filetype)
+    return DfileApi.list_files(source_dir: folder_path, extension: filetype)
   end
 
 end

@@ -44,7 +44,7 @@ class AssetsController < ApplicationController
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not find job with id: #{params[:asset_id]}")
       render_json
     else
-      file = FileAdapter.open_file(job.package_location, job.package_name + params[:file_dir] + params[:file_name])
+      file = FileAdapter.open_file(job.package_location, job.current_package_name + params[:file_dir] + params[:file_name])
       @response = {ok: "success"}
       
       send_data file.read, filename: params[:file_name], disposition: "inline"

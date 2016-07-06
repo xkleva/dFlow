@@ -126,5 +126,14 @@ processes:
     - gupea_collection
     - gupea_folder_path
     - pdf_file_path
+- code: CREATE_METS_FILE
+  state: PROCESS
+  required_params:
+    - job_folder_path
+    - mets_file_path
+    - formats_required
+    - files_required
+    - creator_name
+    - creator_sigel
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"
