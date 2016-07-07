@@ -104,7 +104,7 @@ class Job < ActiveRecord::Base
     return if !self.quarantined
     self.quarantined = false
     self.current_flow_step = flow_step
-    create_flow_steps
+    create_flow_steps(new_flow: true)
     self.save
     create_log_entry("UNQUARANTINE","_UNQUARANTINED")
   end
@@ -408,8 +408,8 @@ class Job < ActiveRecord::Base
   end
 
    # Creates flow_steps for flow
-  def create_flow_steps
-    if !Flow.find(self.flow).apply_flow(job: self, step_nr: self.current_flow_step)
+  def create_flow_steps(new_flow: false)
+    if !Flow.find(self.flow).apply_flow(job: self, step_nr: self.current_flow_step, new_flow: new_flow)
       raise StandardError, "Could not create flow for job"
     end
     self.reload
@@ -420,10 +420,7 @@ class Job < ActiveRecord::Base
     if flow_name
       self.update_attribute('flow', flow_name)
     end
-    if !flow_object.apply_flow(job: self, step_nr: step_nr, new_flow: true)
-      raise StandardError, "Could not create flow for job"
-    end
-    self.reload
+    create_flow_steps(new_flow: true)
   end
 
   # Sets jobs to finished
