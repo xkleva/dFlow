@@ -29,7 +29,7 @@ class CreateMetsPackage
       set_full_path
       @extension = filename.gsub(/^.*\.([^\.]+)$/,'\1')
       @number = filename.gsub(/^(\d+)\.[^\.]+$/,'\1')
-      @checksum = DfileApi.checksum("PACKAGING", @full_path)
+      @checksum = DfileApi.checksum(source_file_path: "PACKAGING:/" + @full_path)
     end
 
     # Setting full path definition. Used both in initialize and renameing
