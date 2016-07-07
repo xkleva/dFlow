@@ -175,27 +175,23 @@ class DfileApi
 
   # TODO: Needs error handling
   # returns {:checksum, :msg}
-  def self.checksum(source, filename)
-    logger.debug "#########  Starting checksum request for: #{source}:#{filename} #########"
+  def self.checksum(source_file_path:)
     response = HTTParty.get("#{host}/checksum", query: {
-      source_file: "#{source}:/#{filename}",
+      source_file: source_file_path,
       api_key: api_key
     })
 
-    logger.debug "Response from dFile: #{response.inspect}"
     if !response.success?
       raise StandardError, "Could not start a process through dFile: #{response['error']}"
     end
 
     process_id = response['id']
 
-    logger.debug "Process id: #{process_id}"
     if !process_id || process_id == ''
       raise StandardError, "Did not get a valid Process ID: #{process_id}"
     end
 
     process_result = get_process_result(process_id: process_id)
-    logger.debug "Process result: #{process_result}"
 
     return process_result
   end

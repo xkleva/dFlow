@@ -135,5 +135,9 @@ processes:
     - files_required
     - creator_name
     - creator_sigel
+- code: CHANGE_PACKAGE_LOCATION
+  state: PROCESS
+  required_params:
+    - new_package_location
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"

@@ -21,7 +21,7 @@ class CreateMetsFile
               )
 
     # Create arrays for formats and files
-    formats_required = formats_required.split(",")
+    formats_required = formats_required.split(",").compact.collect(&:strip)
     files_required = files_required.split(",")
     
     # Set archivist values to creator values if not given
@@ -39,29 +39,29 @@ class CreateMetsFile
     mets = MetsObject.new(job: job, logger: logger, job_folder_path: job_folder_path, mets_file_path: mets_file_path, copyright_text: copyright_text, creator_name: creator_name, creator_sigel: creator_sigel, archivist_name: archivist_name, archivist_sigel: archivist_sigel, formats_required: formats_required, files_required: files_required)
     mets.create_mets_xml_file
    
-    #mets.move_metadata_folders
-    #mets.move_mets_package
-    #job.update_attributes(package_location: "STORE")
-    
   end
 
   # Describing one file, used for handling locations, checksums, renaming
   class MetsFileObject
-    attr_accessor :number, :checksum, :name
+    attr_accessor :number, :checksum, :name, :extension, :mimetype
+
+    MIMETYPES = {
+      "jpg" => "image/jpeg",
+      "tif" => "image/tiff",
+      "xml" => "text/xml",
+      "pdf" => "text/pdf"
+    }
     def initialize(job_id:, path:, filename:, size:)
       @job_id = job_id
       @path = path
       @name = filename
       @size = size
-      set_full_path
+      @full_path = @path + "/" + @name
       @extension = filename.gsub(/^.*\.([^\.]+)$/,'\1')
       @number = filename.gsub(/^(\d+)\.[^\.]+$/,'\1')
-      @checksum = DfileApi.checksum("PACKAGING", @full_path)
-    end
-
-    # Setting full path definition. Used both in initialize and renameing
-    def set_full_path
-      @full_path = "#{@job_id}/#{@path}/#{@name}"
+      @mimetype = MIMETYPES[@extension]
+      raise StandardError, "Extension is not configured as mimetype: #{@extension}" if !@mimetype
+      @checksum = DfileApi.checksum(source_file_path: @full_path)
     end
 
   end
@@ -71,32 +71,33 @@ class CreateMetsFile
   # and whether or not there should be multiple or single file entries
   class MetsFileGroup
     attr_accessor :files, :name, :mimetype
-    def initialize(job:, name:, mimetype:, extension:, single: false, folder_path:, file_path: nil)
+    def initialize(job:, name:, extension:, single: false, folder_path:, file_path: nil)
       @job = job
       @job_id = job.id
       @name = name
-      @mimetype = mimetype
-      @extension = extension
       @single = single
       @files = []
       @folder_path = folder_path
       @file_path = file_path
+      @extension = extension
       add_files
-      count = @job.page_count
-      if @single
-        count = 1
-      end
-      # TODO: Raise exception if files do not correspond to jobs file count if single flag is false
-      if @files.count != count
-        raise StandardError, "Wrong number of files for #{@name}, wanted: #{count}, found: #{@files.count}"
-      end
+      @extension = @files.first.extension
+      @mimetype = @files.first.mimetype
       
     end
 
     # Keep track of all relevant files in the directory
     def add_files
       DfileApi.list_files(source_dir: @folder_path, extension: @extension).each do |file|
-        @files << MetsFileObject.new(job_id: @job_id, path: @name, filename: file['name'], size: file['size'])
+        @files << MetsFileObject.new(job_id: @job_id, path: @folder_path, filename: file['name'], size: file['size'])
+      end
+      count = @job.page_count
+      if @single
+        count = 1
+      end
+      # TODO: Raise exception if files do not correspond to jobs file count if single flag is false
+      if @files.count != count
+        raise StandardError, "Wrong number of files for #{@name} in #{@folder_path}, wanted: #{count}, found: #{@files.count}"
       end
     end
 
@@ -145,10 +146,26 @@ class CreateMetsFile
       end
 
       @file_groups = []
-      @file_groups << MetsFileGroup.new(job: @job, name: "master",mimetype: "image/tiff",extension: "tif", folder_path: @job_folder_path + "/master") if @formats_required.include?('master')
-      @file_groups << MetsFileGroup.new(job: @job, name: "web", mimetype: "image/jpeg", extension: "jpg", folder_path: @job_folder_path + "/web") if @formats_required.include?('web')
-      @file_groups << MetsFileGroup.new(job: @job, name: "alto", mimetype: "text/xml", extension: "xml", folder_path: @job_folder_path + "/alto") if @formats_required.include?('alto')
-      @file_groups << MetsFileGroup.new(job: @job, name: "pdf", mimetype: "text/pdf", extension: "pdf", single: true, folder_path: @job_folder_path + "/pdf", file_path: @files_required.first) if @files_required.first.present?
+      @formats_required.each do |format|
+        name, extension = format.split('-')
+        if !name.present? || !extension.present?
+          raise StandardError, "Wrong format: #{format} , should be formatted according to <folder>-<extenstion> e.g. master-tif"
+        end
+        @file_groups << MetsFileGroup.new(job: @job, name: name, extension: extension, folder_path: @job_folder_path + "/" + name)
+      end
+      @files_required.each do |file|
+        path = Pathname.new(file)
+        name = path.dirname.to_s.split('/').last
+        extension = file.split('.').last
+        if !name.present?
+          raise StandardError, "Files must be placed in a sub-folder and not in the root of the package."
+        end
+        if !extension.present?
+          raise StandardError, "Wrong file: #{file} , should be formatted according to <folder>/<filename>.<extension>"
+        end
+        @file_groups << MetsFileGroup.new(job: @job, name: name, extension: extension, folder_path: @job_folder_path + '/' + name, single: true, file_path: file)
+      end
+
     end
 
     # Creates the mets xml file in package folder
