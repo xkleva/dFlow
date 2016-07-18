@@ -5,6 +5,13 @@ DFlow is a Ruby-On-Rails Application, built to support workflows for large digit
 ## Table of Contents
 
 * [Processes] (#processes)
+    * [Making an API-request] (#making-an-api-request)
+    * [Triggered processes] (#triggered-processes)
+        * [CONFIRMATION] (#confirmation)
+    * [Waiting processes] (#waiting-processes)
+        * [WAITFOR_FILES] (#waitfor_files)
+        * [WAITFOR_FILE] (#waitfor_file)
+    * [Running processes] (#running-processes)
 
 ## Processes
 A process is a potiential step which can be used in a workflow. These processes can be triggered manually & via API-request, or through the built in Queue Manager.
@@ -25,8 +32,8 @@ For an external service to be able to control the workflow steps, API-requests c
 **Example 4:** Reporting fail for flow step **20** for job with mid **12345**  (Will also place job in **quarantine**)  
 `http://dflow-example.com/api/process/12345?step=50&status=fail&msg='Process failed!'`
 
-### Triggered flow steps
-
+### Triggered processes
+A *Triggered* flow step has to be called to be completed, either through interaction with the DFlow interface or via API-request.
 #### CONFIRMATION
 ##### Description 
 This flow step is meant to be used as a confirmation trigger that the current step is completed. The trigger can either be called by a manual press of a button inside DFlow, or through an API-request form an external service.
@@ -63,3 +70,7 @@ This process only finishes the current flow step
     }
   },
 ```
+### Waiting processes
+#### WAITFOR_FILE
+#### WAITFOR_FILES
+### Running processes
