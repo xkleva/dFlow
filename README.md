@@ -133,9 +133,11 @@ The process keeps repeating until the given number of files are found.
     }
   },
 ```
+*****
 ### Running processes
 A *Running process* has specific tasks which it will conduct when started. Such task can consist of anything, e.g. copying folders, creating files, deleting files, importing data et.c.  
 Running processes are started by the Queue Manager, and only one process can run at any one time.
+*****
 #### COPY_FILE
 ##### Description 
 Copies a file to given location and filename.
@@ -159,6 +161,7 @@ Source file is copied to destination file
     }
   },
 ```
+*****
 #### COPY_FOLDER
 ##### Description 
 Copies a folder to given location.
@@ -184,6 +187,7 @@ Source folder contents are copied to the destination folder, with new filenames 
     }
   },
 ```
+*****
 #### MOVE_FOLDER
 ##### Description 
 Moves a folder to given location.
@@ -209,6 +213,7 @@ Source folder contents are copied to the destination folder, with new filenames 
     }
   },
 ```
+*****
 #### DELETE_JOB_FILES
 ##### Description 
 Deletes a job folder with the job id as name from given parent path.
@@ -230,6 +235,7 @@ If there is a folder named after the jobs id in the given directory, it should b
     }
   },
 ```
+*****
 #### CHANGE_PACKAGE_LOCATION
 ##### Description 
 Changes the current default location for the job files, which decides which files are to be displayed in the DFlow interface.
@@ -251,6 +257,7 @@ The package location for the job is updated, and the files showin in the interfa
     }
   },
 ```
+*****
 #### COLLECT_JOB_METADATA
 ##### Description 
 Collects metadata from a given file folder, storing file names and file count as metadata for the job in DFlow.
@@ -274,6 +281,7 @@ The metadata for the job will be updated to contain the images within the given 
     }
   },
 ```
+*****
 #### CREATE_FORMAT
 ##### Description 
 Creates a new image format using ImageMagick with given parameters.
@@ -301,6 +309,7 @@ A new format is created using the given formatting parameters.
     }
 },
 ```
+*****
 #### CREATE_METS_FILE
 ##### Description 
 Creates a METS-file for the current job using given parameters.
@@ -338,6 +347,7 @@ A mets file is created consisting the given formats and files.
     }
 },
 ```
+*****
 #### CREATE_GUPEA_PACKAGE
 **This process is specific for the GUB implementation of DFlow**  
 ##### Description 
@@ -364,3 +374,4 @@ A post is created in GUPEA, and a PublicationLog item is created in DFlow contai
     }
   },
 ```
+*****
