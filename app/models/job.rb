@@ -214,6 +214,13 @@ class Job < ActiveRecord::Base
     self.metadata = metadata_temp.to_json
   end
 
+  # Updates metadata for a specific key
+  def update_package_metadata_key(key, metadata)
+    metadata_temp = JSON.parse(self.package_metadata || '{}')
+    metadata_temp[key] = metadata
+    self.package_metadata = metadata_temp.to_json
+  end
+
   # Updates flow parameters for a specific key
   def update_flow_param_key(key, param)
     flow_params_temp = JSON.parse(self.flow_params || '{}')

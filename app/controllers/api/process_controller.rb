@@ -125,7 +125,7 @@ class Api::ProcessController < Api::ApiController
     # If process is sending a progress report, save message
     if params[:status] == 'progress'
       if !params[:msg].blank?
-        job.flow_step.update_attribute('process_msg', params[:msg])
+        job.flow_step.update_attribute('status', params[:msg])
       end
     end
 

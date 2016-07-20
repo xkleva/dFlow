@@ -99,11 +99,6 @@ processes:
   required_params:
     - folder_path
     - filetype
-- code: RENAME_FILES
-  state: PROCESS
-  required_params:
-    - folder_path
-    - format
 - code: CREATE_FORMAT
   state: PROCESS
   required_params:
