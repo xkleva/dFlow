@@ -130,7 +130,7 @@ class Job < ActiveRecord::Base
 
   def default_values
     @created_by ||= 'not_set'
-    @package_location ||= 'PACKAGING'
+    @package_location ||= 'PROCESSING'
   end
 
   # Creates a JobActivity object for CREATE event
@@ -382,11 +382,11 @@ class Job < ActiveRecord::Base
   end
 
   def is_processing?
-    state == "PROCESS" && flow_step.is_active? && flow_step.running?
+    ["PROCESS", "WAITFOR"].include? state && flow_step.is_active? && flow_step.running?
   end
 
   def is_pending?
-    state == "PROCESS" && flow_step.is_active? && flow_step.pending?
+    ["PROCESS", "WAITFOR"].include? state && flow_step.is_active? && flow_step.pending?
   end
 
   # Returns a list of all files in job package
@@ -427,7 +427,11 @@ class Job < ActiveRecord::Base
     if flow_name
       self.update_attribute('flow', flow_name)
     end
+    if step_nr
+      self.update_attribute('current_flow_step', step_nr)
+    end
     create_flow_steps(new_flow: true)
+    self.update_attribute('state', flow_step.main_state)
   end
 
   # Sets jobs to finished
