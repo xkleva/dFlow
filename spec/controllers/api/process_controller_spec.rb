@@ -46,7 +46,7 @@ RSpec.describe Api::ProcessController, :type => :controller do
 
         expect(response.status).to be 200
         expect(json['job']['status']).to eq 'Waiting to begin'
-        expect(json['job']['flow_step']['process_msg']).to eq 'Everything is running fine!'
+        expect(json['job']['flow_step']['status']).to eq 'Everything is running fine!'
       end
     end
 
