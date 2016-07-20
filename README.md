@@ -181,8 +181,8 @@ Source folder contents are copied to the destination folder, with new filenames 
     "goto_true": 70,
     "goto_false": null,
     "params": {
-      "source_file_path": "MACHINE1:/scans/%{job_id}/tif",
-      "destination_file_path": "PROCESSING:/%{job_id}/tif",
+      "source_folder_path": "MACHINE1:/scans/%{job_id}/tif",
+      "destination_folder_path": "PROCESSING:/%{job_id}/tif",
       "format": "%04d"
     }
   },
