@@ -80,8 +80,7 @@ class ImportPackageMetadata
     # Fetch XML metadata for image and extract relevant information
     def fetch_metadata
       image_name = sprintf("%04d.xml", @image_num)
-      image_data = DfileApi.download_file("PACKAGING", 
-        "#{@job_id}/page_metadata/#{image_name}")
+      image_data = DfileApi.download_file(source_file:"PACKAGING:/#{@job_id}/page_metadata/#{image_name}")
       
       doc = Nokogiri::XML(image_data)
       pos = doc.search("/ParametersPage/position")
@@ -191,7 +190,7 @@ class ImportPackageMetadata
     def fetch_page_count
       page_count_file_path = "#{@job.id}/page_count/#{@job.id}.txt"
       puts "Looking for file: #{page_count_file_path}"
-      page_count_data = DfileApi.download_file("PACKAGING", page_count_file_path)
+      page_count_data = DfileApi.download_file(source_file: "PACKAGING:/#{page_count_file_path}")
       @page_count = page_count_data.to_i
       if @page_count == 0
         error = {}

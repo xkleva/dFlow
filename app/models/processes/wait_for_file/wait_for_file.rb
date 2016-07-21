@@ -2,8 +2,7 @@ class WaitForFile
 
   def self.run(job:, logger: QueueManager.logger, file_path:)
 
-    source,file = file_path.split(/:/, 2)
-    result = FileAdapter.file_exists?(source, file)
+    result = DfileApi.file_exist?(source_file: file_path)
 
     if result
       logger.info "File #{file_path} found!"

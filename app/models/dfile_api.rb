@@ -1,5 +1,6 @@
 require 'httparty'
 require 'redis'
+require 'open-uri'
 
 class DfileApi
 
@@ -29,30 +30,43 @@ class DfileApi
     end
   end
 
-  # TODO: Needs error handling
-  def self.download_file(source, filename)
-    response = HTTParty.get("#{host}/download_file", query: {
-      source_file: "#{source}:#{filename}",
+  def self.download_file(source_file:)
+    url = URI.parse("#{host}/download_file")
+    params = {
+      source_file: source_file,
       api_key: api_key
-    })
+    }
+    url.query = params.to_param
 
-    return response.body
+    return open(url.to_s) 
   end
 
-  # TODO: Needs error handling
   # Returns array of {:name, :size}
-  # :name == basename
-  def self.list_files(source_dir:, extension:)
+  def self.list_files(source_dir:, extension: nil, show_catalogues: true)
     response = HTTParty.get("#{host}/list_files", query: {
       source_dir: source_dir,
       ext: extension,
-        api_key: api_key
+      show_catalogues: show_catalogues,
+      api_key: api_key
     })
 
     if response.success?
       return JSON.parse(response.body)
     else
       raise StandardError, "Couldn't list files in #{source_dir}, with message #{response['error']}"
+    end
+  end
+
+  def self.file_exist?(source_file:)
+    response = HTTParty.get("#{host}/download_file.json", query: {
+      source_file: source_file,
+      api_key: api_key
+    })
+
+    if response.success?
+      return JSON.parse(response.body)
+    else
+      return false
     end
   end
 
@@ -112,6 +126,20 @@ class DfileApi
 
     return process_result
 
+  end
+
+  # Moves a folder to trash location
+  def self.move_to_trash(source_dir:)
+    response = HTTParty.get("#{host}/move_to_trash", query: {
+      source_dir: source_dir,
+      api_key: api_key
+    })
+
+    if response.success?
+      return true
+    else
+      return false
+    end
   end
 
   def self.create_format(source_dir:, dest_dir:, to_filetype:, format_params:, flow_step: nil)

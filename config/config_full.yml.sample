@@ -14,13 +14,6 @@ _cas_url:
   system: true
   info: "Ange adress till CAS-inloggning"
 cas_url: https://example.com/login
-_file_adapter:
-  system: true
-  info: "Ange vilken filadapter som ska användas"
-  type: selectone
-  options:
-    - "dfile"
-file_adapter: dfile
 _dfile_base_url:
   system: true
   info: "Ange adress till dFile"

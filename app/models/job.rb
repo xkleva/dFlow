@@ -130,7 +130,7 @@ class Job < ActiveRecord::Base
 
   def default_values
     @created_by ||= 'not_set'
-    @package_location ||= 'PROCESSING'
+    @package_location ||= "PROCESSING:/#{self.id}"
   end
 
   # Creates a JobActivity object for CREATE event
@@ -320,13 +320,9 @@ class Job < ActiveRecord::Base
     PdfHelper.create_work_order(self)
   end
 
-  # Returns current package name, depending on status
+  # Returns current package name, depending on package_location
   def current_package_name
-    if package_location == "STORE"
-      return package_name
-    else
-      return id.to_s
-    end
+    self.package_location.split('/').last
   end
 
   def package_name
@@ -335,21 +331,19 @@ class Job < ActiveRecord::Base
 
   # Returns path to pdf file
   def pdf_path
-    #job_id = id.to_s
-    #job_id = sprintf("GUB%07d", job_id.to_i) if done?
-    return sprintf("/%s/pdf/%s.pdf", current_package_name, current_package_name)
+    return sprintf("pdf/%s.pdf", current_package_name)
   end
 
   # True if PDF can be found based on config
   def has_pdf
-    return FileAdapter.file_exists?(package_location, pdf_path)
+    return DfileApi.file_exist?(source_file: "#{package_location}/#{pdf_path}")
   end
 
   # Restarts job by setting status and moving files
   def restart
     create_flow_steps
     self.current_flow_step = flow_object.first_step_nr
-    if FileAdapter.move_to_trash(package_location, current_package_name) && create_flow_steps
+    if DfileApi.move_to_trash(source_dir: package_location) && create_flow_steps
       create_log_entry("RESTART", message)
       save!
     end
@@ -391,7 +385,7 @@ class Job < ActiveRecord::Base
 
   # Returns a list of all files in job package
   def files_list
-    return FileAdapter.files_list(package_location, current_package_name)
+    return DfileApi.list_files(source_dir: package_location)
   end
 
   # Returns true if job is a subset of a periodical
