@@ -376,11 +376,13 @@ class Job < ActiveRecord::Base
   end
 
   def is_processing?
-    ["PROCESS", "WAITFOR"].include? state && flow_step.is_active? && flow_step.running?
+    return true if state == "WAITFOR"
+    return true if state == "PROCESS" && flow_step.is_active? && flow_step.running?
+    return false
   end
 
   def is_pending?
-    ["PROCESS", "WAITFOR"].include? state && flow_step.is_active? && flow_step.pending?
+    state == "PROCESS" && flow_step.is_active? && flow_step.pending?
   end
 
   # Returns a list of all files in job package
