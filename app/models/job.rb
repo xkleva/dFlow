@@ -111,7 +111,7 @@ class Job < ActiveRecord::Base
 
   # Moves job to given flow step
   def new_flow_step!(flow_step:)
-    old_flow_step_string = self.flow_step.info_string
+    old_flow_step_string = self.flow_step ? self.flow_step.info_string : ""
     self.current_flow_step = flow_step
     create_flow_steps
     self.save
@@ -378,7 +378,7 @@ class Job < ActiveRecord::Base
   def is_processing?
     return true if state == "WAITFOR"
     return true if state == "PROCESS" && flow_step.is_active? && flow_step.running?
-    return false
+    false
   end
 
   def is_pending?
