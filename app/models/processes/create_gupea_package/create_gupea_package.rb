@@ -129,7 +129,7 @@ class CreateGupeaPackage
     else
       publicationlog = PublicationLog.new(job: job, publication_type: 'GUPEA', comment: response['url'])
       if !publicationlog.save
-        raise SatndardError, "Couldn't save publicationlog due to errors: #{publicationlog.errors}"
+        raise StandardError, "Couldn't save publicationlog due to errors: #{publicationlog.errors}"
       end
     end
 

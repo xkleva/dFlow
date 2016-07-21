@@ -211,7 +211,7 @@ class DfileApi
     if response.success?
       return true
     else
-      raise StandardError, "DFileApi: Could not create file: #{source} #{filename}"
+      raise StandardError, "DFileApi: Could not create file: #{dest_file}"
     end
   end
 
