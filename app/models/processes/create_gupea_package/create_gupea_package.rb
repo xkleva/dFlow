@@ -11,16 +11,17 @@ class CreateGupeaPackage
 
   def self.ordinals(job:)
     ordinals_string = ""
-    if job['metadata']['ordinal_1_key'] && job['metadata']['ordinal_1_value']
-      ordinals_string = job['metadata']['ordinal_1_key'] + ' ' + job['metadata']['ordinal_1_value']
+    hash = job.metadata_hash
+    if hash['ordinal_1_key'] && hash['ordinal_1_value']
+      ordinals_string = hash['ordinal_1_key'] + ' ' + hash['ordinal_1_value']
     end
 
-    if job['metadata']['ordinal_2_key'] && job['metadata']['ordinal_2_value']
-      ordinals_string += ', ' + job['metadata']['ordinal_2_key'] + ' ' + job['metadata']['ordinal_2_value']
+    if hash['ordinal_2_key'] && hash['ordinal_2_value']
+      ordinals_string += ', ' + hash['ordinal_2_key'] + ' ' + hash['ordinal_2_value']
     end
 
-    if job['metadata']['ordinal_3_key'] && job['metadata']['ordinal_3_value']
-      ordinals_string += ', ' + job['metadata']['ordinal_3_key'] + ' ' + job['metadata']['ordinal_3_value']
+    if hash['ordinal_3_key'] && hash['ordinal_3_value']
+      ordinals_string += ', ' + hash['ordinal_3_key'] + ' ' + hash['ordinal_3_value']
     end
 
     ordinals_string
@@ -28,25 +29,26 @@ class CreateGupeaPackage
 
   def self.chronologicals(job:)
     chronologicals_string = ""
+    hash = job.metadata_hash
 
-    if job['metadata']['chron_1_key'] && job['metadata']['chron_1_value']
-      chronologicals_string = job['metadata']['chron_1_key'] + ' ' + job['metadata']['chron_1_value']
+    if hash['chron_1_key'] && hash['chron_1_value']
+      chronologicals_string = hash['chron_1_key'] + ' ' + hash['chron_1_value']
     end
 
-    if job['metadata']['chron_2_key'] && job['metadata']['chron_2_value']
-      chronologicals_string += ', ' + job['metadata']['chron_2_key'] + ' ' + job['metadata']['chron_2_value']
+    if hash['chron_2_key'] && hash['chron_2_value']
+      chronologicals_string += ', ' + hash['chron_2_key'] + ' ' + hash['chron_2_value']
     end
 
-    if job['metadata']['chron_3_key'] && job['metadata']['chron_3_value']
-      chronologicals_string += ', ' + job['metadata']['chron_3_key'] + ' ' + job['metadata']['chron_3_value']
+    if hash['chron_3_key'] && hash['chron_3_value']
+      chronologicals_string += ', ' + hash['chron_3_key'] + ' ' + hash['chron_3_value']
     end
 
     chronologicals_string
   end
 
   def self.chronologicals_year(job:)
-    if job['metadata'].has_key?('chron_1_value')
-      return job['metadata']['chron_1_value'].to_i
+    if job.metadata_hash.has_key?('chron_1_value')
+      return job.metadata_hash['chron_1_value'].to_i
     else
       return 0
     end
@@ -66,7 +68,7 @@ class CreateGupeaPackage
           end
         }
         xml.dcvalue(:element => "contributor", :qualifier => "author") {
-          xml.text job['author']
+          xml.text job.author
         }
         xml.dcvalue(:element => "date", :qualifier => "issued") {
           if job.is_periodical
