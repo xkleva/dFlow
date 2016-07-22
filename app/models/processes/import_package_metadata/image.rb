@@ -190,7 +190,7 @@ class ImportPackageMetadata
     def fetch_page_count
       page_count_file_path = "#{@job.id}/page_count/#{@job.id}.txt"
       puts "Looking for file: #{page_count_file_path}"
-      page_count_data = DfileApi.download_file(source_file: "PACKAGING:/#{page_count_file_path}")
+      page_count_data = DfileApi.download_file(source_file: "PACKAGING:/#{page_count_file_path}").read
       @page_count = page_count_data.to_i
       if @page_count == 0
         error = {}
