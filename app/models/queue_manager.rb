@@ -8,6 +8,7 @@ class QueueManager
   def self.run(loop: true)
     DfileApi.logger = QueueManager.logger
     while(true) do
+      sleep_time = 10
       # Check if PID file exists
       pid_file = Pathname.new(QUEUE_MANAGER_CONFIG['pid_file_location'])
 
@@ -29,6 +30,7 @@ class QueueManager
         logger.info "Starting #{job.flow_step.process} for job #{job.id}"
         execute_process(job: job)
         logger.info "Done processing, repeating"
+        sleep_time = 3
       else
         logger.debug "No job to process at this time"
       end
@@ -36,7 +38,7 @@ class QueueManager
       if !loop 
         return
       end
-      sleep 10
+      sleep sleep_time
     end
 
   end
