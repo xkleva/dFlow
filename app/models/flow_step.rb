@@ -11,7 +11,9 @@ class FlowStep < ActiveRecord::Base
 
   def as_json(opts={})
     super.merge({
-      params: params_hash
+      params: params_hash,
+      params_array: params_hash.map{|key, value| {key: key, value: value}},
+      parsed_params: parsed_params
     })
   end
 
