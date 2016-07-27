@@ -56,6 +56,7 @@ events:
 - name: STATUS
 - name: STARTED
 - name: FINISHED
+- name: SKIPPED
 processes:
 - code: CONFIRMATION
   state: ACTION

@@ -1,4 +1,5 @@
 class FlowStep < ActiveRecord::Base
+  default_scope {where( :aborted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
   belongs_to :job
 
   validates :step, uniqueness: {scope: [:job_id, :aborted_at]}
@@ -137,13 +138,28 @@ class FlowStep < ActiveRecord::Base
     return step_nr == self.step
   end
 
-  def enter!
+  def enter!(username: nil)
     return true if entered?
-    self.entered_at = DateTime.now
-    self.save!
-    job.nolog = true
-    job.set_current_flow_step(self)
-    job.update_attribute('state', main_state)
+    # Skip step if conditions are not met
+    if !condition_met?
+      self.finished_at = DateTime.now
+      self.save!
+      if username
+        job.created_by = username
+      end
+      job.update_attribute('state', main_state)
+      job.create_log_entry("SKIPPED", self.description + " Condition not met: #{condition}")
+      if next_step
+        next_step.job = job
+        next_step.enter!
+      end
+    else
+      self.entered_at = DateTime.now
+      self.save!
+      job.nolog = true
+      job.set_current_flow_step(self)
+      job.update_attribute('state', main_state)
+    end
   end
 
   def start!(username: nil)
@@ -175,6 +191,31 @@ class FlowStep < ActiveRecord::Base
 
   def abort!
     self.aborted_at = DateTime.now
+    self.save!
+  end
+
+  # Forces att timestamps to be set for given flow_step
+  def force_finish!
+    if !entered?
+      self.entered_at = DateTime.now
+    end
+    if !started?
+      self.started_at = DateTime.now
+    end
+    if !finished?
+      self.finished_at = DateTime.now
+    end
+
+    self.save!
+  end
+
+  # resets all timestams for given flow_step
+  def reset!
+    self.entered_at = nil
+    self.started_at = nil
+    self.finished_at = nil
+    self.status = ""
+
     self.save!
   end
 
@@ -239,8 +280,20 @@ class FlowStep < ActiveRecord::Base
       ordinality_1: job.metadata_value('ordinal_1_value') || 'undefined',
       ordinality_2: job.metadata_value('ordinal_2_value') || 'undefined',
       ordinality_3: job.metadata_value('ordinal_3_value') || 'undefined'
-    }
+    }.merge(job.flow_parameters_hash.symbolize_keys)
 
+  end
+
+  # Check if conditions for running flow step are met. If none exist, return true.
+  def condition_met?
+    pp "Inne i condition_met?"
+    pp condition
+    if condition.present?
+      parsed_condition = substitute_parameters(condition)
+      pp "Condition: parsed_condition"
+      return eval(parsed_condition)
+    end
+    return true
   end
 
 

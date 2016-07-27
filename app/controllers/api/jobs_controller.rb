@@ -112,11 +112,12 @@ class Api::JobsController < Api::ApiController
     validate_only = params[:validate_only]
     job_params = params[:job]
     job_params[:metadata] = job_params[:metadata].to_json
+    job_params[:flow_parameters] = job_params[:parameters].to_json if job_params.has_key?(:flow_parameters)
     job_params[:created_by] = @current_user.username
     job_params[:flow] ||= APP_CONFIG["default_workflow"]
     job_params[:package_location] ||= "PACKAGING"
     parameters = ActionController::Parameters.new(job_params)
-    job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow, :current_flow_step, :package_location))
+    job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow, :current_flow_step, :package_location, :flow_parameters))
 
     # If ID is given, use it for creation
     if params[:force_id]
@@ -151,6 +152,9 @@ class Api::JobsController < Api::ApiController
     if job_params.has_key?(:metadata)
       job_params[:metadata] = job_params[:metadata].to_json
     end
+    if job_params.has_key?(:flow_parameters)
+      job_params[:flow_parameters] = job_params[:flow_parameters].to_json
+    end
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
     
@@ -158,7 +162,7 @@ class Api::JobsController < Api::ApiController
       flow_is_changed = true
     end
 
-    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow, :current_flow_step, :package_location))
+    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow, :current_flow_step, :package_location, :flow_parameters))
       if flow_is_changed
         job.change_flow
       end
@@ -219,7 +223,7 @@ class Api::JobsController < Api::ApiController
   def unquarantine
     job = Job.find_by_id(params[:id])
     job.created_by = @current_user.username
-    if job.unquarantine!(flow_step: params[:step])
+    if job.unquarantine!(step_nr: params[:step])
       @response[:job] = job
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not unquarantine job.", job.errors)
@@ -231,7 +235,7 @@ class Api::JobsController < Api::ApiController
   def new_flow_step
     job = Job.find_by_id(params[:id])
     job.created_by = @current_user.username
-    if job.new_flow_step!(flow_step: params[:step])
+    if job.new_flow_step!(step_nr: params[:step])
       @response[:job] = job
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not update flow step for job", job.errors)

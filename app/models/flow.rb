@@ -24,7 +24,8 @@ class Flow
   def as_json(options={})
     {
      name: @name,
-     flow_steps: @workflow_hash['steps'] 
+     flow_steps: @workflow_hash['steps'],
+     parameters: @workflow_hash['parameters']
     }
   end
 
@@ -32,12 +33,21 @@ class Flow
     @workflow_hash = workflow_hash
     @name = workflow_hash["name"]
     @flow_steps_hash = workflow_hash["steps"]
+    @parameters = workflow_hash["parameters"] || []
   end
 
   def valid?
     @errors ||= []
     validate
     @errors.blank?
+  end
+
+  def parameter_hash
+    hash = {}
+    @parameters.each do |parameter|
+      hash[parameter['name']] = nil
+    end
+    return hash
   end
 
   # Create flow step objects for job
@@ -131,6 +141,10 @@ class Flow
 
   def step_nr_valid?(step_nr)
     @flow_steps_hash.map{|x| x["step"]}.include?(step_nr)
+  end
+
+  # Creates new flow_steps, sets earlier as done and aborts old ones.
+  def create_flow_steps(job:, step_nr:)
   end
 
   # Create flow steps for job id

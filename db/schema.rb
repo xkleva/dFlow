@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160621095410) do
+ActiveRecord::Schema.define(version: 20160727134917) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 20160621095410) do
     t.text     "process_msg"
     t.datetime "entered_at"
     t.string   "status"
+    t.string   "condition"
   end
 
   create_table "job_activities", force: :cascade do |t|
@@ -78,6 +79,7 @@ ActiveRecord::Schema.define(version: 20160621095410) do
     t.text     "flow"
     t.text     "state"
     t.string   "package_location"
+    t.text     "flow_parameters",   default: ""
   end
 
   add_index "jobs", ["parent_ids"], name: "index_jobs_on_parent_ids", using: :gin

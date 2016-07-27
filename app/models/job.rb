@@ -30,6 +30,7 @@ class Job < ActiveRecord::Base
   after_create :create_log_entry
   after_create :create_initial_flow_steps
   after_initialize :default_values
+  after_initialize :init_flow_parameters
 
   before_validation :set_treenode_ids
 
@@ -74,7 +75,10 @@ class Job < ActiveRecord::Base
         flow_steps: flow_steps,
         publication_logs: publication_logs,
         package_location: package_location,
-        package_name: current_package_name
+        package_name: current_package_name,
+        flow_object: flow_object,
+        flow_parameters: flow_parameters_hash,
+        flow_parameters_array: flow_parameters_hash.map {|key,value| {key: key, value: value}}
         })
     end
 
@@ -100,21 +104,17 @@ class Job < ActiveRecord::Base
   end
 
   # Unsets quarantine flag for job
-  def unquarantine!(flow_step:)
+  def unquarantine!(step_nr:)
     return if !self.quarantined
-    self.quarantined = false
-    self.current_flow_step = flow_step
-    create_flow_steps(new_flow: true)
-    self.save
+    self.update_attribute('quarantined', false)
+    reset_flow_steps(step_nr: step_nr)
     create_log_entry("UNQUARANTINE","_UNQUARANTINED")
   end
 
   # Moves job to given flow step
-  def new_flow_step!(flow_step:)
+  def new_flow_step!(step_nr:)
     old_flow_step_string = self.flow_step ? self.flow_step.info_string : ""
-    self.current_flow_step = flow_step
-    create_flow_steps
-    self.save
+    reset_flow_steps(step_nr: step_nr)
     create_log_entry("FLOW_STEP", "Old: #{old_flow_step_string} New: #{self.flow_step.info_string}")
   end
 
@@ -204,6 +204,10 @@ class Job < ActiveRecord::Base
     end
   end
 
+  def flow_object 
+    Flow.find(self.flow)
+  end
+
   ########################
 
 
@@ -279,6 +283,12 @@ class Job < ActiveRecord::Base
     @package_metadata_hash ||= JSON.parse(package_metadata)
   end
 
+  # Returns all package_metadata as a hash
+  def flow_parameters_hash
+    return {} if flow_parameters.blank? || flow_parameters == "null"
+    @flow_parameters_hash ||= JSON.parse(flow_parameters)
+  end
+
   # Returns ordinal data as a string representation
   def ordinals(return_raw = false)
     ordinal_data = []
@@ -341,9 +351,9 @@ class Job < ActiveRecord::Base
 
   # Restarts job by setting status and moving files
   def restart
-    create_flow_steps
-    self.current_flow_step = flow_object.first_step_nr
-    if DfileApi.move_to_trash(source_dir: package_location) && create_flow_steps
+    #reset_flow_steps
+    #if DfileApi.move_to_trash(source_dir: package_location)
+    if reset_flow_steps
       create_log_entry("RESTART", message)
       save!
     end
@@ -402,7 +412,7 @@ class Job < ActiveRecord::Base
 
   # Returns current flow step object
   def flow_step
-    FlowStep.job_flow_step(job_id: id, flow_step: current_flow_step || 10)
+    FlowStep.job_flow_step(job_id: id, flow_step: current_flow_step)
   end
 
   # Run on create
@@ -418,10 +428,15 @@ class Job < ActiveRecord::Base
     self.reload
   end
 
+  def init_flow_parameters
+    self.flow_parameters = flow_parameters_hash.merge(Flow.find(self.flow).parameter_hash).to_json
+  end
+
   # Changes the flow, aborts all previous flow steps and creates new ones
   def change_flow(flow_name: nil, step_nr: nil)
     if flow_name
       self.update_attribute('flow', flow_name)
+      self.update_attribute('flow_parameters', flow_parameters_hash.merge(Flow.find(self.flow).parameter_hash).to_json)
     end
     if step_nr
       self.update_attribute('current_flow_step', step_nr)
@@ -442,6 +457,43 @@ class Job < ActiveRecord::Base
 
   def page_count
     package_metadata_hash['image_count'] || -1
+  end
+  
+  # Resets flow steps from step_nr and sets earlier steps as done.
+  def reset_flow_steps(step_nr: nil)
+    if step_nr
+      flow_step = flow_steps.where(step: step_nr).first
+      if !flow_step
+        raise StandardError, "There is no flow step with number #{step_nr}"
+      end
+    else
+      flow_step = first_flow_step
+      if !flow_step
+        raise StandardError, "Couldn't find the first flow step for job"
+      end
+    end
+
+    flow_steps.each do |step| 
+      if step.is_before?(flow_step.step) 
+        step.force_finish!
+      end
+
+      if step.is_after?(flow_step.step) || step.is_equal?(flow_step.step)
+        step.reset!
+      end
+
+      if step.is_equal?(flow_step.step)
+        step.enter!
+      end
+    end
+
+    self.update_attribute('current_flow_step', flow_step.step)
+
+  end
+
+  # Returns the first flow step of the flow
+  def first_flow_step
+    flow_steps.where("params ILIKE '%\"start\":true%'").first
   end
 end
 
