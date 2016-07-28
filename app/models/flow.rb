@@ -24,9 +24,20 @@ class Flow
   def as_json(options={})
     {
      name: @name,
-     flow_steps: @workflow_hash['steps'],
+     flow_steps: flow_steps_json,
      parameters: @workflow_hash['parameters']
     }
+  end
+
+  def flow_steps_json
+    flow_steps = @workflow_hash['steps']
+    flow_steps.each do |step|
+      if step['params'].present?
+        step['params_array'] = step['params'].map{|key,value| {key: key, value: value}}
+      else
+        step['params_array'] = []
+      end
+    end
   end
 
   def initialize(workflow_hash, job_id=0)
