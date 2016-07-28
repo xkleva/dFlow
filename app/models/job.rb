@@ -421,8 +421,8 @@ class Job < ActiveRecord::Base
   end
 
    # Creates flow_steps for flow
-  def create_flow_steps(new_flow: false)
-    if !Flow.find(self.flow).apply_flow(job: self, step_nr: self.current_flow_step, new_flow: new_flow)
+  def create_flow_steps
+    if !Flow.find(self.flow).apply_flow(job: self, step_nr: self.current_flow_step)
       raise StandardError, "Could not create flow for job"
     end
     self.reload
@@ -441,7 +441,7 @@ class Job < ActiveRecord::Base
     if step_nr
       self.update_attribute('current_flow_step', step_nr)
     end
-    create_flow_steps(new_flow: true)
+    create_flow_steps
     self.update_attribute('state', flow_step.main_state)
   end
 
@@ -494,6 +494,10 @@ class Job < ActiveRecord::Base
   # Returns the first flow step of the flow
   def first_flow_step
     flow_steps.where("params ILIKE '%\"start\":true%'").first
+  end
+
+  def recreate_flow(step_nr: nil)
+    change_flow(flow_name: self.flow, step_nr: step_nr) 
   end
 end
 

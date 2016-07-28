@@ -24,7 +24,7 @@ class Flow
   def as_json(options={})
     {
      name: @name,
-     flow_steps: flow_steps_json,
+     flow_steps: options[:full] ? flow_steps_json : @workflow_hash['steps'],
      parameters: @workflow_hash['parameters']
     }
   end
@@ -65,10 +65,6 @@ class Flow
   def generate_flow_steps(job_id, steps_list = [])
     @flow_steps = []
     @workflow_hash["steps"].each do |flow_step|
-      # Skip step if step_list has values and current step is not part of it
-      if steps_list.present? && !steps_list.include?(flow_step["step"])
-        next
-      end
       params = flow_step.dup
       params["job_id"] = job_id
       params["params"] = params["params"].to_json
@@ -155,11 +151,11 @@ class Flow
   end
 
   # Creates new flow_steps, sets earlier as done and aborts old ones.
-  def create_flow_steps(job:, step_nr:)
+  def create_flow_steps(job:, step_nr: nil)
   end
 
   # Create flow steps for job id
-  def apply_flow(job:, step_nr: nil, new_flow: false)
+  def apply_flow(job:, step_nr: nil)
     if !job
       raise StandardError, "Job missing"
     end
@@ -172,41 +168,13 @@ class Flow
       end
     end
 
-    # List of step_nrs to be generated
-    generate_steps_list = []
-
     job.flow_steps.each do |flow_step|
       flow_step.job = job
 
-      # Abort if new flow is to be applied
-      if new_flow
-        flow_step.abort!
-        next
-      end
-
-      # Abort all existing flow_steps after and including given step_nr
-      if flow_step.is_after?(step_nr) || flow_step.is_equal?(step_nr)
-        flow_step.abort!
-        generate_steps_list << flow_step.step
-      end
-
-      # Finish all existing flow_steps before given step_nr
-      if flow_step.is_before?(step_nr)
-        if !flow_step.entered?
-          flow_step.update_attribute('entered_at', DateTime.now)
-        end
-        if !flow_step.started?
-          flow_step.update_attribute('started_at', DateTime.now)
-        end
-        if !flow_step.finished?
-          flow_step.update_attribute('finished_at', DateTime.now)
-        end
-      end
+      # Abort old flow_steps
+      flow_step.abort!
     end
-
-    # Generate new flow steps
-    generate_flow_steps(job.id, generate_steps_list)
-
+    generate_flow_steps(job.id)
     Job.transaction do
       FlowStep.transaction do
         flow_steps.each do |flow_step|
@@ -224,5 +192,4 @@ class Flow
       end
     end
   end
-
 end

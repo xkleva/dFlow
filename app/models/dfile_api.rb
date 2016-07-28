@@ -99,12 +99,13 @@ class DfileApi
 
   end
 
-  def self.copy_folder_ind(source_dir:, dest_dir:, flow_step: nil, format_params: nil)
+  def self.copy_folder_ind(source_dir:, dest_dir:, flow_step: nil, format_params: nil, filetype: nil)
     logger.debug "#########  Starting copy_folder request from #{source_dir} to #{dest_dir} #########"
     response = HTTParty.get("#{host}/copy_folder_ind", query: {
       source_dir: source_dir,
       dest_dir: dest_dir,
       format_params: format_params,
+      filetype: filetype,
       api_key: api_key
     })
 

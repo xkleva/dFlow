@@ -235,10 +235,18 @@ class Api::JobsController < Api::ApiController
   def new_flow_step
     job = Job.find_by_id(params[:id])
     job.created_by = @current_user.username
-    if job.new_flow_step!(step_nr: params[:step])
-      @response[:job] = job
+    if params[:recreate_flow].to_s == 'true'
+      if job.recreate_flow(step_nr: params[:step])
+        @response[:job] = job
+      else
+        error_msg(ErrorCodes::OBJECT_ERROR, "Could not update flow step for job", job.errors)
+      end
     else
-      error_msg(ErrorCodes::OBJECT_ERROR, "Could not update flow step for job", job.errors)
+      if job.new_flow_step!(step_nr: params[:step])
+        @response[:job] = job
+      else
+        error_msg(ErrorCodes::OBJECT_ERROR, "Could not update flow step for job", job.errors)
+      end
     end
     render_json
   end
