@@ -3,8 +3,12 @@
 DFlow is a Ruby-On-Rails Application, built to support workflows for large digitizing projects.
 
 ## Table of Contents
-
+* [Configuration Interface] (#configuration-interface)
+* [Workflows] (#workflows)
+    * [Workflow Parameters] (#workflow-parameters)
+    * [Flow steps] (#flow-steps)
 * [Processes] (#processes)
+    *  [Using Variables] (#using-variables) 
     *  [Making an API-request] (#making-an-api-request)
     *  [Triggered processes] (#triggered-processes)
         * [CONFIRMATION] (#confirmation)
@@ -21,9 +25,148 @@ DFlow is a Ruby-On-Rails Application, built to support workflows for large digit
         *  [CREATE_FORMAT] (#create_format)
         *  [CREATE_METS_FILE] (#create_mets_file)
         *  [CREATE_GUPEA_PACKAGE] (#create_gupea_package)
+        *  [COMBINE_PDF_FILES] (#combine_pdf_files)
 
+## Configuration Interface
+The configuration interface is accessible through `http://<host>/setup`. For a locally running instance, it is typically reached by `http://localhost:3000/setup`. The username and password are assigned at the top of `config/config_full.yml`.
+
+Everything in the configuration interface simply creates a new version of `config/config_full.yml`, meaning that all changes can be made directly to the configuration file just as well as through the interface.
+
+After **saving** though the interface, make sure the server is **restarted** (this will happen automatically on any production server using *Passenger*, but not on local instances), and the page manually reloaded. Otherwise the old data will be shown, and any subsequent changes will overwrite the previously made ones.
+## Workflows
+A workflow defines which steps a job goes through to be processed. A Workflow is built up of [Steps] (#flow-steps), which each points to a specific [Process] (#processes). 
+### Creating a workflow
+Workflows are dined using the [configuration interface] (#configuration-interface), in the text-box 'Workflows'. The syntax used is JSON, and the input format has to be valid JSON to save properly. Use a JSON validator ([like this one] (http://jsonlint.com/) to check the validity before saving.
+
+Each workflow has three possible attributes, **name**, **parameters**, and **steps**
+
+**Example of a valid workflow:**
+```json
+  {
+    "name": "MY_FLOW",
+    "parameters": [
+      {
+        "name": "processing_station",
+        "info": "Which station was used",
+        "type": "radio",
+        "options": [
+          "STATION1",
+          "STATION2",
+          "STATION3"
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "step": 10,
+        "process": "CONFIRMATION",
+        "description": "Waiting for processing",
+        "goto_true": 20,
+        "goto_false": null,
+        "params": {
+          "start": true,
+          "manual": true,
+          "msg": "Start processing"
+        }
+      },
+      {
+        "step": 20,
+        "process": "CONFIRMATION",
+        "description": "Processing done",
+        "goto_true": null,
+        "goto_false": null,
+        "params": {
+          "start": true,
+          "manual": true,
+          "msg": "Start processing"
+        }
+      }
+    ]
+}
+```
+### Workflow name
+The workflow name has to be unique, and the preferred convention is to use upper snake-case (e.g. MY_FLOW). The workflow name should **not** contain **spaces**.
+### Workflow parameters
+A workflow can have any number of predefined parameters. These parameters get their values from user-input per job. This makes the workflow highly flexible, and reduces the need for having many almost-identical workflows when there are only small differences.
+
+**Parameter options**  
+**name** (String, lower snake-case e.g. 'my_parameter') - The name of the parameter, decides what it will be called in the GUI, as well as how to call it from a flow step.  
+**info** (String) - A description, meant to be able to guide the user as to what the parameter means. (e.g. 'Assign the number of pages this job has')  
+**type** (Predefined input types, i.e. one of 'radio') - The type of input for the user.  
+**options** (List of values) - The list of values available when using a predefined input type such as 'radio'.  
+
+**Example:** Defines one parameter 'processing_station' for the current flow, using a radio input.
+```json
+"parameters": [
+      {
+        "name": "processing_station",
+        "info": "Which station was used",
+        "type": "radio",
+        "options": [
+          "STATION1",
+          "STATION2",
+          "STATION3"
+        ]
+      }
+    ]
+```
+### Flow steps
+The flow steps define the core of the workflow, as nothing would be done without them. Each step has the following options:  
+**step** (Integer) - The step identifier, must be a number.  
+**process** (Process - Available values are defined in [Processes] (#processes)) - The name of the process to be run for this step. The process has to be predefined.  
+**goto_true** (Integer - Another existing step identifier) - Points to which step should be run when this step is finished.  
+**goto_false** (Integer - Another existing step identifier) - **Not yet implemented**  
+**condition** (Evaluable statement) (Not mandatory) - A condition which has to return **true** for the step to execute, otherwise the step will finish and the next one be started. Example of a condition is "%{copyright} == 'true'".  
+**params** - The parameters available for the given **process**, see documentation on each process.
+
+**Example 1:** A manual flow step which should only run if job is copyrighted, and starts step nr **30** when done:
+```json
+  {
+    "step": 20,
+    "process": "CONFIRMATION",
+    "description": "Check with copyright owners",
+    "condition": "%{copyright} == 'true'"
+    "goto_true": 30,
+    "goto_false": null,
+    "params": {
+      "start": true,
+      "manual": true,
+      "msg": "Copyright is cleared!"
+    }
+  }
+```
 ## Processes
 A process is a potiential step which can be used in a workflow. These processes can be triggered manually & via API-request, or through the built in Queue Manager.
+### Using variables
+Variables can be used within FlowStep parameters to be able to access a job's properties, such as its ID, PackageName or PageCount. It can also be used to access flow-specific parameters.
+
+*To access a variable, use the following syntax:*
+``` 
+%{variable_name}
+```
+*When using the variable 'job_id' within a parameter, it could look like this:*
+```
+..
+source_folder_path: PROCESSING:/%{job_id}
+..
+```
+*When accessing a flow-parameter, the name of the variable is the same as the name of the parameter. Let's say the parameter 'processing_station' is defined, it could be used as follows:*
+```
+..
+source_folder_path: %{processing_station}:/%{job_id}
+..
+```
+
+**OBSERVE: All parameters can use variables EXCEPT 'format'. This is due to 'format' needing to maintain its own variable-like definitions.**
+#### Predefined variables
+Variables are predefined in the code [app/model/flow_step.rb#substitute_parameters] (https://github.com/ub-digit/dFlow/blob/master/app/models/flow_step.rb#L273-L285). This is where new variables should be added if needed.
+
+**job_id** : The job's ID.  
+**page_count** : The number of pages(images) of the job. Typically assigned using process COLLECT_JOB_METADATA.  
+**package_name** : The package name of the job, using the ID and a formatting string defined in the configuration file. For example, format 'GUB%07d' for job id '123' gives package name 'GUB0000123'.  
+**copyright** : Returns a boolean string value of copyright, i.e. 'true' (copyrighted) or 'false' (not copyrighted).  
+**chron_1, chron_2, chron_3** : Returns the metadata values for chronology. Generally used for periodicals.  
+**ordinality_1, ordinality_2, ordinality_3** : Returns the metadata values for ordinality. Generally used for periodicals.  
 ### Making an API-request
 Observe that you will have to define **api-keys** to be able to use the API.  
 For an external service to be able to control the workflow steps, API-requests can be made. The requests are built using the following format:  
@@ -168,7 +311,8 @@ Copies a folder to given location.
 ##### Parameters
 **source_folder_path** (Path) - Path of source folder  
 **destination_folder_path** (Path) - Path of destination folder (including the copied folder, i.e. not its parent)  
-**format** (Format string, e.g. '%04d' for 0001.jpg) (Not mandatory) - Tells new format of file names after being copied, can be omitted if filenames should remain the same.
+**format** (Format string, e.g. '%04d' for 0001.jpg) (Not mandatory) - Tells new format of file names after being copied, can be omitted if filenames should remain the same.  
+**filetype** (Filetype, e.g. 'tif', 'jpg' et.c.) (Not mandatory) - If given, only copies files with the given filetype. Files will only be copied from the source folder, **subdirectories or nested files will NOT be copied**.
 ##### Expected outcome
 Source folder contents are copied to the destination folder, with new filenames if **format** is given.
 ##### Examples
@@ -375,3 +519,26 @@ A post is created in GUPEA, and a PublicationLog item is created in DFlow contai
   },
 ```
 *****
+#### COMBINE_PDF_FILES
+##### Description 
+Combines a number of PDF-files into a single PDF.
+##### Parameters
+**source_folder_path** (Path) - Path of folder containing PDF-files to be combined.
+**destination_file_path** (Path) - Path of resulting pdf file, including file name.
+##### Expected outcome
+A PDF-file is created at the location specified from the source documents.
+##### Examples
+**Example 1:** A PDF file should be created from a folder of single files, named after the job's ID.
+```json
+{
+        "step": 150,
+        "process": "COMBINE_PDF_FILES",
+        "description": "Combine PDF files to one single file",
+        "goto_true": 155,
+        "goto_false": null,
+        "params": {
+          "source_folder_path": "PROCESSING:/%{job_id}/pdf_single",
+          "destination_file_path": "PROCESSING:/%{job_id}/pdf/%{job_id}.pdf"
+        }
+      },
+```
