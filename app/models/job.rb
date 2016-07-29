@@ -358,6 +358,7 @@ class Job < ActiveRecord::Base
         reset_flow_steps
       end
       DfileApi.move_to_trash(source_dir: package_location)
+      self.update_attribute('quarantined', false) if quarantined
       create_log_entry("RESTART", message)
       save!
     end
