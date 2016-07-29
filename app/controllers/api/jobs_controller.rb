@@ -194,7 +194,12 @@ class Api::JobsController < Api::ApiController
     job = Job.find_by_id(params[:id])
     job.created_by = @current_user.username
     job.message = params[:message]
-    if job.restart
+    if params[:recreate_flow] = 'true'
+      recreate_flow = true
+    else
+      recreate_flow = false
+    end
+    if job.restart(recreate_flow: recreate_flow)
       @response[:job] = job
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not restart.", job.errors)

@@ -350,13 +350,16 @@ class Job < ActiveRecord::Base
   end
 
   # Restarts job by setting status and moving files
-  def restart
-    #reset_flow_steps
-    #if DfileApi.move_to_trash(source_dir: package_location)
-    if reset_flow_steps
-      create_log_entry("RESTART", message)
-      save!
+  def restart(recreate_flow: false)
+    
+    if recreate_flow
+      flow_object.apply_flow(job: self, step_nr: nil)
+    else
+      reset_flow_steps
     end
+    DfileApi.move_to_trash(source_dir: package_location)
+    create_log_entry("RESTART", message)
+    save!
   end
 
   # Returns a limited number of main statuses based on current status
@@ -422,7 +425,7 @@ class Job < ActiveRecord::Base
 
    # Creates flow_steps for flow
   def create_flow_steps
-    if !Flow.find(self.flow).apply_flow(job: self, step_nr: self.current_flow_step)
+    if !flow_object.apply_flow(job: self, step_nr: self.current_flow_step)
       raise StandardError, "Could not create flow for job"
     end
     self.reload
