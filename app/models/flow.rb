@@ -30,14 +30,19 @@ class Flow
   end
 
   def flow_steps_json
-    flow_steps = @workflow_hash['steps']
-    flow_steps.each do |step|
+    flow_steps_temp = @workflow_hash['steps'].dup
+    new_flow_steps = []
+    flow_steps_temp.each do |old_step|
+      step = old_step.dup
       if step['params'].present?
         step['params_array'] = step['params'].map{|key,value| {key: key, value: value}}
       else
         step['params_array'] = []
       end
+      new_flow_steps << step
     end
+    flow_steps_temp = new_flow_steps
+    return flow_steps_temp
   end
 
   def initialize(workflow_hash, job_id=0)
