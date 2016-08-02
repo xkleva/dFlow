@@ -110,7 +110,7 @@ RSpec.describe Job, :type => :model do
         fs_old2 = FlowStep.job_flow_step(job_id: job.id, flow_step: 30)
         fs_old3 = FlowStep.job_flow_step(job_id: job.id, flow_step: 40)
 
-        job.unquarantine!(flow_step: 30)
+        job.unquarantine!(step_nr: 30)
         fs_new1 = FlowStep.job_flow_step(job_id: job.id, flow_step: 10)
         fs_new2 = FlowStep.job_flow_step(job_id: job.id, flow_step: 30)
         fs_new3 = FlowStep.job_flow_step(job_id: job.id, flow_step: 40)
@@ -234,26 +234,26 @@ RSpec.describe Job, :type => :model do
     end
   end
 
-  describe "restart job" do
-    context "for a job with a different status" do
-      it "should set start status and create log entries" do
+  #describe "restart job" do
+  #  context "for a job with a different status" do
+  #    it "should set start status and create log entries" do
 
-        stub_request(:get, /http:\/\/dfile\.example\.org\/move_to_trash\?api_key=test_key&source_dir=PACKAGING:\d+/).
-        with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-        to_return(:status => 200, :body => "", :headers => {})
+  #      stub_request(:get, /http:\/\/dfile\.example\.org\/move_to_trash\?api_key=test_key&source_dir=PACKAGING:\d+/).
+  #      with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+  #      to_return(:status => 200, :body => "", :headers => {})
 
 
-        job = create(:job, created_by: 'TestUser', message: 'Restarted')
-        @old_count = job.job_activities.count
-        
-        job.restart
-        job.reload
+  #      job = create(:job, created_by: 'TestUser', message: 'Restarted')
+  #      @old_count = job.job_activities.count
+  #      
+  #      job.restart
+  #      job.reload
 
-        expect(job.flow_step.description).to eq 'Waiting to begin'
-        expect(job.job_activities.count).to eq @old_count+1
-      end
-    end
-  end
+  #      expect(job.flow_step.description).to eq 'Waiting to begin'
+  #      expect(job.job_activities.count).to eq @old_count+1
+  #    end
+  #  end
+  #end
 
   describe "create job with stepnr" do
     context "for a new job" do

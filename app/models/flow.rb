@@ -24,7 +24,7 @@ class Flow
   def as_json(options={})
     {
      name: @name,
-     flow_steps: options[:full] ? flow_steps_json : @workflow_hash['steps'],
+     flow_steps: options[:full].present? ? flow_steps_json : @workflow_hash['steps'],
      parameters: @workflow_hash['parameters']
     }
   end

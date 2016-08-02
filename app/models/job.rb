@@ -29,8 +29,8 @@ class Job < ActiveRecord::Base
 
   after_create :create_log_entry
   after_create :create_initial_flow_steps
-  after_initialize :default_values
-  after_initialize :init_flow_parameters
+  before_validation :default_values
+  before_validation :init_flow_parameters
 
   before_validation :set_treenode_ids
 
@@ -332,7 +332,11 @@ class Job < ActiveRecord::Base
 
   # Returns current package name, depending on package_location
   def current_package_name
-    self.package_location.split('/').last
+    if self.package_location.present?
+      self.package_location.split('/').last
+    else
+      return nil
+    end
   end
 
   def package_name
@@ -434,14 +438,16 @@ class Job < ActiveRecord::Base
   end
 
   def init_flow_parameters
-    self.flow_parameters = flow_parameters_hash.merge(Flow.find(self.flow).parameter_hash).to_json
+    if self.flow.present?
+      self.flow_parameters = flow_parameters_hash.merge(flow_object.parameter_hash).to_json
+    end
   end
 
   # Changes the flow, aborts all previous flow steps and creates new ones
   def change_flow(flow_name: nil, step_nr: nil)
     if flow_name
       self.update_attribute('flow', flow_name)
-      self.update_attribute('flow_parameters', flow_parameters_hash.merge(Flow.find(self.flow).parameter_hash).to_json)
+      self.update_attribute('flow_parameters', flow_parameters_hash.merge(flow_object.parameter_hash).to_json)
     end
     if step_nr
       self.update_attribute('current_flow_step', step_nr)
@@ -452,7 +458,7 @@ class Job < ActiveRecord::Base
 
   # Sets jobs to finished
   def finish_job
-    self.update_attribute('current_flow_step', Flow.find(self.flow).last_step)
+    self.update_attribute('current_flow_step', flow_object.last_step)
     self.update_attribute('state', 'FINISH')
   end
 
