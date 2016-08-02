@@ -8,16 +8,16 @@ describe CreateMetsPackage::METS do
     # Stubs
     
     # Stub list of master files according to file
-    stub_request(:get, "http://dfile.example.org/list_files?api_key=test_key&ext=tif&source_dir=PACKAGING:/1001006/master").with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).to_return(:status => 200, :body => File.open("spec/models/processes/create_mets_package/spec/fixtures/stubs/1001006_list_files_master.json"), :headers => {'Content-Type' => 'application/json'})
+    stub_request(:get, "http://dfile.example.org/list_files?api_key=test_key&ext=tif&show_catalogues=true&source_dir=PACKAGING:/1001006/master").with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).to_return(:status => 200, :body => File.open("spec/models/processes/create_mets_package/spec/fixtures/stubs/1001006_list_files_master.json"), :headers => {'Content-Type' => 'application/json'})
 
     # Stub list of web files according to file
-    stub_request(:get, "http://dfile.example.org/list_files?api_key=test_key&ext=jpg&source_dir=PACKAGING:/1001006/web").with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).to_return(:status => 200, :body => File.open("spec/models/processes/create_mets_package/spec/fixtures/stubs/1001006_list_files_web.json"), :headers => {'Content-Type' => 'application/json'})
+    stub_request(:get, "http://dfile.example.org/list_files?api_key=test_key&ext=jpg&show_catalogues=true&source_dir=PACKAGING:/1001006/web").with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).to_return(:status => 200, :body => File.open("spec/models/processes/create_mets_package/spec/fixtures/stubs/1001006_list_files_web.json"), :headers => {'Content-Type' => 'application/json'})
     
     # Stub list of web files according to xml
-    stub_request(:get, "http://dfile.example.org/list_files?api_key=test_key&ext=xml&source_dir=PACKAGING:/1001006/alto").with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).to_return(:status => 200, :body => File.open("spec/models/processes/create_mets_package/spec/fixtures/stubs/1001006_list_files_alto.json"), :headers => {'Content-Type' => 'application/json'})
+    stub_request(:get, "http://dfile.example.org/list_files?api_key=test_key&ext=xml&show_catalogues=true&source_dir=PACKAGING:/1001006/alto").with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).to_return(:status => 200, :body => File.open("spec/models/processes/create_mets_package/spec/fixtures/stubs/1001006_list_files_alto.json"), :headers => {'Content-Type' => 'application/json'})
 
     # Stub list of pdf files according to xml
-    stub_request(:get, "http://dfile.example.org/list_files?api_key=test_key&ext=pdf&source_dir=PACKAGING:/1001006/pdf").with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).to_return(:status => 200, :body => File.open("spec/models/processes/create_mets_package/spec/fixtures/stubs/1001006_list_files_pdf.json"), :headers => {'Content-Type' => 'application/json'})
+    stub_request(:get, "http://dfile.example.org/list_files?api_key=test_key&ext=pdf&show_catalogues=true&source_dir=PACKAGING:/1001006/pdf").with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).to_return(:status => 200, :body => File.open("spec/models/processes/create_mets_package/spec/fixtures/stubs/1001006_list_files_pdf.json"), :headers => {'Content-Type' => 'application/json'})
 
     # Stub chekcsum requests to process 123
     stub_request(:get, /http:\/\/dfile\.example.org\/checksum\?api_key=test_key&source_file=PACKAGING:\/1001006\/(web|master|alto|pdf)\/\w+.(tif|jpg|xml|pdf)/).with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).to_return(:status => 200, :body => '{"id": "123"}', :headers => {'Content-Type' => 'application/json'})
@@ -42,11 +42,6 @@ describe CreateMetsPackage::METS do
 
   after :all do
     WebMock.allow_net_connect!
-  end
-
-  describe "checksum_file" do
-    it "should do something" do
-    end
   end
 
   describe "mets sections" do

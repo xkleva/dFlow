@@ -350,7 +350,11 @@ class Job < ActiveRecord::Base
 
   # True if PDF can be found based on config
   def has_pdf
-    return DfileApi.file_exist?(source_file: "#{package_location}/#{pdf_path}")
+    if self.package_location.present?
+      return DfileApi.file_exist?(source_file: "#{package_location}/#{pdf_path}")
+    else
+      return false
+    end
   end
 
   # Restarts job by setting status and moving files
@@ -361,7 +365,9 @@ class Job < ActiveRecord::Base
       else
         reset_flow_steps
       end
-      DfileApi.move_to_trash(source_dir: package_location)
+      if self.package_location.present?
+        DfileApi.move_to_trash(source_dir: package_location)
+      end
       self.update_attribute('quarantined', false) if quarantined
       create_log_entry("RESTART", message)
       save!
@@ -406,7 +412,11 @@ class Job < ActiveRecord::Base
 
   # Returns a list of all files in job package
   def files_list
-    return DfileApi.list_files(source_dir: package_location)
+    if self.package_location.present?
+      return DfileApi.list_files(source_dir: package_location)
+    else
+      return []
+    end
   end
 
   # Returns true if job is a subset of a periodical
