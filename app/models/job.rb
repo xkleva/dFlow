@@ -8,6 +8,7 @@ class Job < ActiveRecord::Base
   Job.per_page = 50
 
   belongs_to :treenode
+  belongs_to :flow
   has_many :job_activities, :dependent => :destroy
   has_many :publication_logs, :dependent => :destroy
 
@@ -20,7 +21,6 @@ class Job < ActiveRecord::Base
   validates :source, :presence => true
   validates :copyright, :inclusion => {:in => [true, false]}
   validate :source_in_list
-  validate :flow_in_list
   validate :xml_validity
   validates_associated :job_activities
   attr_accessor :created_by
@@ -76,7 +76,7 @@ class Job < ActiveRecord::Base
         publication_logs: publication_logs,
         package_location: package_location,
         package_name: current_package_name,
-        flow_object: flow_object,
+        flow: flow,
         flow_parameters: flow_parameters_hash,
         flow_parameters_array: flow_parameters_hash.map {|key,value| {key: key, value: value}}
         })
@@ -197,17 +197,6 @@ class Job < ActiveRecord::Base
     end
   end
 
-  # Check if flow is in list of configured flows
-  def flow_in_list
-    if !APP_CONFIG["workflows"].map { |x| x["name"] }.include?(flow)
-      errors.add(:flow, "not included in list of valid sources")
-    end
-  end
-
-  def flow_object 
-    Flow.find(self.flow)
-  end
-
   ########################
 
 
@@ -285,8 +274,11 @@ class Job < ActiveRecord::Base
 
   # Returns all package_metadata as a hash
   def flow_parameters_hash
+    pp "flow_parameters_hash: #{flow_parameters} caller: #{caller[0]}"
     return {} if flow_parameters.blank? || flow_parameters == "null"
     @flow_parameters_hash ||= JSON.parse(flow_parameters)
+    pp @flow_parameters_hash
+    return @flow_parameters_hash
   end
 
   # Returns ordinal data as a string representation
@@ -361,7 +353,7 @@ class Job < ActiveRecord::Base
   def restart(recreate_flow: false)
     Job.transaction do 
       if recreate_flow
-        flow_object.apply_flow(job: self, step_nr: nil)
+        flow.apply_flow(job: self, step_nr: nil)
       else
         reset_flow_steps
       end
@@ -441,7 +433,7 @@ class Job < ActiveRecord::Base
 
    # Creates flow_steps for flow
   def create_flow_steps
-    if !flow_object.apply_flow(job: self, step_nr: self.current_flow_step)
+    if !flow.apply_flow(job: self, step_nr: self.current_flow_step)
       raise StandardError, "Could not create flow for job"
     end
     self.reload
@@ -449,15 +441,19 @@ class Job < ActiveRecord::Base
 
   def init_flow_parameters
     if self.flow.present?
-      self.flow_parameters = flow_parameters_hash.merge(flow_object.parameter_hash).to_json
+      self.flow_parameters = flow.parameters_hash.merge(flow_parameters_hash).to_json
     end
   end
 
   # Changes the flow, aborts all previous flow steps and creates new ones
   def change_flow(flow_name: nil, step_nr: nil)
     if flow_name
-      self.update_attribute('flow', flow_name)
-      self.update_attribute('flow_parameters', flow_parameters_hash.merge(flow_object.parameter_hash).to_json)
+      flow = Flow.find_by_name(flow_name)
+      if !flow
+        raise StandardError, "No flow found with name #{flow_name}"
+      end
+      self.update_attribute('flow', flow)
+      self.update_attribute('flow_parameters', flow_parameters_hash.merge(flow.parameters_hash).to_json)
     end
     if step_nr
       self.update_attribute('current_flow_step', step_nr)
@@ -468,12 +464,8 @@ class Job < ActiveRecord::Base
 
   # Sets jobs to finished
   def finish_job
-    self.update_attribute('current_flow_step', flow_object.last_step)
+    self.update_attribute('current_flow_step', flow.last_step)
     self.update_attribute('state', 'FINISH')
-  end
-
-  def flow_object
-    Flow.find(self.flow)
   end
 
   def page_count
@@ -482,6 +474,7 @@ class Job < ActiveRecord::Base
   
   # Resets flow steps from step_nr and sets earlier steps as done.
   def reset_flow_steps(step_nr: nil)
+    pp "step_nr: #{step_nr}"
     if step_nr
       flow_step = flow_steps.where(step: step_nr).first
       if !flow_step
@@ -518,7 +511,7 @@ class Job < ActiveRecord::Base
   end
 
   def recreate_flow(step_nr: nil)
-    change_flow(flow_name: self.flow, step_nr: step_nr) 
+    change_flow(flow_name: self.flow.name, step_nr: step_nr) 
   end
 end
 

@@ -1,36 +1,38 @@
-class Flow
-  #attr_accessor :name
-  attr_accessor :flow_steps
-  #attr_accessor :flow_steps_hash
-  attr_accessor :errors
-
-  def self.all
-    flows = []
-    workflows = APP_CONFIG["workflows"]
-    workflows.each do |wf|
-      flows << Flow.new(wf)
-    end
-    return flows
-  end
-
-  def self.find(flow_name)
-    hash = APP_CONFIG["workflows"].find{|x| x["name"] == flow_name}
-    if !hash
-      raise StandardError, "No such workflow #{flow_name}"
-    end
-    Flow.new(hash)
-  end
+class Flow < ActiveRecord::Base 
+  default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
 
   def as_json(options={})
     {
-     name: @name,
-     flow_steps: options[:full].present? ? flow_steps_json : @workflow_hash['steps'],
-     parameters: @workflow_hash['parameters']
+     id: id,
+     name: name,
+     description: description,
+     flow_steps: {flow_steps: options[:full].present? ? flow_steps_json : steps_array},
+     parameters: {parameters: parameters_array},
+     folder_paths: {folder_paths: folder_paths_array}
     }
   end
 
+  def steps_array
+    return [] if steps.blank? || parameters == "null"
+    @steps_array ||= JSON.parse(steps)
+  end
+
+  def parameters_array
+    return [] if parameters.blank? || parameters == "null"
+    @parameters_array ||= JSON.parse(parameters)
+  end
+
+  def parameters_hash
+    parameters_array.map{|param| {param['name'] => nil}}.reduce({}, :merge)
+  end
+
+  def folder_paths_array 
+    return [] if folder_paths.blank? || folder_paths == "null"
+    @folder_paths_array ||= JSON.parse(folder_paths)
+  end
+
   def flow_steps_json
-    flow_steps_temp = @workflow_hash['steps'].dup
+    flow_steps_temp = steps_array.dup
     new_flow_steps = []
     flow_steps_temp.each do |old_step|
       step = old_step.dup
@@ -45,31 +47,10 @@ class Flow
     return flow_steps_temp
   end
 
-  def initialize(workflow_hash, job_id=0)
-    @workflow_hash = workflow_hash
-    @name = workflow_hash["name"]
-    @flow_steps_hash = workflow_hash["steps"]
-    @parameters = workflow_hash["parameters"] || []
-  end
-
-  def valid?
-    @errors ||= []
-    validate
-    @errors.blank?
-  end
-
-  def parameter_hash
-    hash = {}
-    @parameters.each do |parameter|
-      hash[parameter['name']] = nil
-    end
-    return hash
-  end
-
   # Create flow step objects for job
-  def generate_flow_steps(job_id, steps_list = [])
+  def generate_flow_steps(job_id)
     @flow_steps = []
-    @workflow_hash["steps"].each do |flow_step|
+    steps_array.each do |flow_step|
       params = flow_step.dup
       params["job_id"] = job_id
       params["params"] = params["params"].to_json
@@ -88,9 +69,9 @@ class Flow
       end
     end
 
-    step_nrs = @flow_steps_hash.map{|x| x["step"]}
-    goto_true_nrs = @flow_steps_hash.map{|x| x["goto_true"]}.compact
-    goto_false_nrs = @flow_steps_hash.map{|x| x["goto_false"]}.compact
+    step_nrs = steps_array.map{|x| x["step"]}
+    goto_true_nrs = steps_array.map{|x| x["goto_true"]}.compact
+    goto_false_nrs = steps_array.map{|x| x["goto_false"]}.compact
     
     # Validate each step nr
     if step_nrs.count != step_nrs.uniq.count
@@ -107,7 +88,7 @@ class Flow
     end
 
     # Check for circular references
-    @flow_steps_hash.each do |flow_step|
+    steps_array.each do |flow_step|
       if flow_step_is_before?(flow_step, flow_step["step"])
         @errors << {step: "Circular reference exists for step: #{flow_step["step"]}"}
       end
@@ -133,7 +114,7 @@ class Flow
 
   # Returns a flow_step hash from total array
   def find_flow_step(step_nr)
-    return @flow_steps_hash.find{|x| x["step"] == step_nr}
+    return steps_array.find{|x| x["step"] == step_nr}
   end
 
   # Returns the lowest step nr witin flow
@@ -143,20 +124,16 @@ class Flow
 
   # Returns start step
   def first_step
-    @flow_steps_hash.find{|x| x["params"]["start"]}
+    steps_array.find{|x| x["params"]["start"]}
   end
 
   # Returns final step
   def last_step
-    @flow_steps_hash.find{|x| x["goto_true"].nil? && x["goto_false"].nil?}
+    steps_array.find{|x| x["goto_true"].nil? && x["goto_false"].nil?}
   end
 
   def step_nr_valid?(step_nr)
-    @flow_steps_hash.map{|x| x["step"]}.include?(step_nr)
-  end
-
-  # Creates new flow_steps, sets earlier as done and aborts old ones.
-  def create_flow_steps(job:, step_nr: nil)
+    steps_array.map{|x| x["step"]}.include?(step_nr)
   end
 
   # Create flow steps for job id
@@ -182,7 +159,7 @@ class Flow
     generate_flow_steps(job.id)
     Job.transaction do
       FlowStep.transaction do
-        flow_steps.each do |flow_step|
+        @flow_steps.each do |flow_step|
           flow_step.save!
           if flow_step.step == step_nr
             flow_step.job = job

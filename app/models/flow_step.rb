@@ -1,6 +1,7 @@
 class FlowStep < ActiveRecord::Base
   default_scope {where( :aborted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
   belongs_to :job
+  belongs_to :flow
 
   validates :step, uniqueness: {scope: [:job_id, :aborted_at]}
   validates :step, numericality: { only_integer: true }

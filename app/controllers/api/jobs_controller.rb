@@ -114,9 +114,8 @@ class Api::JobsController < Api::ApiController
     job_params[:metadata] = job_params[:metadata].to_json
     job_params[:flow_parameters] = job_params[:parameters].to_json if job_params.has_key?(:flow_parameters)
     job_params[:created_by] = @current_user.username
-    job_params[:flow] ||= APP_CONFIG["default_workflow"]
     parameters = ActionController::Parameters.new(job_params)
-    job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow, :current_flow_step, :package_location, :flow_parameters))
+    job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :current_flow_step, :package_location, :flow_parameters))
 
     # If ID is given, use it for creation
     if params[:force_id]

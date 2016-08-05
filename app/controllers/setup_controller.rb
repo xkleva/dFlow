@@ -31,10 +31,8 @@ class SetupController < ApplicationController
     @error_fields = {}
     json_fields.each do |key, value|
       begin
-        puts params[:config]
         params[:config][key] = JSON.parse(params[:config][key])
       rescue JSON::ParserError => e
-        puts "key: #{key}"
         @error_fields[key] = params[:config][key]
       end
     end
