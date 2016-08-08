@@ -19,7 +19,7 @@ testem.log
 deployscript.sh
 deployscript_production.sh
 
-config/environment.js
+#config/environment.js
 
 *~
 \#*#
