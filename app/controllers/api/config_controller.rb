@@ -49,4 +49,10 @@ class Api::ConfigController < Api::ApiController
     render_json
   end
 
+  api!
+  def version_info
+    @response[:config] = VERSION_DATA
+    render_json
+  end
+
 end

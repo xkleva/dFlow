@@ -1,5 +1,6 @@
 class Api::FlowsController < Api::ApiController
   skip_before_filter :verify_authenticity_token, :only => [:index]
+  before_filter -> { validate_rights 'manage_jobs' }, except: [:index]
 
   api!
   def index

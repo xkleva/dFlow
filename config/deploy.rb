@@ -20,4 +20,5 @@ server deploy_config['host'], user: deploy_config['user'], roles: ['app', 'db', 
 
 set :deploy_to, deploy_config['path']
 
+after "deploy:finishing", "extra_cmds:create_version_file"
 

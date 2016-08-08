@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     get 'config/status_list', to: 'config#status_list'
     get 'config/states', to: 'config#state_list'
     get 'config/cas_url', to: 'config#cas_url'
+    get 'config/version_info', to: 'config#version_info'
 
     # User API
     resources :users
