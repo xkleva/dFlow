@@ -17,17 +17,17 @@ class Flow < ActiveRecord::Base
   def validate_json
     begin 
       JSON.parse(self.steps)
-    rescue JSON::ParseError => e
+    rescue JSON::ParserError => e
       errors.add(:steps, "JSON ParseError: #{e}")
     end
     begin 
       JSON.parse(self.parameters)
-    rescue JSON::ParseError => e
+    rescue JSON::ParserError => e
       errors.add(:parameters, "JSON ParseError: #{e}")
     end
     begin 
       JSON.parse(self.folder_paths)
-    rescue JSON::ParseError => e
+    rescue JSON::ParserError => e
       errors.add(:folder_paths, "JSON ParseError: #{e}")
     end
   end
