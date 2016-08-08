@@ -405,11 +405,21 @@ class Job < ActiveRecord::Base
 
   # Returns a list of all files in job package
   def files_list
+    files_list = []
     if self.package_location.present?
-      return DfileApi.list_files(source_dir: package_location)
-    else
-      return []
+      children = DfileApi.list_files(source_dir: self.package_location)
+      if children.present?
+        files_list << {name: self.package_location, children: DfileApi.list_files(source_dir: package_location)}
+      end
     end
+    flow.folder_paths_array.each do |folder_path|
+      folder_path = substitute_parameters(folder_path)
+      children = DfileApi.list_files(source_dir: folder_path)
+      if children.present?
+        files_list << {name: folder_path, children: DfileApi.list_files(source_dir: folder_path)}
+      end
+    end
+    return files_list
   end
 
   # Returns true if job is a subset of a periodical
