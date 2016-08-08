@@ -39,7 +39,7 @@ FactoryGirl.define do
     copyright false
     created_by 'TestUser'
     metadata "{}"
-    flow "VALID_FLOW"
+    association :flow, factory: [:flow]
     current_flow_step 10
     state "ACTION"
 

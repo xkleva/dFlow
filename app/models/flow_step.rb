@@ -274,7 +274,7 @@ class FlowStep < ActiveRecord::Base
   # Check if conditions for running flow step are met. If none exist, return true.
   def condition_met?
     if condition.present?
-      parsed_condition = substitute_parameters(condition)
+      parsed_condition = job.substitute_parameters(condition)
       return eval(parsed_condition)
     end
     return true
