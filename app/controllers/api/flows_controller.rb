@@ -29,14 +29,15 @@ class Api::FlowsController < Api::ApiController
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not find flow with id '#{params[:id]}'")
     end
 
-    flow_params[:steps] = flow_params[:flow_steps]['flow_steps'].to_json
-    flow_params[:parameters] = flow_params[:parameters]['parameters'].to_json
-    flow_params[:folder_paths] = flow_params[:folder_paths]['folder_paths'].to_json
+    pp flow_params[:folder_paths]
+    flow_params[:steps] = flow_params[:flow_steps]['flow_steps'].present? ? flow_params[:flow_steps]['flow_steps'].to_json : '[]'
+    flow_params[:parameters] = flow_params[:parameters]['parameters'].present? ? flow_params[:parameters]['parameters'].to_json : '[]'
+    flow_params[:folder_paths] = flow_params[:folder_paths]['folder_paths'].present? ? flow_params[:folder_paths]['folder_paths'].to_json : '[]'
 
     if flow.update_attributes(permitted_params)
       @response[:flow] = flow
     else
-      error_msg(ErrorCodes::VALIDATION_ERROR, "Could not save flow #{params[:id]}")
+      error_msg(ErrorCodes::VALIDATION_ERROR, "Could not save flow #{params[:id]}", flow.errors)
     end
     render_json
   end
@@ -48,7 +49,7 @@ class Api::FlowsController < Api::ApiController
     if flow.save
       @response[:flow] = flow
     else
-      error_msg(ErrorCodes::VALIDATION_ERROR, "Could not save flow #{params[:id]}")
+      error_msg(ErrorCodes::VALIDATION_ERROR, "Could not save flow #{params[:id]}", flow.errors)
     end
     render_json
   end
