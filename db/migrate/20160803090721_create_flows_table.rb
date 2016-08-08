@@ -7,6 +7,7 @@ class CreateFlowsTable < ActiveRecord::Migration
       t.text :folder_paths, default: "[]"
       t.text :steps, default: "[]"
       t.boolean :active, default: true
+      t.datetime :deleted_at, default: nil
       t.timestamps
     end
 
