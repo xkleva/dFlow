@@ -80,3 +80,4 @@ group :development do
 end
 
 gem 'unicode', '~> 0.4.4.2'
+gem 'ember-cli-rails'

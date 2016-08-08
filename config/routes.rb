@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount_ember_app :frontend, to: "/index"
   apipie
   resources :session
   get 'setup', to: 'setup#index'

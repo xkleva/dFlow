@@ -1,0 +1,14 @@
+<td>{{#link-to 'jobs.show' step.job_id}}{{step.job_id}}{{/link-to}}</td>
+<td>{{step.id}}</td>
+<td>{{step.description}}</td>
+<td>{{enteredAt}}
+  {{#if step.entered_at}}
+  <br/>{{sinceEntered}}
+  {{/if}}
+</td>
+<td>{{startedAt}}
+  {{#if step.started_at}}
+  <br/>{{sinceStarted}}
+  {{/if}}
+</td>
+<td>{{step.status}}</td>

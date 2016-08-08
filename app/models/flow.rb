@@ -1,6 +1,8 @@
 class Flow < ActiveRecord::Base 
   default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
 
+  validate :validate_json
+
   def as_json(options={})
     {
      id: id,
@@ -10,6 +12,24 @@ class Flow < ActiveRecord::Base
      parameters: {parameters: parameters_array},
      folder_paths: {folder_paths: folder_paths_array}
     }
+  end
+
+  def validate_json
+    begin 
+      JSON.parse(self.steps)
+    rescue JSON::ParseError => e
+      errors.add(:steps, "JSON ParseError: #{e}")
+    end
+    begin 
+      JSON.parse(self.parameters)
+    rescue JSON::ParseError => e
+      errors.add(:parameters, "JSON ParseError: #{e}")
+    end
+    begin 
+      JSON.parse(self.folder_paths)
+    rescue JSON::ParseError => e
+      errors.add(:folder_paths, "JSON ParseError: #{e}")
+    end
   end
 
   def steps_array

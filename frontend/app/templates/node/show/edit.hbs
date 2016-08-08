@@ -1,0 +1,27 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">{{t 'nodes.edit'}} {{model.name}}</div>
+  </div>
+  <div class="panel-body">
+    <div class="form-group col-xs-12">
+      {{#if error}}
+        <div class="alert alert-danger">
+          {{error.msg}}
+        </div>
+      {{/if}}
+      <label class="col-xs-12">{{t 'nodes.name'}}
+        {{input type="text" classBinding=":form-control :col-xs-6" value=model.name}}
+      </label>
+      <label class="col-xs-12">{{t 'nodes.new_parent_id'}}
+        {{input type="text" classBinding=":form-control :col-xs-6" value=model.new_parent_id}}
+      </label>
+      <div class="col-xs-12">
+        <button class="btn btn-primary" {{action 'updateNode' model}}>{{t 'nodes.update'}}</button>
+        {{#link-to 'node.show' class="btn btn-default"}}{{t 'nodes.cancel'}}{{/link-to}}
+        <div class="pull-right">
+        <button class="btn btn-danger" {{action 'deleteNode' model.id}}>{{t 'nodes.delete'}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">{{t 'nodes.new'}}</div>
+  </div>
+  <div class="panel-body">
+    <div class="form-group col-xs-12">
+      {{#if error}}
+        <div class="alert alert-danger">
+          {{error.msg}}
+        </div>
+      {{/if}}
+      <label class="col-xs-12">{{t 'nodes.name'}}
+        {{input type="text" classBinding=":form-control :col-xs-6" value=model.name}}
+      </label>
+      <div class="col-xs-12">
+        <button class="btn btn-primary" {{action 'createNode' model}}>{{t 'nodes.create'}}</button>
+        {{#link-to 'node.show' class="btn btn-default"}}{{t 'nodes.cancel'}}{{/link-to}}
+      </div>
+    </div>
+  </div>
+</div>

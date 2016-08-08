@@ -1,0 +1,25 @@
+{{#if error}}
+  <div class="alert alert-danger">
+    {{error.msg}}
+  </div>
+{{/if}}
+
+<label class="col-xs-12">{{t 'users.username'}}
+  {{input type="text" classBinding=":form-control :col-xs-6" value=model.username}}
+</label>
+
+<label class="col-xs-12">{{t 'users.name'}}
+  {{input type="text" classBinding=":form-control :col-xs-6" value=model.name}}
+</label>
+
+<label class="col-xs-12">{{t 'users.email'}}
+  {{input type="text" classBinding=":form-control :col-xs-6" value=model.email}}
+</label>
+
+<label class="col-xs-12">{{t 'users.role'}}
+  {{#x-select value=model.role class="form-control"}}
+    {{#each roleSelection as |option|}}
+      {{#x-option value=option.name}}{{option.name}}{{/x-option}}
+    {{/each}}
+  {{/x-select}}
+</label>

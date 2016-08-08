@@ -1,0 +1,16 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Flödessteg</th>
+      <th>Tidsstämplar</th>
+      <th>Parametrar</th>
+      <th>Villkor</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each flowStepsSorted as |flowStep|}}
+    {{flow-step flowStep=flowStep}}
+    {{/each}}
+  </tbody>
+</table>

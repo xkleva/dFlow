@@ -17,7 +17,6 @@ end
 version_data = {}
 if File.file?(LAST_COMMIT_FILE_LOCATION)
   File.readlines(LAST_COMMIT_FILE_LOCATION).each do |line|
-    puts line
     key,value = line.split(' ',2)
     case key
     when 'commit'

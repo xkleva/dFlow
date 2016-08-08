@@ -1,0 +1,52 @@
+.form-group label {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.form-group input {
+  display: block;
+}
+
+.form-group select {
+  display: block;
+}
+
+.breadcrumb {
+  background-color: inherit;
+}
+
+.pagination > li > a {
+  margin-left: 5px;
+}
+
+.pagination > li.spacer > span {
+  border: 0px;
+  margin-left: 5px;
+}
+
+.sub-navbar .navbar-right {
+  margin-right: 0;
+}
+
+.sub-navbar .navbar-btn {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.panel-heading .btn {
+ margin-top:0px;
+ margin-bottom:0px;
+ padding-top:0px;
+ padding-bottom: 0px;
+}
+
+#jsoneditor3 {
+  height: 500px;
+}
+
+#jsoneditor2 {
+  height: 200px;
+}
+
+#jsoneditor1 {
+  height: 800px;
+}

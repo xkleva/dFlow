@@ -19,6 +19,7 @@ config/config_secret.yml
 config/database.yml
 config/deploy.yml
 config/config_full.yml
+last_commit.txt
 *~
 \#*#
 .#*

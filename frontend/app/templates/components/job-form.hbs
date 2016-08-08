@@ -1,0 +1,178 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">{{#if isNew}}{{t 'jobs.new'}}{{else}}{{t 'jobs.edit'}}{{/if}}</div>
+    </div>
+    <div class="panel-body">
+      <div class="form-horizontal">
+        {{#if error}}
+          <div class="alert alert-danger">
+            {{error.msg}}
+          </div>
+        {{/if}}
+        {{#if isNew}}
+          <div class="alert alert-info">
+            <strong>{{t 'jobs.source'}}:</strong> {{model.source_label}}<br/>
+            <strong>{{t 'jobs.catalog_id'}}:</strong> {{model.catalog_id}}<br/>
+            <strong>{{t 'jobs.title'}}:</strong> {{model.title}}<br/>
+            <strong>{{t 'jobs.author'}}:</strong> {{model.author}}
+          </div>
+        {{/if}}
+        <div class="form-group">
+          <label class="col-xs-2 control-label">{{t 'jobs.name'}}</label>
+          <div class="col-xs-10">
+            {{input type="text" classBinding=":form-control" value=model.name}}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-xs-2 control-label">{{t 'jobs.comment'}}</label>
+          <div class="col-xs-10">
+            {{textarea cols="80" rows="3" classBinding=":form-control" value=model.comment}}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-xs-2 control-label">{{t 'jobs.object_info'}}</label>
+          <div class="col-xs-10">
+            {{textarea cols="80" rows="3" classBinding=":form-control" value=model.object_info}}
+          </div>
+        </div> 
+
+        <div class="form-group">
+          <label class="col-xs-2 control-label">{{t 'jobs.copyright'}}</label>
+          <div class="col-xs-4">
+            {{#x-select value=model.copyright class="form-control"}}
+              {{#each copyrightSelection as |option|}}
+                {{#x-option value=option.value}}{{option.label}}{{/x-option}}
+              {{/each}}
+            {{/x-select}}
+          </div>
+        </div>
+
+        {{#if model.id}}
+        <div class="form-group">
+          <label class="col-xs-2 control-label">Katalog-id</label>
+          <div class="col-xs-4">
+            {{input value=model.treenode_id class="form-control" type="number"}}
+          </div>
+        </div>
+        {{/if}}
+
+        <div class="form-group">
+          <label class="col-xs-2 control-label">{{t 'jobs.flow'}}</label>
+          <div class="col-xs-4">
+            {{#x-select value=model.flow_id class="form-control"}}
+              {{#each flowSelection as |option|}}
+                {{#x-option value=option.value}}{{option.label}}{{/x-option}}
+              {{/each}}
+            {{/x-select}}
+          </div> 
+        </div>
+        <h4>Flödesparametrar för {{currentFlow.name}}</h4>
+
+        {{#each currentFlow.parameters.parameters as |parameter|}}
+          {{parameter-input parameter=parameter values=model.flow_parameters}}
+        {{else}}
+            Inga flödesparametrar är definierade.
+        {{/each}}
+
+        <h4>Flödessteg för {{currentFlow.name}}</h4>
+
+        <div class="form-group">
+          <label class="col-xs-1 control-label">Steg</label>
+          <label class="col-xs-2 form-control-static">Namn</label>
+          <label class="col-xs-2 form-control-static">Processtyp</label>
+          <label class="col-xs-3 form-control-static">Villkor</label>
+          <label class="col-xs-4 form-control-static">Parametrar</label>
+          {{#each currentFlow.flow_steps.flow_steps as |step|}}
+            <div class="row">
+            <label class="col-xs-1 control-label">{{step.step}}</label>
+            <div class="col-xs-2 form-control-static">{{step.description}}</div>
+            <div class="col-xs-2 form-control-static">{{step.process}}</div>
+            <div class="col-xs-3 form-control-static">{{step.condition}}</div>
+            <div class="col-xs-4 form-control-static">
+              {{#each step.params_array as |param|}}
+                <strong>{{param.key}}</strong>: {{param.value}}<br/>
+              {{/each}}
+            </div>
+            </div>
+          {{/each}}
+        </div>
+
+        {{#if model.is_periodical}}
+          <div class="col-xs-12">
+            <h4>{{t 'jobs.ordinality'}}</h4>
+            <div class="row">
+
+              <label class="col-xs-6 col-sm-3">{{t 'jobs.key'}}
+                {{input type="text" classBinding=":form-control :col-xs-6" value=model.metadata.ordinal_1_key placeHolderTranslation="jobs.ordOneKeyPH"}}
+              </label>
+
+              <label class="col-xs-6 col-sm-3">{{t 'jobs.value'}}
+                {{input type="text" classBinding=":form-control :col-xs-6" value=model.metadata.ordinal_1_value placeHolderTranslation="jobs.ordOneValuePH"}}
+              </label>
+            </div>
+            <div class="row">
+              <label class="col-xs-6 col-sm-3">
+                {{input type="text" classBinding=":form-control :col-xs-6" value=model.metadata.ordinal_2_key placeHolderTranslation="jobs.ordTwoKeyPH"}}
+              </label>
+
+              <label class="col-xs-6 col-sm-3">
+                {{input type="text" classBinding=":form-control :col-xs-6" value=model.metadata.ordinal_2_value placeHolderTranslation="jobs.ordTwoValuePH"}}
+              </label>
+            </div>
+            <div class="row">
+              <label class="col-xs-6 col-sm-3">
+                {{input type="text" classBinding=":form-control :col-xs-6" value=model.metadata.ordinal_3_key placeHolderTranslation="jobs.ordThreeKeyPH"}}
+              </label>
+
+              <label class="col-xs-6 col-sm-3">
+                {{input type="text" classBinding=":form-control :col-xs-6" value=model.metadata.ordinal_3_value placeHolderTranslation="jobs.ordThreeValuePH"}}
+              </label>
+            </div>
+
+            <h4>{{t 'jobs.chronology'}}</h4>
+            <div class="row">
+              <label class="col-xs-6 col-sm-3">{{t 'jobs.key'}}
+                {{input type="text" classBinding=":form-control :col-xs-6" value=model.metadata.chron_1_key placeHolderTranslation="jobs.chronOneKeyPH"}}
+              </label>
+
+              <label class="col-xs-6 col-sm-3">{{t 'jobs.value'}}
+                {{input type="text" classBinding=":form-control :col-xs-6" value=model.metadata.chron_1_value placeHolderTranslation="jobs.chronOneValuePH"}}
+              </label>
+            </div>
+            <div class="row">
+              <label class="col-xs-6 col-sm-3">
+                {{input type="text" classBinding=":form-control :col-xs-6" value=model.metadata.chron_2_key placeHolderTranslation="jobs.chronTwoKeyPH"}}
+              </label>
+
+              <label class="col-xs-6 col-sm-3">
+                {{input type="text" classBinding=":form-control :col-xs-6" value=model.metadata.chron_2_value placeHolderTranslation="jobs.chronTwoValuePH"}}
+              </label>
+            </div>
+            <div class="row">
+              <label class="col-xs-6 col-sm-3">
+                {{input type="text" classBinding=":form-control :col-xs-6" value=model.metadata.chron_3_key placeHolderTranslation="jobs.chronThreeKeyPH"}}
+              </label>
+
+              <label class="col-xs-6 col-sm-3">
+                {{input type="text" classBinding=":form-control :col-xs-6" value=model.metadata.chron_3_value placeHolderTranslation="jobs.chronThreeValuePH"}}
+              </label>
+            </div>
+          </div>
+        {{/if}}
+
+        <div class="row" style="margin-top:20px;">
+          <div class="col-xs-12">
+            <button class="btn btn-primary" {{action 'create' model}}>
+              {{#if model.id}}
+                {{t 'jobs.save'}}
+              {{else}}
+                {{t 'jobs.createsubmit'}}
+              {{/if}}
+            </button>
+            <button class="btn btn-default" {{action 'abort'}}>{{t 'jobs.cancel'}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
