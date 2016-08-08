@@ -274,10 +274,8 @@ class Job < ActiveRecord::Base
 
   # Returns all package_metadata as a hash
   def flow_parameters_hash
-    pp "flow_parameters_hash: #{flow_parameters} caller: #{caller[0]}"
     return {} if flow_parameters.blank? || flow_parameters == "null"
     @flow_parameters_hash ||= JSON.parse(flow_parameters)
-    pp @flow_parameters_hash
     return @flow_parameters_hash
   end
 
@@ -359,6 +357,9 @@ class Job < ActiveRecord::Base
       end
       if self.package_location.present?
         DfileApi.move_to_trash(source_dir: package_location)
+      end
+      flow.folder_paths_array.each do |folder_path|
+        DfileApi.move_to_trash(source_dir: self.substitute_parameters(folder_path))
       end
       self.update_attribute('quarantined', false) if quarantined
       create_log_entry("RESTART", message)
@@ -474,7 +475,6 @@ class Job < ActiveRecord::Base
   
   # Resets flow steps from step_nr and sets earlier steps as done.
   def reset_flow_steps(step_nr: nil)
-    pp "step_nr: #{step_nr}"
     if step_nr
       flow_step = flow_steps.where(step: step_nr).first
       if !flow_step
@@ -512,6 +512,23 @@ class Job < ActiveRecord::Base
 
   def recreate_flow(step_nr: nil)
     change_flow(flow_name: self.flow.name, step_nr: step_nr) 
+  end
+ 
+  # Substitutes defined variable names according to map
+  def substitute_parameters(string)
+    string % {
+      job_id: self.id, 
+      page_count: self.page_count || '-1', 
+      package_name: self.package_name, 
+      copyright: self.copyright.to_s,
+      chron_1: self.metadata_value('chron_1_value') || 'undefined',
+      chron_2: self.metadata_value('chron_2_value') || 'undefined',
+      chron_3: self.metadata_value('chron_3_value') || 'undefined',
+      ordinality_1: self.metadata_value('ordinal_1_value') || 'undefined',
+      ordinality_2: self.metadata_value('ordinal_2_value') || 'undefined',
+      ordinality_3: self.metadata_value('ordinal_3_value') || 'undefined'
+    }.merge(self.flow_parameters_hash.symbolize_keys)
+
   end
 end
 

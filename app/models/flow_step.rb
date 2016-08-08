@@ -260,7 +260,7 @@ class FlowStep < ActiveRecord::Base
     new_hash = {}
     hash.each do |key, value|
       if (value.kind_of? String) && (key != "format")
-        new_hash[key] = substitute_parameters(value)
+        new_hash[key] = job.substitute_parameters(value)
       elsif key == "format"
         new_hash['format_params'] = value
       else
@@ -270,22 +270,6 @@ class FlowStep < ActiveRecord::Base
     return new_hash
   end
 
-  # Substitutes defined variable names according to map
-  def substitute_parameters(string)
-    string % {
-      job_id: job.id, 
-      page_count: job.page_count || '-1', 
-      package_name: job.package_name, 
-      copyright: job.copyright.to_s,
-      chron_1: job.metadata_value('chron_1_value') || 'undefined',
-      chron_2: job.metadata_value('chron_2_value') || 'undefined',
-      chron_3: job.metadata_value('chron_3_value') || 'undefined',
-      ordinality_1: job.metadata_value('ordinal_1_value') || 'undefined',
-      ordinality_2: job.metadata_value('ordinal_2_value') || 'undefined',
-      ordinality_3: job.metadata_value('ordinal_3_value') || 'undefined'
-    }.merge(job.flow_parameters_hash.symbolize_keys)
-
-  end
 
   # Check if conditions for running flow step are met. If none exist, return true.
   def condition_met?
