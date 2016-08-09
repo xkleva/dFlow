@@ -62,7 +62,6 @@ Each workflow has three possible attributes, **name**, **parameters**, and **ste
         "process": "CONFIRMATION",
         "description": "Waiting for processing",
         "goto_true": 20,
-        "goto_false": null,
         "params": {
           "start": true,
           "manual": true,
@@ -74,7 +73,6 @@ Each workflow has three possible attributes, **name**, **parameters**, and **ste
         "process": "CONFIRMATION",
         "description": "Processing done",
         "goto_true": null,
-        "goto_false": null,
         "params": {
           "start": true,
           "manual": true,
@@ -115,7 +113,6 @@ The flow steps define the core of the workflow, as nothing would be done without
 **step** (Integer) - The step identifier, must be a number.  
 **process** (Process - Available values are defined in [Processes] (#processes)) - The name of the process to be run for this step. The process has to be predefined.  
 **goto_true** (Integer - Another existing step identifier) - Points to which step should be run when this step is finished.  
-**goto_false** (Integer - Another existing step identifier) - **Not yet implemented**  
 **condition** (Evaluable statement) (Not mandatory) - A condition which has to return **true** for the step to execute, otherwise the step will finish and the next one be started. Example of a condition is "%{copyright} == 'true'".  
 **params** - The parameters available for the given **process**, see documentation on each process.
 
@@ -127,7 +124,6 @@ The flow steps define the core of the workflow, as nothing would be done without
     "description": "Check with copyright owners",
     "condition": "%{copyright} == 'true'"
     "goto_true": 30,
-    "goto_false": null,
     "params": {
       "start": true,
       "manual": true,
@@ -203,7 +199,6 @@ This process only finishes the current flow step
     "process": "CONFIRMATION",
     "description": "Review document",
     "goto_true": 70,
-    "goto_false": null,
     "params": {
       "manual": true,
       "msg": "Document is reviewed!"
@@ -216,8 +211,7 @@ This process only finishes the current flow step
     "step": 60,
     "process": "CONFIRMATION",
     "description": "External application: Create JPG files",
-    "goto_true": 70,
-    "goto_false": null,
+    "goto_true": 70
     "params": {
       "manual": false
     }
@@ -243,7 +237,6 @@ The process keeps repeating until given file is found.
     "process": "WAITFOR_FILE",
     "description": "Check if file1.xml exists in job folder!",
     "goto_true": 70,
-    "goto_false": null,
     "params": {
       "file_path": "PROCESSING:/%{job_id}/xml/file1.xml"
     }
@@ -268,7 +261,6 @@ The process keeps repeating until the given number of files are found.
     "process": "WAITFOR_FILES",
     "description": "Check if all jpg files have been created",
     "goto_true": 70,
-    "goto_false": null,
     "params": {
       "folder_path": "PROCESSING:/%{job_id}/jpg/",
       "filetype": "jpg",
@@ -297,7 +289,6 @@ Source file is copied to destination file
     "process": "COPY_FILE",
     "description": "Copy external jpg into job",
     "goto_true": 70,
-    "goto_false": null,
     "params": {
       "source_file_path": "CONFIGURATION:/placeholders/jpg/placeholder1.jpg",
       "destination_file_path": "PROCESSING:/%{job_id}/jpg/0000.jpg"
@@ -323,7 +314,6 @@ Source folder contents are copied to the destination folder, with new filenames 
     "process": "COPY_FOLDER",
     "description": "Copy tif files into job",
     "goto_true": 70,
-    "goto_false": null,
     "params": {
       "source_folder_path": "MACHINE1:/scans/%{job_id}/tif",
       "destination_folder_path": "PROCESSING:/%{job_id}/tif",
@@ -349,7 +339,6 @@ Source folder contents are copied to the destination folder, with new filenames 
     "process": "MOVE_FOLDER",
     "description": "Move tif files into job",
     "goto_true": 70,
-    "goto_false": null,
     "params": {
       "source_file_path": "MACHINE1:/scans/%{job_id}/tif",
       "destination_file_path": "PROCESSING:/%{job_id}/tif",
@@ -373,7 +362,6 @@ If there is a folder named after the jobs id in the given directory, it should b
     "process": "DELETE_JOB_FILES",
     "description": "Delete processing folder for job",
     "goto_true": 70,
-    "goto_false": null,
     "params": {
       "job_parent_path": "PROCESSING:/"
     }
@@ -395,7 +383,6 @@ The package location for the job is updated, and the files showin in the interfa
     "process": "CHANGE_PACKAGE_LOCATION",
     "description": "Change package location to STORE",
     "goto_true": 70,
-    "goto_false": null,
     "params": {
       "new_package_location": "STORE:/{package_name}"
     }
@@ -418,7 +405,6 @@ The metadata for the job will be updated to contain the images within the given 
     "process": "COLLECT_JOB_METADATA",
     "description": "Get image metadata from master images",
     "goto_true": 70,
-    "goto_false": null,
     "params": {
       "folder_path": "PROCESSING:/{job_id}/tif",
       "filetype": "tif"
@@ -444,7 +430,6 @@ A new format is created using the given formatting parameters.
     "process": "CREATE_FORMAT",
     "description": "Create jpg files from master files",
     "goto_true": 75,
-    "goto_false": null,
     "params": {
         "source_folder_path": "PROCESSING:/%{job_id}/mst/tif_lzw",
          "destination_folder_path": "PROCESSING:/%{job_id}/web/jpg",
@@ -480,7 +465,6 @@ A mets file is created consisting the given formats and files.
     "process": "CREATE_METS_FILE",
     "description": "Create METS-file",
     "goto_true": 75,
-    "goto_false": null,
     "params": {
         "job_folder_path": "PACKAGING:/%{job_id}",
         "mets_file_path": "PACKAGING:/%{job_id}/%{package_name}_mets.xml",
@@ -510,7 +494,6 @@ A post is created in GUPEA, and a PublicationLog item is created in DFlow contai
     "process": "CREATE_GUPEA_PACKAGE",
     "description": "CReate GUPEA post with PDF",
     "goto_true": 230,
-    "goto_false": null,
     "params": {
       "gupea_collection": "2077/38764",
       "pdf_file_path": "STORE:/%{package_name}/pdf/%{package_name}.pdf",
@@ -535,7 +518,6 @@ A PDF-file is created at the location specified from the source documents.
         "process": "COMBINE_PDF_FILES",
         "description": "Combine PDF files to one single file",
         "goto_true": 155,
-        "goto_false": null,
         "params": {
           "source_folder_path": "PROCESSING:/%{job_id}/pdf_single",
           "destination_file_path": "PROCESSING:/%{job_id}/pdf/%{job_id}.pdf"
