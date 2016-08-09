@@ -65,7 +65,6 @@ class Job < ActiveRecord::Base
         activities: job_activities.as_json,
         metadata: metadata_hash,
         source_link: source_link,
-        has_pdf: has_pdf,
         package_metadata: package_metadata_hash,
         main_status: main_status,
         files: files_list,
@@ -74,11 +73,9 @@ class Job < ActiveRecord::Base
         flow_step: flow_step,
         flow_steps: flow_steps,
         publication_logs: publication_logs,
-        package_location: package_location,
-        package_name: current_package_name,
+        package_name: package_name,
         flow: flow,
-        flow_parameters: flow_parameters_hash,
-        flow_parameters_array: flow_parameters_hash.map {|key,value| {key: key, value: value}}
+        flow_parameters: flow_parameters_hash
         })
     end
 
@@ -130,7 +127,6 @@ class Job < ActiveRecord::Base
 
   def default_values
     @created_by ||= 'not_set'
-    @package_location ||= "PROCESSING:/#{self.id}"
   end
 
   # Creates a JobActivity object for CREATE event
@@ -320,31 +316,8 @@ class Job < ActiveRecord::Base
     PdfHelper.create_work_order(self)
   end
 
-  # Returns current package name, depending on package_location
-  def current_package_name
-    if self.package_location.present?
-      self.package_location.split('/').last
-    else
-      return nil
-    end
-  end
-
   def package_name
     return sprintf(APP_CONFIG['package_name'], id)
-  end
-
-  # Returns path to pdf file
-  def pdf_path
-    return sprintf("pdf/%s.pdf", current_package_name)
-  end
-
-  # True if PDF can be found based on config
-  def has_pdf
-    if self.package_location.present?
-      return DfileApi.file_exist?(source_file: "#{package_location}/#{pdf_path}")
-    else
-      return false
-    end
   end
 
   # Restarts job by setting status and moving files
@@ -354,9 +327,6 @@ class Job < ActiveRecord::Base
         flow.apply_flow(job: self, step_nr: nil)
       else
         reset_flow_steps
-      end
-      if self.package_location.present?
-        DfileApi.move_to_trash(source_dir: package_location)
       end
       flow.folder_paths_array.each do |folder_path|
         DfileApi.move_to_trash(source_dir: self.substitute_parameters(folder_path))
@@ -406,12 +376,6 @@ class Job < ActiveRecord::Base
   # Returns a list of all files in job package
   def files_list
     files_list = []
-    if self.package_location.present?
-      children = DfileApi.list_files(source_dir: self.package_location)
-      if children.present?
-        files_list << {name: self.package_location, children: DfileApi.list_files(source_dir: package_location)}
-      end
-    end
     flow.folder_paths_array.each do |folder_path|
       folder_path = substitute_parameters(folder_path)
       children = DfileApi.list_files(source_dir: folder_path)

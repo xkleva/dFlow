@@ -8,7 +8,7 @@ class Flow < ActiveRecord::Base
      id: id,
      name: name,
      description: description,
-     flow_steps: {flow_steps: options[:full].present? ? flow_steps_json : steps_array},
+     flow_steps: {flow_steps: steps_array},
      parameters: {parameters: parameters_array},
      folder_paths: {folder_paths: folder_paths_array}
     }
@@ -49,22 +49,6 @@ class Flow < ActiveRecord::Base
   def folder_paths_array 
     return [] if folder_paths.blank? || folder_paths == "null"
     @folder_paths_array ||= JSON.parse(folder_paths)
-  end
-
-  def flow_steps_json
-    flow_steps_temp = steps_array.dup
-    new_flow_steps = []
-    flow_steps_temp.each do |old_step|
-      step = old_step.dup
-      if step['params'].present?
-        step['params_array'] = step['params'].map{|key,value| {key: key, value: value}}
-      else
-        step['params_array'] = []
-      end
-      new_flow_steps << step
-    end
-    flow_steps_temp = new_flow_steps
-    return flow_steps_temp
   end
 
   # Create flow step objects for job

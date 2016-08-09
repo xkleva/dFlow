@@ -160,7 +160,7 @@ class Api::JobsController < Api::ApiController
       flow_is_changed = true
     end
 
-    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow, :current_flow_step, :package_location, :flow_parameters))
+    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow, :current_flow_step, :flow_parameters))
       if flow_is_changed
         job.change_flow
       end
@@ -253,17 +253,6 @@ class Api::JobsController < Api::ApiController
       end
     end
     render_json
-  end
-
-  api!
-  def thumbnail
-    source = params[:source] || "web"
-    size = params[:size] || "700"
-    
-    @response[:thumbnail] = FileAdapter.thumbnail(params[:package_location], params[:package_name], source, size, params[:image])['thumbnail']
-
-    render_json
-
   end
 
   # Checks if job exists, and sets @job variable. Otherwise, return error.
