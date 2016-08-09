@@ -6,10 +6,6 @@ export default Ember.Controller.extend({
   parameters_mode: 'code',
   folder_paths_mode: 'code',
 
-  flow_steps_json: Ember.computed('model.flow_steps.@each', function(){
-    return {tjosan: this.get('model.flow_steps')};
-  }),
-
   actions: {
     save(model) {
       var that = this;
@@ -21,6 +17,7 @@ export default Ember.Controller.extend({
         that.set('savingMessage', 'Kunde inte spara!');
       }); 
     }
+
   }
 
 });
