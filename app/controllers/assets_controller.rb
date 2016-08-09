@@ -51,4 +51,12 @@ class AssetsController < ApplicationController
     end
   end
 
+  def file
+    file = DfileApi.download_file(source_file: params[:file_path])
+
+    filename = Pathname.new(params[:file_path]).basename
+
+    send_data file.read, filename: filename, disposition: "inline"
+  end
+
 end

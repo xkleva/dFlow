@@ -5,7 +5,7 @@ export default Ember.Component.extend({
   session: Ember.inject.service(),
   tagName: 'div',
   isExpanded: false,
-  parentPath: '/',
+  parentPath: '',
 
   byteString: Ember.computed('item.size', function() {
     var size = this.get('item.size');
@@ -45,7 +45,7 @@ export default Ember.Component.extend({
 
   fileUrl: Ember.computed('item', function() {
     var token =  this.get('session.data.authenticated.token');
-    return ENV.APP.serviceURL + '/assets/job_file/' + this.get('jobId') + '?file_dir=' + this.get('parentPath') + '&file_name=' + this.get('item.name') + '&token=' + token;
+    return ENV.APP.serviceURL + '/assets/file?file_path=' + this.get('parentPath') + this.get('item.name') + '&token=' + token;
   }),
 
   icon: Ember.computed('isImage', 'isPdf', 'isFile', 'isText', function(){

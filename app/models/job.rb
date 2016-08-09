@@ -28,7 +28,7 @@ class Job < ActiveRecord::Base
   attr_accessor :nolog # Flag, set to true to inactivate job activity creation
 
   after_create :create_log_entry
-  after_create :create_initial_flow_steps
+  after_create :create_flow_steps
   before_validation :default_values
   before_validation :init_flow_parameters
 
@@ -399,11 +399,6 @@ class Job < ActiveRecord::Base
   # Returns current flow step object
   def flow_step
     FlowStep.job_flow_step(job_id: id, flow_step: current_flow_step)
-  end
-
-  # Run on create
-  def create_initial_flow_steps
-    create_flow_steps
   end
 
    # Creates flow_steps for flow

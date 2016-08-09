@@ -7,7 +7,7 @@ export default Ember.Controller.extend({
 
   pdfUrl: Ember.computed('model', function() {
     var token =  this.get('session.data.authenticated.token');
-    return ENV.APP.serviceURL + '/assets/job_pdf/' + this.get('model.id') + '.pdf?token=' + token;
+    return ENV.APP.serviceURL + '/assets/file?file_path=' + this.get('model.flow_step.parsed_params.pdf_file_path') + '&token=' + token;
   }),
 
   flowStepItems: Ember.computed('model.flow', 'model.flow_steps', function(){
