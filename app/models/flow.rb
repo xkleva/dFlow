@@ -2,6 +2,7 @@ class Flow < ActiveRecord::Base
   default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
 
   validate :validate_json
+  validate :validate_steps
 
   def as_json(options={})
     {
@@ -55,48 +56,74 @@ class Flow < ActiveRecord::Base
   def generate_flow_steps(job_id)
     @flow_steps = []
     steps_array.each do |flow_step|
-      params = flow_step.dup
-      params["job_id"] = job_id
-      params["params"] = params["params"].to_json
-      @flow_steps << FlowStep.new(params)
+      @flow_steps << FlowStep.new_from_json(json: flow_step, job_id: job_id, flow: self)
     end
   end
 
-  def validate
+  def validate_steps
     # Validate each step independently
     if !@flow_steps
       generate_flow_steps(0)
     end
     @flow_steps.each do |fs|
       if !fs.valid?
-        @errors << fs.errors
+        fs.errors.full_messages.each do |error_msg|
+          errors.add(:steps, error_msg)
+        end
       end
     end
 
     step_nrs = steps_array.map{|x| x["step"]}
     goto_true_nrs = steps_array.map{|x| x["goto_true"]}.compact
-    goto_false_nrs = steps_array.map{|x| x["goto_false"]}.compact
+
+    # Validate that start step exists
+    start_steps = @flow_steps.select{|fs| fs.is_first_step}
+    if start_steps.count < 1
+      errors.add(:steps, "No start step exist (add the param 'start': true to first step)")
+    end
+    if start_steps.count > 1
+      errors.add(:steps, "Only one start step is allowed (remove param 'start': true from one of steps: #{start_steps.map{|fs| fs.step}.inspect})")
+    end
     
-    # Validate each step nr
+    # Validate that end step exists
+    end_steps = @flow_steps.select{|fs| fs.is_last_step}
+    if end_steps.count < 1
+      errors.add(:steps, "No end step exist (add the param 'end': true to last step)")
+    end
+    if end_steps.count > 1
+      errors.add(:steps, "Only one end step is allowed (remove param 'end': true from one of steps: #{end_steps.map{|fs| fs.step}.inspect})")
+    end
+
+    # Validate each step nr uniqueness
     if step_nrs.count != step_nrs.uniq.count
-      @errors << {step: "Duplicated step nrs exist!"}
+      multiple_step_nrs = step_nrs.select{ |e| step_nrs.count(e) > 1 }.uniq
+      errors.add(:steps, "Duplicated step nrs exist: #{multiple_step_nrs.inspect}")
+    end
+
+    # Validate each goto_true uniqueness
+    if goto_true_nrs.count != goto_true_nrs.uniq.count
+      multiple_goto_true_nrs = goto_true_nrs.select{ |e| goto_true_nrs.count(e) > 1 }.uniq
+      errors.add(:steps, "Duplicated goto_true nrs exist: #{multiple_goto_true_nrs.inspect}")
+    end
+
+    # Validate number of goto_true equals step nrs -1
+    if step_nrs.count - goto_true_nrs.count != 1
+      errors.add(:steps, "All steps not pointed to by goto")
     end
 
     # Validate existence of step nr from references
     if (goto_true_nrs - step_nrs).present?
-      @errors << {step: "Given goto_true step does not exist! #{(goto_true_nrs - step_nrs).inspect}"}
-    end
-
-    if (goto_false_nrs - step_nrs).present?
-      @errors << {step: "Given goto_false step does not exist! #{(goto_false_nrs - step_nrs).inspect}"}
+      errors.add(:steps, "Given goto_true step does not exist: #{(goto_true_nrs - step_nrs).inspect}")
     end
 
     # Check for circular references
     steps_array.each do |flow_step|
       if flow_step_is_before?(flow_step, flow_step["step"])
-        @errors << {step: "Circular reference exists for step: #{flow_step["step"]}"}
+        errors.add(:steps, "Circular reference exists for step: #{flow_step["step"]}")
       end
     end
+
+   @flow_steps = nil
 
   end
 

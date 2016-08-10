@@ -4,11 +4,35 @@ class FlowStep < ActiveRecord::Base
   belongs_to :flow
 
   validates :step, uniqueness: {scope: [:job_id, :aborted_at]}
-  validates :step, numericality: { only_integer: true }
+  validates :step, numericality: { only_integer: true}
 
+  validate :step_differs_from_goto
   validates :process, presence: true
   validate :process_in_list
   validate :validate_params
+  validate :validate_variables
+  validates :description, presence: true
+  validates :goto_true, numericality: { only_integer: true}, unless: :is_last_step
+  validates :goto_true, absence: true, if: :is_last_step
+
+  def step_differs_from_goto
+    self.step != self.goto_true
+  end
+
+  def is_last_step
+    params_hash['end'] == true
+  end
+
+  def is_first_step
+    params_hash['start'] == true
+  end
+
+  def self.new_from_json(json:, job_id: nil, flow:)
+    json["flow_id"] = flow.id
+    json["job_id"] = job_id
+    json["params"] = json["params"].to_json
+    return FlowStep.new(json)
+  end
 
   def as_json(opts={})
     super.merge({
@@ -33,7 +57,7 @@ class FlowStep < ActiveRecord::Base
     if process_object && process_object["required_params"]
       process_object["required_params"].each do |param|
         if !params_hash.has_key?(param)
-          errors.add(:params, "#{step} Missing mandatory param #{param}")
+          errors.add(:params, "Step: #{step} - Missing mandatory param #{param}")
         end
       end
     end
@@ -42,7 +66,7 @@ class FlowStep < ActiveRecord::Base
   # Check if status is in list of configured sources
   def process_in_list
     if !SYSTEM_DATA["processes"].map { |x| x["code"] }.include?(process)
-      errors.add(:process, "#{process} not included in list of valid statuses")
+      errors.add(:process, "Step: #{step} - #{process} not included in list of valid statuses")
     end
   end
 
@@ -268,6 +292,15 @@ class FlowStep < ActiveRecord::Base
       end
     end
     return new_hash
+  end
+
+  def validate_variables
+    self.job = Job.new(id: 0) unless self.job
+    begin
+      self.parsed_params
+    rescue KeyError => e
+      errors.add(:params, "Step: #{step} - Undefined variable #{e}")
+    end
   end
 
 

@@ -485,18 +485,22 @@ class Job < ActiveRecord::Base
  
   # Substitutes defined variable names according to map
   def substitute_parameters(string)
-    string % {
-      job_id: self.id, 
-      page_count: self.page_count || '-1', 
-      package_name: self.package_name, 
-      copyright: self.copyright.to_s,
-      chron_1: self.metadata_value('chron_1_value') || 'undefined',
-      chron_2: self.metadata_value('chron_2_value') || 'undefined',
-      chron_3: self.metadata_value('chron_3_value') || 'undefined',
-      ordinality_1: self.metadata_value('ordinal_1_value') || 'undefined',
-      ordinality_2: self.metadata_value('ordinal_2_value') || 'undefined',
-      ordinality_3: self.metadata_value('ordinal_3_value') || 'undefined'
-    }.merge(self.flow_parameters_hash.symbolize_keys)
+    string % Job.variables_hash(self).merge(self.flow_parameters_hash.symbolize_keys)
+  end
+
+  def self.variables_hash(job)
+    {
+      job_id: job.id, 
+      page_count: job.page_count || '-1', 
+      package_name: job.package_name, 
+      copyright: job.copyright.to_s,
+      chron_1: job.metadata_value('chron_1_value') || 'undefined',
+      chron_2: job.metadata_value('chron_2_value') || 'undefined',
+      chron_3: job.metadata_value('chron_3_value') || 'undefined',
+      ordinality_1: job.metadata_value('ordinal_1_value') || 'undefined',
+      ordinality_2: job.metadata_value('ordinal_2_value') || 'undefined',
+      ordinality_3: job.metadata_value('ordinal_3_value') || 'undefined'
+    }
 
   end
 end

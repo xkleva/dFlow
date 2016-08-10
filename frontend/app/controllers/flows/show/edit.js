@@ -13,7 +13,7 @@ export default Ember.Controller.extend({
       this.store.save('flow', model).then(function(){
         that.set('savingMessage', 'Sparat!');
       },
-      function(){
+      function(response){
         that.set('savingMessage', 'Kunde inte spara!');
       }); 
     }
