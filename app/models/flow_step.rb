@@ -47,7 +47,7 @@ class FlowStep < ActiveRecord::Base
   end
 
   def process_object
-    @process_object ||= SYSTEM_DATA["processes"].find { |x| x["code"] == process}
+    @process_object ||= (SYSTEM_DATA["processes"].find { |x| x["code"] == process}) || {}
   end
 
   def params_hash
