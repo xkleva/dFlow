@@ -122,7 +122,7 @@ class Api::JobsController < Api::ApiController
       job.id = params[:force_id]
     end
 
-    if (!validate_only && !job.save) || (validate_only && !job.valid?)
+    if (!validate_only && !job.save!) || (validate_only && !job.valid?)
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not save job.", job.errors)
       render_json
       return
