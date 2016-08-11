@@ -11,6 +11,7 @@ export default Ember.Controller.extend({
       var that = this;
       this.set('savingMessage', 'Sparar...');
       this.store.save('flow', model).then(function(){
+        that.set('errors', null);
         that.set('savingMessage', 'Sparat!');
         that.send('refreshApplication');
       },

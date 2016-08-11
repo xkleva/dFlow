@@ -298,7 +298,8 @@ class FlowStep < ActiveRecord::Base
   end
 
   def validate_variables
-    self.job = Job.new(id: 0) unless self.job
+    self.job = Job.new(id: 0, flow: flow) unless self.job
+    job.flow_parameters = flow.parameters_hash.merge(job.flow_parameters_hash).to_json
     begin
       self.parsed_params
     rescue KeyError => e
