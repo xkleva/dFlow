@@ -204,12 +204,10 @@ class Flow < ActiveRecord::Base
       # Abort old flow_steps
       flow_step.abort!
     end
-    Rails.logger.error "ADAKMDKOAFNKOFAKNFAKNFAKONJFAWJIONFAWEJPIN"
     generate_flow_steps(job.id)
     Job.transaction do
       FlowStep.transaction do
         @flow_steps.each do |flow_step|
-          Rails.logger.error "FEL: #{flow_step.step}"
           flow_step.save!
           if flow_step.step == step_nr
             flow_step.job = job

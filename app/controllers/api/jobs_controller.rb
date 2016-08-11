@@ -234,7 +234,7 @@ class Api::JobsController < Api::ApiController
     else
       recreate_flow = false
     end
-    if job.unquarantine!(step_nr: params[:step], recreate_flow: recreate_flow)
+    if job.unquarantine!(step_nr: params[:step].to_i, recreate_flow: recreate_flow)
       @response[:job] = job
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not unquarantine job.", job.errors)
@@ -247,13 +247,13 @@ class Api::JobsController < Api::ApiController
     job = Job.find_by_id(params[:id])
     job.created_by = @current_user.username
     if params[:recreate_flow].to_s == 'true'
-      if job.recreate_flow(step_nr: params[:step])
+      if job.recreate_flow(step_nr: params[:step].to_i)
         @response[:job] = job
       else
         error_msg(ErrorCodes::OBJECT_ERROR, "Could not update flow step for job", job.errors)
       end
     else
-      if job.new_flow_step!(step_nr: params[:step])
+      if job.new_flow_step!(step_nr: params[:step].to_i)
         @response[:job] = job
       else
         error_msg(ErrorCodes::OBJECT_ERROR, "Could not update flow step for job", job.errors)

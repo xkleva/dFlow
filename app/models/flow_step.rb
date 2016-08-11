@@ -33,8 +33,7 @@ class FlowStep < ActiveRecord::Base
     json["flow_id"] = flow.id
     json["job_id"] = job_id
     json["params"] = json["params"].to_json
-    fs = FlowStep.new(json)
-    return fs
+    return FlowStep.new(json)
   end
 
   def as_json(opts={})

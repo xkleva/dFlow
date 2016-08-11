@@ -91,7 +91,7 @@ class QueueManager
     params = params.symbolize_keys
     params[:job] = job
     params[:logger] = logger
-    process_object.run(params)
+    process_object.run(params.except!(:start, :end))
     job.flow_step.finish!(username: job.flow_step.process)
   rescue StandardError => e
     logger.fatal e.message + " " + e.backtrace.inspect
