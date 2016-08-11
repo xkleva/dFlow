@@ -104,15 +104,19 @@ class Job < ActiveRecord::Base
   def quarantine!(msg:)
     return if self.quarantined
     self.quarantined = true
-    self.save
+    self.save(validate: false)
     create_log_entry("QUARANTINE", msg)
   end
 
   # Unsets quarantine flag for job
-  def unquarantine!(step_nr:)
+  def unquarantine!(step_nr:, recreate_flow: false)
     return if !self.quarantined
     self.update_attribute('quarantined', false)
-    reset_flow_steps(step_nr: step_nr)
+    if recreate_flow
+      flow.apply_flow(job: self, step_nr: step_nr)
+    else
+      reset_flow_steps(step_nr: step_nr)
+    end
     create_log_entry("UNQUARANTINE","_UNQUARANTINED")
   end
 

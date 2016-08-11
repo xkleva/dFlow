@@ -36,7 +36,7 @@ class Flow < ActiveRecord::Base
   end
 
   def steps_array
-    return [] if steps.blank? || parameters == "null"
+    return [] if steps.blank? || steps == "null"
     @steps_array ||= JSON.parse(steps)
   end
 
@@ -181,7 +181,7 @@ class Flow < ActiveRecord::Base
   end
 
   def step_nr_valid?(step_nr)
-    steps_array.map{|x| x["step"]}.include?(step_nr)
+    steps_array.map{|x| x["step"]}.include?(step_nr.to_i)
   end
 
   # Create flow steps for job id

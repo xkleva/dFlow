@@ -229,7 +229,12 @@ class Api::JobsController < Api::ApiController
   def unquarantine
     job = Job.find_by_id(params[:id])
     job.created_by = @current_user.username
-    if job.unquarantine!(step_nr: params[:step])
+    if params[:recreate_flow] = 'true'
+      recreate_flow = true
+    else
+      recreate_flow = false
+    end
+    if job.unquarantine!(step_nr: params[:step], recreate_flow: recreate_flow)
       @response[:job] = job
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "Could not unquarantine job.", job.errors)
