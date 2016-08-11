@@ -30,9 +30,10 @@ class Job < ActiveRecord::Base
   after_create :create_log_entry
   after_create :create_flow_steps
   before_validation :default_values
-  before_validation :init_flow_parameters
+  after_validation :init_flow_parameters
 
   before_validation :set_treenode_ids
+  validate :validate_flow
 
   def as_json(options = {})
     if !id 
@@ -80,6 +81,13 @@ class Job < ActiveRecord::Base
     end
 
     return json
+  end
+
+  def validate_flow
+    flow.validate
+    flow.errors.full_messages.each do |msg|
+      errors.add(:flow, msg)
+    end
   end
 
   def treenode_breadcrumb(params)
@@ -421,6 +429,9 @@ class Job < ActiveRecord::Base
       flow = Flow.find_by_name(flow_name)
       if !flow
         raise StandardError, "No flow found with name #{flow_name}"
+      end
+      if !flow.valid?
+        raise StandardError, "Fow is invalid: #{flow_name} #{flow.errors.full_messages.inspect}"
       end
       self.update_attribute('flow', flow)
       self.update_attribute('flow_parameters', flow_parameters_hash.merge(flow.parameters_hash).to_json)

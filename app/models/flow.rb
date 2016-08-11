@@ -58,7 +58,7 @@ class Flow < ActiveRecord::Base
   def generate_flow_steps(job_id)
     @flow_steps = []
     steps_array.each do |flow_step|
-      @flow_steps << FlowStep.new_from_json(json: flow_step, job_id: job_id, flow: self)
+      @flow_steps << FlowStep.new_from_json(json: flow_step.dup, job_id: job_id, flow: self)
     end
   end
 
@@ -204,10 +204,12 @@ class Flow < ActiveRecord::Base
       # Abort old flow_steps
       flow_step.abort!
     end
+    Rails.logger.error "ADAKMDKOAFNKOFAKNFAKNFAKONJFAWJIONFAWEJPIN"
     generate_flow_steps(job.id)
     Job.transaction do
       FlowStep.transaction do
         @flow_steps.each do |flow_step|
+          Rails.logger.error "FEL: #{flow_step.step}"
           flow_step.save!
           if flow_step.step == step_nr
             flow_step.job = job

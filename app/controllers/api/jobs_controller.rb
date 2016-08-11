@@ -112,7 +112,9 @@ class Api::JobsController < Api::ApiController
     validate_only = params[:validate_only]
     job_params = params[:job]
     job_params[:metadata] = job_params[:metadata].to_json
-    job_params[:flow_parameters] = job_params[:parameters].to_json if job_params.has_key?(:flow_parameters)
+    if job_params.has_key?(:flow_parameters)
+      job_params[:flow_parameters] = job_params[:flow_parameters].to_json
+    end
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
     job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :current_flow_step, :package_location, :flow_parameters))

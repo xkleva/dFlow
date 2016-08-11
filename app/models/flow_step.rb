@@ -33,7 +33,8 @@ class FlowStep < ActiveRecord::Base
     json["flow_id"] = flow.id
     json["job_id"] = job_id
     json["params"] = json["params"].to_json
-    return FlowStep.new(json)
+    fs = FlowStep.new(json)
+    return fs
   end
 
   def as_json(opts={})
@@ -220,7 +221,7 @@ class FlowStep < ActiveRecord::Base
 
   def abort!
     self.aborted_at = DateTime.now
-    self.save!
+    self.save!(validate: false)
   end
 
   # Forces att timestamps to be set for given flow_step
