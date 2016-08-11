@@ -132,10 +132,16 @@ class Flow < ActiveRecord::Base
     end
 
     # Validate that parameters only contain allowed characters
+    parameter_names.each do |name|
+      unless name =~ /^[a-z0-9_-]+$/
+        errors.add(:parameters, "Invalid parameter name: #{name} only [a-z] [0-9] [- _] are allowed")
+      end
+    end
     
   end
 
   def validate_folder_paths
+
   end
 
   # Returns true if given step_nr occurs anywhere below flow_step
