@@ -3,6 +3,8 @@ class Flow < ActiveRecord::Base
 
   validate :validate_json
   validate :validate_steps
+  validate :validate_parameters
+  validate :validate_folder_paths
 
   def as_json(options={})
     {
@@ -118,6 +120,22 @@ class Flow < ActiveRecord::Base
     end
     @flow_steps = nil
 
+  end
+
+  def validate_parameters
+    parameter_names = parameters_array.map{|parameter| parameter['name']}
+
+    # Validate uniqueness of parameter names
+    if parameter_names.count != parameter_names.uniq.count
+      multiple_parameter_names = parameter_names.select{ |e| parameter_names.count(e) > 1 }.uniq
+      errors.add(:parameters, "Duplicated parameter names exist: #{multiple_parameter_names.inspect}")
+    end
+
+    # Validate that parameters only contain allowed characters
+    
+  end
+
+  def validate_folder_paths
   end
 
   # Returns true if given step_nr occurs anywhere below flow_step

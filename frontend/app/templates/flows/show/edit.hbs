@@ -19,12 +19,26 @@
       {{json-editor json=model.parameters modes=modes mode=parameters_mode name='parameters' id='jsoneditor3'}}
     </div>
   </div>
+  {{#if errors.parameters}}
+    <div class="col-sm-offset-2 alert alert-danger">
+      {{#each errors.parameters as |error|}}
+        {{error}}<br/>
+      {{/each}}
+    </div>
+  {{/if}}
   <div class="form-group">
     <label class="control-label col-sm-2">Jobb-kataloger</label>
     <div class="col-sm-10">
       {{json-editor json=model.folder_paths modes=modes mode=folder_paths_mode name='folder_paths' id='jsoneditor2'}}
     </div>
   </div>
+  {{#if errors.folder_paths}}
+    <div class="col-sm-offset-2 alert alert-danger">
+      {{#each errors.folder_paths as |error|}}
+        {{error}}<br/>
+      {{/each}}
+    </div>
+  {{/if}}
   <div class="form-group">
     <label class="control-label col-sm-2">Flödessteg</label>
     <div class="col-sm-10">

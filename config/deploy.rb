@@ -1,10 +1,9 @@
 # config valid only for current version of Capistrano
-lock '3.4.1'
 
 set :application, 'dFlow'
 set :repo_url, 'https://github.com/ub-digit/dFlow.git'
 
-set :rvm_ruby_version, '2.1.5'      # Defaults to: 'default'
+set :rvm_ruby_version, '2.3.1'      # Defaults to: 'default'
 
 # Returns config for current stage assigned in config/deploy.yml
 def deploy_config
