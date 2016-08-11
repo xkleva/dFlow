@@ -17,9 +17,9 @@
   {{/if}}
 </td>
 <td>
-  {{#each flowStep.params_array as |param|}}
-    <strong>{{param.key}}</strong>: {{param.value}}<br/>
-  {{/each}}
+  {{#each-in flowStep.params as |key value|}}
+    <strong>{{key}}</strong>: {{value}}<br/>
+  {{/each-in}}
 </td>
 <td>{{flowStep.condition}}</td>
 <td>{{flowStep.status}}</td>

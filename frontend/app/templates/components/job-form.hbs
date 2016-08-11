@@ -90,9 +90,9 @@
             <div class="col-xs-2 form-control-static">{{step.process}}</div>
             <div class="col-xs-3 form-control-static">{{step.condition}}</div>
             <div class="col-xs-4 form-control-static">
-              {{#each step.params_array as |param|}}
-                <strong>{{param.key}}</strong>: {{param.value}}<br/>
-              {{/each}}
+              {{#each-in step.params as |key value|}}
+                <strong>{{key}}</strong>: {{value}}<br/>
+              {{/each-in}}
             </div>
             </div>
           {{/each}}

@@ -12,8 +12,10 @@ export default Ember.Controller.extend({
       this.set('savingMessage', 'Sparar...');
       this.store.save('flow', model).then(function(){
         that.set('savingMessage', 'Sparat!');
+        that.send('refreshApplication');
       },
       function(response){
+        that.set('errors', response.error.errors);
         that.set('savingMessage', 'Kunde inte spara!');
       }); 
     }

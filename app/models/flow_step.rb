@@ -4,7 +4,7 @@ class FlowStep < ActiveRecord::Base
   belongs_to :flow
 
   validates :step, uniqueness: {scope: [:job_id, :aborted_at]}
-  validates :step, numericality: { only_integer: true}
+  validates :step, numericality: { only_integer: true, allow_nil: true}, presence: true
 
   validate :step_differs_from_goto
   validates :process, presence: true
@@ -12,11 +12,13 @@ class FlowStep < ActiveRecord::Base
   validate :validate_params
   validate :validate_variables
   validates :description, presence: true
-  validates :goto_true, numericality: { only_integer: true}, unless: :is_last_step
+  validates :goto_true, numericality: { only_integer: true, allow_nil: true}, presence: true, unless: :is_last_step
   validates :goto_true, absence: true, if: :is_last_step
 
   def step_differs_from_goto
-    self.step != self.goto_true
+    if self.step == self.goto_true
+      errors.add(:steps, "goto_true can't point to itself")
+    end
   end
 
   def is_last_step

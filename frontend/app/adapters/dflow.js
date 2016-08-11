@@ -55,7 +55,6 @@ export default Ember.Object.extend({
   },
   send: function(url, method, data) {
     var that = this;
-    console.log(data);
     return Ember.$.ajax({
       url: url,
       method: method,

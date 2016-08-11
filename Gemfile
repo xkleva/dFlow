@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 
-ruby "2.1.5"
+ruby "2.3.1"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'
 # Use sqlite3 as the database for Active Record
@@ -74,9 +74,6 @@ group :development do
   gem 'capistrano-passenger'
   gem 'capistrano-bundler', '~> 1.1.2'
   gem 'capistrano-rvm'
-  #gem 'capistrano-rvm'
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  # gem 'spring'
 end
 
 gem 'unicode', '~> 0.4.4.2'

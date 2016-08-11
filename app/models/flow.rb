@@ -65,13 +65,6 @@ class Flow < ActiveRecord::Base
     if !@flow_steps
       generate_flow_steps(0)
     end
-    @flow_steps.each do |fs|
-      if !fs.valid?
-        fs.errors.full_messages.each do |error_msg|
-          errors.add(:steps, error_msg)
-        end
-      end
-    end
 
     step_nrs = steps_array.map{|x| x["step"]}
     goto_true_nrs = steps_array.map{|x| x["goto_true"]}.compact
@@ -84,7 +77,7 @@ class Flow < ActiveRecord::Base
     if start_steps.count > 1
       errors.add(:steps, "Only one start step is allowed (remove param 'start': true from one of steps: #{start_steps.map{|fs| fs.step}.inspect})")
     end
-    
+
     # Validate that end step exists
     end_steps = @flow_steps.select{|fs| fs.is_last_step}
     if end_steps.count < 1
@@ -116,14 +109,14 @@ class Flow < ActiveRecord::Base
       errors.add(:steps, "Given goto_true step does not exist: #{(goto_true_nrs - step_nrs).inspect}")
     end
 
-    # Check for circular references
-    steps_array.each do |flow_step|
-      if flow_step_is_before?(flow_step, flow_step["step"])
-        errors.add(:steps, "Circular reference exists for step: #{flow_step["step"]}")
+    @flow_steps.each do |fs|
+      if !fs.valid?
+        fs.errors.full_messages.each do |error_msg|
+          errors.add(:steps, "Step: #{fs.step.inspect} - #{error_msg}")
+        end
       end
     end
-
-   @flow_steps = nil
+    @flow_steps = nil
 
   end
 

@@ -94,6 +94,9 @@ export default Ember.Route.extend(ApplicationRouteMixin, {
     },
     invalidateSession: function(){
       this.get('session').invalidate();
+    },
+    refreshApplication: function(){
+      this.refresh();
     }
   }
 });
