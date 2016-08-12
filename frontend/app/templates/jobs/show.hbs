@@ -248,6 +248,9 @@
         {{/each}}
         </tbody>
         </table>
+            {{#each model.package_metadata.images as |imageMetadata|}}
+              {{dscribe-wrapper imageMetadata=imageMetadata}}
+            {{/each}}
         </div>
       </div>
     </div>

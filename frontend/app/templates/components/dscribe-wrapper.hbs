@@ -1,0 +1,19 @@
+<header><h2>{{item.title}}</h2></header>
+{{#if item.partnerPage}}
+
+{{/if}}
+{{item.physical}}
+<br/>
+<div>
+<div class="btn-group-vertical vtop" role="group" aria-label="...">
+  <button {{bind-attr class=":btn :btn-default item.isUndefined:active"}} {{action 'setPhysical' item 'undefined'}} title="undefined"><i class="fa fa-ban"></i>
+</button>
+<button {{bind-attr class=":btn :btn-default item.isLeftPage:active"}} {{action 'setPhysical' item 'LeftPage'}} title="LeftPage"><i class="fa fa-align-right" ></i></button>
+  <button {{bind-attr class=":btn :btn-default item.isRightPage:active"}} {{action 'setPhysical' item 'RightPage'}} title="RightPage"><i class="fa fa-align-left"></i></button>
+  
+  <button {{bind-attr class=":btn :btn-default item.isDoublePage:active"}} {{action 'setPhysical' item 'DoublePage'}} title="DoublePage"><i class="fa fa-arrows-h"></i>
+</button>
+<button {{bind-attr class=":btn :btn-primary"}} {{bind-attr disabled=item.isSameSelectionAsPartner}} {{action 'copyFrame' item item.partnerPage}} title="Copy frames"><i class="fa fa-copy"></i></button>
+</div>
+  <img src="data:image/jpeg;base64,{{item.small}}">
+</div>
