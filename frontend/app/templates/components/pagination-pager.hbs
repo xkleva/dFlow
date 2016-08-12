@@ -15,7 +15,7 @@
       <li class="disabled spacer"><span>...</span></li>
     {{else}}
       <li class="{{if page.active 'active'}}">
-        {{#link-to (query-params page=page.page.page) class="btn btn-default"}}{{page.page}}{{/link-to}}
+        {{#link-to (query-params page=page.page) class="btn btn-default"}}{{page.page}}{{/link-to}}
       </li>
     {{/if}}
   {{/each}}

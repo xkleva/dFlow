@@ -54,7 +54,7 @@ class Job < ActiveRecord::Base
         quarantined: quarantined,
         main_status: main_status,
         is_processing: is_processing?,
-        status: flow_step.description,
+        status: flow_step ? flow_step.description : "",
         comment: comment,
         object_info: object_info
       }
@@ -70,7 +70,7 @@ class Job < ActiveRecord::Base
         main_status: main_status,
         files: files_list,
         is_periodical: is_periodical,
-        status: flow_step.description,
+        status: flow_step ? flow_step.description : "",
         flow_step: flow_step,
         flow_steps: flow_steps,
         publication_logs: publication_logs,
@@ -376,12 +376,14 @@ class Job < ActiveRecord::Base
   end
 
   def is_processing?
+    return false if !flow_step
     return true if state == "WAITFOR"
     return true if state == "PROCESS" && flow_step.is_active? && flow_step.running?
     false
   end
 
   def is_pending?
+    return false if !flow_step
     state == "PROCESS" && flow_step.is_active? && flow_step.pending?
   end
 

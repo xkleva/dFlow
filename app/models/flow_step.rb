@@ -172,7 +172,7 @@ class FlowStep < ActiveRecord::Base
     # Skip step if conditions are not met
     if !condition_met?
       self.finished_at = DateTime.now
-      self.save!
+      self.save!(validate: false)
       if username
         job.created_by = username
       end
@@ -184,7 +184,7 @@ class FlowStep < ActiveRecord::Base
       end
     else
       self.entered_at = DateTime.now
-      self.save!
+      self.save!(validate: false)
       job.nolog = true
       job.set_current_flow_step(self)
       job.update_attribute('state', main_state)
@@ -194,7 +194,7 @@ class FlowStep < ActiveRecord::Base
   def start!(username: nil)
     return true if started?
     self.started_at = DateTime.now
-    self.save!
+    self.save!(validate: false)
     job.set_current_flow_step(self)
     if username
       job.created_by = username
@@ -206,7 +206,7 @@ class FlowStep < ActiveRecord::Base
   def finish!(username: nil)
     return true if finished?
     self.finished_at = DateTime.now
-    self.save!
+    self.save!(validate: false)
     if username
       job.created_by = username
     end
@@ -235,7 +235,7 @@ class FlowStep < ActiveRecord::Base
       self.finished_at = DateTime.now
     end
 
-    self.save!
+    self.save!(validate: false)
   end
 
   # resets all timestams for given flow_step
@@ -245,7 +245,7 @@ class FlowStep < ActiveRecord::Base
     self.finished_at = nil
     self.status = ""
 
-    self.save!
+    self.save!(validate: false)
   end
 
   # Returns main_state based on process type and location in flow
