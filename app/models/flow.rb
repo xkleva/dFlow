@@ -1,10 +1,10 @@
 class Flow < ActiveRecord::Base 
   default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
 
-  validate :validate_json
-  validate :validate_steps
-  validate :validate_parameters
-  validate :validate_folder_paths
+  validate :validate_json, on: :update
+  validate :validate_steps, on: :update
+  validate :validate_parameters, on: :update
+  validate :validate_folder_paths, on: :update
 
   def as_json(options={})
     {
