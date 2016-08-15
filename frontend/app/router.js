@@ -13,6 +13,7 @@ Router.map(function() {
       this.route('edit', {path: '/edit/:id'});
       this.route('jobs', function() {
         this.route('edit', {path: '/edit/:id'});
+        this.route('import');
         this.route('source', function() {
           this.route('new');
         });

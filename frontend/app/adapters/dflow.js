@@ -10,7 +10,8 @@ export default Ember.Object.extend({
     job: { path: 'api/jobs'},
     process: { path: 'api/process', singular: 'job'},
     flow: { path: 'api/flows'},
-    queue: {path: 'api/queued_jobs', singular: 'flor_step', plural: 'flow_steps'}
+    queue: {path: 'api/queued_jobs', singular: 'flow_step', plural: 'flow_steps'},
+    script: {path: 'api/script', singular: 'script', plural: 'scripts'}
   },
   sessionHeaders: function() {
     var session = this.get('session');

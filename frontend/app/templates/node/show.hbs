@@ -25,6 +25,7 @@
     {{#if session.data.authenticated.can_manage_tree}}
     {{#link-to 'node.show.new' class="btn btn-default navbar-btn"}}{{t 'nodes.new'}}{{/link-to}}
     {{#link-to 'node.show.jobs.source' class="btn btn-default navbar-btn"}}{{t 'jobs.new'}}{{/link-to}}
+    {{#link-to 'node.show.jobs.import' class="btn btn-default navbar-btn"}}{{t 'jobs.import'}}{{/link-to}}
     {{/if}}
     {{/unless}}
     {{#if isRoot}}

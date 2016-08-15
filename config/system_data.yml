@@ -136,5 +136,13 @@ processes:
   state: PROCESS
   required_params:
     - new_package_location
+- code: IMPORT_JOBS
+  state: PROCESS
+  required_params:
+    - file_path
+    - treenode_id
+    - copyright
+    - flow_id
+    - source_name
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"

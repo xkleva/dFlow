@@ -54,6 +54,8 @@ Rails.application.routes.draw do
 
     resources :flows
 
+    post 'script', to: 'script#create'
+    get 'script/:id', to: 'script#show'
   end
 
 end
