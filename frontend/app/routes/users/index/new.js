@@ -4,6 +4,10 @@ export default Ember.Route.extend({
   model: function() {
     return {}; // Data to include in create form
   },
+  setupController: function(controller, model) {
+    controller.set('model', model);
+    controller.set('error', null);
+  },
   actions: {
     createUser: function(model) {
       var that = this; // To be used in nested functions

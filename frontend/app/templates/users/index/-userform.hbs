@@ -4,17 +4,35 @@
   </div>
 {{/if}}
 
-<label class="col-xs-12">{{t 'users.username'}}
-  {{input type="text" classBinding=":form-control :col-xs-6" value=model.username}}
-</label>
+<div class="form-group {{if error.errors.username 'has-error'}}">
+  <label class="col-xs-12 control-label">{{t 'users.username'}}
+    {{input type="text" classBinding=":form-control :col-xs-6" value=model.username}}
+  </label>
+</div>
 
-<label class="col-xs-12">{{t 'users.name'}}
-  {{input type="text" classBinding=":form-control :col-xs-6" value=model.name}}
-</label>
+<div class="form-group {{if error.errors.name 'has-error'}}">
+  <label class="col-xs-12 control-label">{{t 'users.name'}}
+    {{input type="text" classBinding=":form-control :col-xs-6" value=model.name}}
+  </label>
+</div>
 
-<label class="col-xs-12">{{t 'users.email'}}
-  {{input type="text" classBinding=":form-control :col-xs-6" value=model.email}}
-</label>
+<div class="form-group {{if error.errors.email 'has-error'}}">
+  <label class="col-xs-12 control-label">{{t 'users.email'}}
+    {{input type="text" classBinding=":form-control :col-xs-6" value=model.email}}
+  </label>
+</div>
+
+<div class="form-group {{if error.errors.password 'has-error'}}">
+  <label class="col-xs-12 control-label">{{t 'users.password'}}
+    {{input type="password" classBinding=":form-control :col-xs-6" value=model.password}}
+  </label>
+</div>
+
+<div class="form-group {{if error.errors.password_confirmation 'has-error'}}">
+  <label class="col-xs-12 control-label">{{t 'users.password_confirmation'}}
+    {{input type="password" classBinding=":form-control :col-xs-6" value=model.password_confirmation}}
+  </label>
+</div>
 
 <label class="col-xs-12">{{t 'users.role'}}
   {{#x-select value=model.role class="form-control"}}

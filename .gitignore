@@ -38,8 +38,6 @@ last_commit.txt
 #Ignore nbproject
 nbproject/
 
-config/passwd
-
 # Ignore test coverage
 coverage/
 

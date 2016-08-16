@@ -5,11 +5,26 @@ class User < ActiveRecord::Base
   validates :username, :uniqueness => {:scope => :deleted_at, :case_sensitive => false}
   validates :name, :presence => true
   validates :role, :presence => true
+  validates :password, confirmation: true
   validate :role_valid
   DEFAULT_PASSWD_FILE = "#{Rails.root}/config/passwd"
   DEFAULT_TOKEN_EXPIRE = 1.day
   has_many :access_tokens
+  before_save :encrypt_password
 
+  def as_json(options = {})
+    data = super
+    data.delete("password")
+    data
+  end
+  
+  def encrypt_password
+    # Only encrypt password if it exists and is not already encrypted
+    if self.password.present? && !BCrypt::Password.valid_hash?(self.password)
+      self.password = BCrypt::Password.create(self.password)
+    end
+  end
+  
   # Validates that role exists in config file
   def role_valid
     if (APP_CONFIG["user_roles"]+SYSTEM_DATA["user_roles"]).select{|role| role["name"] == self.role}.empty?
@@ -62,60 +77,19 @@ class User < ActiveRecord::Base
       return token_object.token
     end
 
-    user_file_data = authenticate_get_local_user
-    auth_status = false
-    if user_file_data
-      auth_status = authenticate_local(user_file_data, provided_password)
-    else
-      if APP_CONFIG["external_auth"]
-        auth_status = authenticate_external(provided_password)
-      end
-    end
+    auth_status = authenticate_local(provided_password)
     auth_status
   end
 
-  # Authenticate against external server
-  def authenticate_external(provided_password)
-    uri = URI(APP_CONFIG["external_auth_url"] + "/" + self.username)
-    params = { :password => provided_password}
-    uri.query = URI.encode_www_form(params)
-    res = Net::HTTP.get_response(uri)
-    json_response = JSON.parse(res.body) if res.is_a?(Net::HTTPSuccess)
-    if(json_response["auth"]["yesno"])
+  # Authenticate against passwords in database
+  def authenticate_local(provided_password)
+    if self.password.blank?
+      return false
+    end
+    pass = BCrypt::Password.new(self.password)
+    if(pass == provided_password)
       token_object = generate_token
       return token_object.token
-    end
-    false
-  end
-
-  # Authenticate against local passwd file
-  # If we run in test environment, read filename from Rails.cache to reach a test passwd file
-  # instead of the system one.
-  def authenticate_local(user_file_data, provided_password)
-    if self.username == user_file_data[:username]
-      pass = BCrypt::Password.new(user_file_data[:passhash])
-      if(pass == provided_password)
-        token_object = generate_token
-        return token_object.token
-      end
-    end
-    false
-  end
-
-  # Check if user exists at all in local file
-  def authenticate_get_local_user(filename = DEFAULT_PASSWD_FILE)
-    if Rails.env == "test"
-      filename = Rails.cache.read("test_passwd_filename")
-    end
-    return false if !filename || !File.exist?(filename)
-    File.open(filename, "r:utf-8") do |file|
-      file.each_line do |line| 
-        line.chomp!
-        username,passhash,_fullname,_email,_role = line.split(/:/)
-        if self.username == username
-          return {username: username, passhash: passhash }
-        end
-      end
     end
     false
   end
@@ -134,9 +108,17 @@ class User < ActiveRecord::Base
     File.open(filename, "r:utf-8") do |file|
       file.each_line do |line| 
         line.chomp!
-        username,_passhash,fullname,email,role = line.split(/:/)
-        next if User.find_by_username(username)
-        User.create(username: username, name: fullname, email: email, role: role)
+        username,passhash,fullname,email,role = line.split(/:/)
+        user = User.find_by_username(username)
+        
+        if user
+          # Check if password field is populated, otherwise write the one from the file
+          if user.password.blank?
+            user.update_attribute(:password, passhash)
+          end
+        else
+          User.create(username: username, name: fullname, email: email, role: role)
+        end
       end
     end
   end

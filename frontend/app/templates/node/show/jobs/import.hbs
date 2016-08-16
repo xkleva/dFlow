@@ -1,0 +1,103 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="panel-title">{{t 'jobs.import'}}</div>
+  </div>
+  <div class="panel-body">
+    {{#if process_id}}
+      {{#if isRunning}}
+        <div class="col-xs-12">
+          <label>{{t 'jobs.import_running'}}</label><br/>
+          {{progress.message}}
+        </div>
+      {{/if}}
+      {{#if isDone}}
+        <div class="col-xs-12">
+          <label>{{t 'jobs.import_finished'}}</label><br/>
+          {{progress.message}}
+        </div>
+        <div class="col-xs-12">
+          {{#link-to 'node.show' active=false class="btn btn-primary"}}OK{{/link-to}}
+        </div>
+      {{/if}}
+      {{#if isAborted}}
+        <div class="col-xs-12 alert alert-danger">
+          {{progress.message}}
+        </div>
+        <div class="col-xs-12">
+          <label>{{t 'jobs.import_aborted'}}</label><br/>
+          {{#if jobError}}
+            <div>{{t 'jobs.import_success'}}: {{progress.data.successful}}</div>
+            <div>
+              {{#each progress.data.error as |fail|}}
+              {{t 'jobs.import_file_error_row'}}: {{fail.location}} ({{fail.message}})<br/>
+              {{/each}}
+            </div>
+          {{/if}}
+        </div>
+        <div class="col-xs-12">
+          {{#link-to 'node.show' active=false class="btn btn-default"}}{{t 'nodes.cancel'}}{{/link-to}}
+        </div>
+      {{/if}}
+    {{else}}
+    <div class="form-group">
+      <form {{action 'importFile' model on="submit"}}>
+        {{#if error}}
+          <div class="alert alert-danger">
+            {{error.msg}}
+          </div>
+        {{/if}}
+
+        <div class="col-xs-12 form-group {{if error.errors.source 'has-error'}}">
+          <label class="col-xs-2 control-label">{{t 'jobs.node_name'}}</label>
+          <div class="col-xs-4">{{node.model.name}} ({{node.model.id}})</div>
+        </div>
+
+        <div class="col-xs-12 form-group {{if error.errors.source 'has-error'}}">
+          <label class="col-xs-2 control-label">{{t 'jobs.source'}}</label>
+          <div class="col-xs-4">
+            {{#x-select value=model.source_name class="form-control"}}
+            {{#each sourceSelection as |option|}}
+            {{#x-option value=option.name}}{{option.label}}{{/x-option}}
+            {{/each}}
+            {{/x-select}}
+          </div>
+        </div>
+
+        <div class="col-xs-12 form-group {{if error.errors.flow 'has-error'}}">
+          <label class="col-xs-2 control-label">{{t 'jobs.flow'}}</label>
+          <div class="col-xs-4">
+            {{#x-select value=model.flow_id class="form-control"}}
+            {{#each flowSelection as |option|}}
+            {{#x-option value=option.value}}{{option.label}}{{/x-option}}
+            {{/each}}
+            {{/x-select}}
+          </div> 
+        </div>
+
+        <div class="col-xs-12 form-group {{if error.errors.copyright 'has-error'}}">
+          <label class="col-xs-2 control-label">{{t 'jobs.copyright'}}</label>
+          <div class="col-xs-4">
+            {{#x-select value=model.copyright class="form-control"}}
+              {{#each copyrightSelection as |option|}}
+                {{#x-option value=option.value}}{{option.label}}{{/x-option}}
+              {{/each}}
+            {{/x-select}}
+          </div>
+        </div>
+
+        <div class="col-xs-12 form-group {{if error.errors.file_path 'has-error'}}">
+          <label class="col-xs-2 control-label">{{t 'jobs.file_path'}}</label>
+          <div class="col-xs-4">
+            {{input value=model.file_path class="form-control"}}
+          </div>
+        </div>
+
+        <div class="col-xs-12">
+          <button class="btn btn-primary" {{action 'importFile' model}}>{{t 'jobs.import'}}</button>
+          {{#link-to 'node.show' active=false class="btn btn-default"}}{{t 'nodes.cancel'}}{{/link-to}}
+        </div>
+      </form>
+    </div>
+    {{/if}}
+  </div>
+</div>

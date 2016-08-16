@@ -5,6 +5,10 @@ export default Ember.Route.extend({
   model: function(params) {
     return this.store.find('user', params.id);
   },
+  setupController: function(controller, model) {
+    controller.set('model', model);
+    controller.set('error', null);
+  },
   actions: {
     saveUser: function(model) {
       var that = this; // To be used in nested functions

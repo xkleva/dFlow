@@ -53,7 +53,9 @@ export default {
     update: "Spara ändringar",
     cancel: "Avbryt",
     delete: "Radera användare",
-    confirm_delete: "Är du säker på att du vill radera användaren från systemet?"
+    confirm_delete: "Är du säker på att du vill radera användaren från systemet?",
+    password: "Lösenord",
+    password_confirmation: "Bekräfta lösenord"
   },
   sources: {
     formlabel: "Källa",
@@ -81,6 +83,14 @@ export default {
   },
   jobs: {
     header: "Jobb",
+    import: "Importera jobb",
+    file_path: "Filsökväg",
+    node_name: "Katalognamn",
+    import_success: "Korrekta jobb",
+    import_file_error_row: "Fel på radnummer",
+    import_running: "Import pågår",
+    import_finished: "Import klar",
+    import_aborted: "Import avbruten p g a fel",
     new: "Skapa jobb",
     createsubmit: "Skapa jobb",
     cancel: "Avbryt",

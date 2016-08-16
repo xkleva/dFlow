@@ -14,8 +14,11 @@ class Api::UsersController < Api::ApiController
 
   # Creates a User 
   api :POST, '/users', 'Creates a new User'
-  example '{"user": {"username": "newUser", "name":"John Doe", "email": "testuser@test.com", "role":"ADMIN""}}'
+  example '{"user": {"username": "newUser", "name":"John Doe", "email": "testuser@test.com", "role":"ADMIN"}}'
   def create
+    if params[:user] && params[:user][:password].blank?
+      params[:user].delete(:password)
+    end
     user = User.new(user_params)
 
     # Save user, or return error message
@@ -31,10 +34,13 @@ class Api::UsersController < Api::ApiController
 
   # Updates a User
   api :PUT, '/users/:id', 'Updates a User object'
-  example '{"user": {"username": "newUser", "name":"John Doe", "email": "testuser@test.com", "role":"ADMIN""}}'
+  example '{"user": {"username": "newUser", "name":"John Doe", "email": "testuser@test.com", "role":"ADMIN"}}'
   def update
+    if params[:user] && params[:user][:password].blank?
+      params[:user].delete(:password)
+    end
     user = User.find(params[:id])
-
+    
     if user.update_attributes(user_params)
       @response[:user] = user
     else
@@ -75,7 +81,7 @@ class Api::UsersController < Api::ApiController
   private
   #Kept secret so that admin functionality cannot be ingested
   def user_params
-    params.require(:user).permit(:username, :name, :email, :role)
+    params.require(:user).permit(:username, :name, :email, :role, :password, :password_confirmation)
   end
 
 end
