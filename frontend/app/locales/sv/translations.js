@@ -53,7 +53,9 @@ export default {
     update: "Spara ändringar",
     cancel: "Avbryt",
     delete: "Radera användare",
-    confirm_delete: "Är du säker på att du vill radera användaren från systemet?"
+    confirm_delete: "Är du säker på att du vill radera användaren från systemet?",
+    password: "Lösenord",
+    password_confirmation: "Bekräfta lösenord"
   },
   sources: {
     formlabel: "Källa",

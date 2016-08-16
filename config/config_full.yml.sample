@@ -9,7 +9,6 @@ _external_auth:
     - true
     - false
   system: true
-external_auth: false
 _cas_url:
   system: true
   info: "Ange adress till CAS-inloggning"
