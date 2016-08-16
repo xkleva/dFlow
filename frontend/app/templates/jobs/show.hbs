@@ -70,7 +70,7 @@
           </a>
           {{else}}
             {{#if model.waitingForManualAction}}
-              <button class="btn btn-primary" {{action 'flowStepSuccess' model.id model.flow_step.step}}>{{model.flow_step.params.msg}}</button>
+              <button class="btn btn-primary" {{action 'flowStepSuccess' model model.flow_step}}>{{model.flow_step.params.msg}}</button>
             {{/if}}
           {{/if}}
           {{#if model.flow_step.parsed_params.pdf_file_path}}
@@ -227,32 +227,9 @@
         <div class="panel-body">
           {{xml-link jobId=model.id}}
           <br/>
-          {{t 'jobs.number_of_images'}}: {{model.package_metadata.image_count}}
-        <table class="table table-hover table-condensed">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Page Type</th>
-            <th>Page Content</th>
-            <th>Group Name</th>
-          </tr>
-        </thead>
-        <tbody>
-        {{#each model.package_metadata.images as |image|}}
-          <tr>
-            <td>{{image.num}}</td>
-            <td>{{image.page_type}}</td>
-            <td>{{image.page_content}}</td>
-            <td>{{image.group_name}}</td>
-          </tr>
-        {{/each}}
-        </tbody>
-        </table>
-            {{#each model.package_metadata.images as |imageMetadata|}}
-              {{dscribe-wrapper imageMetadata=imageMetadata}}
-            {{/each}}
-        </div>
+        {{metadata-setter packageMetadata=model.package_metadata flowStep=model.flow_step}}
       </div>
+    </div>
     </div>
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingThree">

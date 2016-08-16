@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get 'assets/job_pdf/:asset_id', to: 'assets#job_pdf'
   get 'assets/job_file/:asset_id', to: 'assets#job_file'
   get 'assets/file', to: 'assets#file'
+  get 'assets/thumbnail', to: 'assets#thumbnail'
 
   namespace :api, :defaults => {:format => :json} do
     get 'check_connection' , to: 'process#check_connection'

@@ -155,6 +155,9 @@ class Api::JobsController < Api::ApiController
     if job_params.has_key?(:flow_parameters)
       job_params[:flow_parameters] = job_params[:flow_parameters].to_json
     end
+    if job_params.has_key?(:package_metadata)
+      job_params[:package_metadata] = job_params[:package_metadata].to_json
+    end
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
     
@@ -261,6 +264,7 @@ class Api::JobsController < Api::ApiController
     end
     render_json
   end
+
 
   # Checks if job exists, and sets @job variable. Otherwise, return error.
   private

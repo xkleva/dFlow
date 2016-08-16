@@ -19,15 +19,24 @@ export default Ember.Route.extend({
   actions: {
     
     // Sets job status to 'digitizing'
-    flowStepSuccess(id, step){
-      this.store.find('process', id, {status: 'success', step: step}).then(
-        () => {
-          this.refresh(id); // Refresh children of current model
-        },
-        (errorObject) => {
-          this.controller.set('error', errorObject.error);
-        }
-      );
+    flowStepSuccess(job, flowStep){
+      // If save param is true, save job first
+      if (flowStep.params.save == true) {
+        this.store.save('job', job).then(
+          () => {
+          this.store.find('process', job.id, {status: 'success', step: flowStep.step}).then(
+            () => {
+              this.refresh(job.id); // Refresh children of current model
+            },
+            (errorObject) => {
+              this.controller.set('error', errorObject.error);
+            }
+          )},
+          (errorObject) => {
+            this.controller.set('error', errorObject.error);
+          }
+        );
+      }
     },
 
     // Deletes job from database

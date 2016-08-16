@@ -1,7 +1,5 @@
 import Ember from 'ember';
 import InViewportMixin from 'd-flow-ember/mixins/in-view-port';
-import Item from 'd-flow-ember/models/item';
-import ENV from 'd-flow-ember/config/environment';
 
 export default Ember.Component.extend(InViewportMixin, {
   session: Ember.inject.service(),
@@ -9,24 +7,17 @@ export default Ember.Component.extend(InViewportMixin, {
   init() {
     var that = this;
     var token =  this.get('session.data.authenticated.token');
-    this.store.find('thumbnail', '?source_dir=PROCESSING:/78&source=master&image=' + this.get('imageMetadata.num') + '&token=' + token).then(function(response){
-      var item = Item.create({
-        small: response.thumbnail,
-        tiny: response.thumbnail,
-        title: that.get('imageMetadata.num'),
-        selection: {x: 20, y: 20, w: 500, h: 800},
-        logical: that.get('imageMetadata.page_content'),
-        physical: that.get('imageMetadata.page_type')
-      })
-      that.set('item', item);
-    })
-
+    if (this.get('imagesFolderPath') && this.get('imagesSource')){
+    this.store.find('thumbnail', '?source_dir=' + this.get('imagesFolderPath') + '&source=' + this.get('imagesSource')+ '&image=' + this.get('image.num') + '&token=' + token).then(function(response){
+      that.set('small', response.thumbnail);
+    });
+    } else {
+      console.log('imagesFoldePath or imagesSource not given, not fetching thumbnails');
+    }
     this._super();
   },
   tagName: 'div',
-  classNames: ['inactive-image'],
-  classNameBindings: ['enteredViewport:entered-viewport', 'item.isAlone:col-xs-12:col-xs-6'],
-  activeFrame: false,
+  classNames: ['col-sm-6'],
 
   mouseEnter: function(){
     this.set('activeFrame', true);
@@ -36,11 +27,11 @@ export default Ember.Component.extend(InViewportMixin, {
   },
 
   actions: {
-    copyFrame: function(fromItem, toItem){
-      toItem.set('selection', Ember.copy(fromItem.get('selection')));
+    setPhysical: function(page_type){
+      this.set('image.page_type', page_type);
     },
-    setPhysical: function(item, physical){
-      item.set('physical', physical);
+    setLogical: function(page_content){
+      this.set('image.page_content', page_content);
     }
   }
 });

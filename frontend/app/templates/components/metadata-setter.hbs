@@ -1,0 +1,50 @@
+{{t 'jobs.number_of_images'}}: {{packageMetadata.image_count}}
+<div class="form">
+<div class="form-group">
+  <label for="sequenceInput" class="col-sm-1 control-label">Sekvens</label>
+  <div class="col-sm-2">
+  {{#x-select id='sequenceInput' value=sequence class='form-control'}}
+    {{#x-option value="right-left"}}Höger / Vänster{{/x-option}}
+    {{#x-option value="left-right"}}Vänster / Höger{{/x-option}}
+    {{#x-option value="right"}}Höger{{/x-option}}
+    {{#x-option value="left"}}Vänster{{/x-option}}
+    {{#x-option value="undefined"}}Undefined{{/x-option}}
+
+    {{/x-select}}
+  </div>
+</div>
+<div class="form-group">
+  <label for="startImageInput" class="col-sm-1 control-label">Startnr</label>
+  <div class="com-sm-2">
+    {{input type='number' id='startImageInput' value=startNr}}
+  </div>
+</div>
+<div class="form-group">
+  <div class="col-sm-2">
+    <button {{action 'generatePageTypes'}} class="btn btn-primary">Generera metadata</button>
+  </div>
+</div>
+</div>
+<table class="table table-hover table-condensed">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Page Type</th>
+      <th>Page Content</th>
+      <th>Group Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each packageMetadata.images as |image|}}
+      <tr>
+        <td>{{image.num}}</td>
+        <td>{{image.page_type}}</td>
+        <td>{{image.page_content}}</td>
+        <td>{{image.group_name}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+{{#each packageMetadata.images as |image|}}
+  {{dscribe-wrapper image=image imagesFolderPath=flowStep.parsed_params.images_folder_path imagesSource=flowStep.parsed_params.source}}
+{{/each}}

@@ -41,6 +41,23 @@ class DfileApi
     return open(url.to_s) 
   end
 
+  def self.thumbnail(source_dir:, source:, image:, filetype: nil, size: nil)
+    response = HTTParty.get("#{host}/thumbnail", query: {
+      source_dir: source_dir,
+      filetype: filetype,
+      source: source,
+      image: image,
+      size: size,
+      api_key: api_key
+    })
+
+    if response.success?
+      return JSON.parse(response.body)
+    else
+      raise StandardError, "Couldn't list files in #{source_dir}, with message #{response['error']}"
+    end
+  end
+
   # Returns array of {:name, :size}
   def self.list_files(source_dir:, extension: nil, show_catalogues: true)
     response = HTTParty.get("#{host}/list_files", query: {
