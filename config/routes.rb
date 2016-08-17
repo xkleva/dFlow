@@ -54,6 +54,8 @@ Rails.application.routes.draw do
     resources :publication_log
 
     resources :flows
+    
+    resources :queue_manager
 
     post 'script', to: 'script#create'
     get 'script/:id', to: 'script#show'
