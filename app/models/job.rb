@@ -431,6 +431,7 @@ class Job < ActiveRecord::Base
 
   # Changes the flow, aborts all previous flow steps and creates new ones
   def change_flow(flow_name: nil, step_nr: nil)
+    pp "Change flow"
     if flow_name
       flow = Flow.find_by_name(flow_name)
       if !flow

@@ -19,7 +19,7 @@ export default Ember.Route.extend({
   actions: {
     
     // Sets job status to 'digitizing'
-    flowStepSuccess(job, flowStep){
+    flowStepSuccessDoStuff(job, flowStep){
       // If save param is true, save job first
       if (flowStep.params.save === true) {
         this.store.save('job', job).then(
@@ -32,7 +32,7 @@ export default Ember.Route.extend({
               this.controller.set('error', errorObject.error);
             }
           );
-          },
+      },
           (errorObject) => {
             this.controller.set('error', errorObject.error);
           }

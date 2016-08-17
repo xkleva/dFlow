@@ -1,6 +1,7 @@
 class Flow < ActiveRecord::Base 
-  default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries, works as long as no deleted jobs needs to be visualized in dFlow
+  default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries. To override, use 'Flow.noscoped' 
 
+  validates :name, uniqueness: true
   validate :validate_json, on: :update
   validate :validate_steps, on: :update
   validate :validate_parameters, on: :update
@@ -36,13 +37,21 @@ class Flow < ActiveRecord::Base
   end
 
   def steps_array
-    return [] if steps.blank? || steps == "null"
-    @steps_array ||= JSON.parse(steps)
+    begin
+      return [] if steps.blank? || steps == "null"
+      @steps_array ||= JSON.parse(steps)
+    rescue JSON::ParserError => e
+      return []
+    end
   end
 
   def parameters_array
-    return [] if parameters.blank? || parameters == "null"
-    @parameters_array ||= JSON.parse(parameters)
+    begin
+      return [] if parameters.blank? || parameters == "null"
+      @parameters_array ||= JSON.parse(parameters)
+    rescue JSON::ParserError => e
+      return []
+    end
   end
 
   def parameters_hash
@@ -50,8 +59,12 @@ class Flow < ActiveRecord::Base
   end
 
   def folder_paths_array 
-    return [] if folder_paths.blank? || folder_paths == "null"
-    @folder_paths_array ||= JSON.parse(folder_paths)
+    begin
+      return [] if folder_paths.blank? || folder_paths == "null"
+      @folder_paths_array ||= JSON.parse(folder_paths)
+    rescue JSON::ParserError => e
+      return []
+    end
   end
 
   # Create flow step objects for job

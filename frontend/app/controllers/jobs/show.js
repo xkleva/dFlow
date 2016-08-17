@@ -26,6 +26,12 @@ export default Ember.Controller.extend({
       flowStepItems.pushObject(item);
     }
     return flowStepItems.sortBy('value');
-  })
+  }),
+
+  actions: {
+    flowStepSuccess(flowStep) {
+      this.send('flowStepSuccessDoStuff', this.get('model'), flowStep);
+    }
+  }
   
 });

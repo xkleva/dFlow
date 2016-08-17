@@ -31,15 +31,15 @@ FactoryGirl.define do
 
   factory :job do
     name {generate :job_name}
+    association :flow, factory: [:flow]
+    association :treenode, factory: [:top_treenode]
     catalog_id '1'
     title {generate :title}
     author {generate :author}
     source 'libris'
-    association :treenode, factory: [:top_treenode]
     copyright false
     created_by 'TestUser'
     metadata "{}"
-    association :flow, factory: [:flow]
     current_flow_step 10
     state "ACTION"
 

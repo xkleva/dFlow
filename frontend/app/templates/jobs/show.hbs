@@ -70,7 +70,7 @@
           </a>
           {{else}}
             {{#if model.waitingForManualAction}}
-              <button class="btn btn-primary" {{action 'flowStepSuccess' model model.flow_step}}>{{model.flow_step.params.msg}}</button>
+              <button class="btn btn-primary" {{action 'flowStepSuccessDoStuff' model model.flow_step}}>{{model.flow_step.params.msg}}</button>
             {{/if}}
           {{/if}}
           {{#if model.flow_step.parsed_params.pdf_file_path}}

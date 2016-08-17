@@ -161,7 +161,7 @@ class Api::JobsController < Api::ApiController
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
     
-    if job.flow != job_params[:flow] && job_params[:flow].present?
+    if job.flow_id != job_params[:flow]['id'] && job_params[:flow].present?
       flow_is_changed = true
     end
 
