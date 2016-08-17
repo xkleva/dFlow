@@ -218,16 +218,18 @@
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingTwo">
         <h4 class="panel-title">
-          <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          <a class="collapsed" data-toggle="collapse" {{action 'setOpen' 'metadata'}} data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
             {{t 'jobs.metadata'}}
           </a>
         </h4>
       </div>
       <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
         <div class="panel-body">
+          {{#if metadataIsOpen}}
           {{xml-link jobId=model.id}}
           <br/>
-        {{metadata-setter packageMetadata=model.package_metadata flowStep=model.flow_step}}
+          {{metadata-setter packageMetadata=model.package_metadata flowStep=model.flow_step}}
+          {{/if}}
       </div>
     </div>
     </div>

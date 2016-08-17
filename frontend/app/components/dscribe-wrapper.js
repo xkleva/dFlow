@@ -11,9 +11,8 @@ export default Ember.Component.extend(InViewportMixin, {
     this.store.find('thumbnail', '?source_dir=' + this.get('imagesFolderPath') + '&source=' + this.get('imagesSource')+ '&image=' + this.get('image.num') + '&token=' + token).then(function(response){
       that.set('small', response.thumbnail);
     });
-    } else {
-      console.log('imagesFoldePath or imagesSource not given, not fetching thumbnails');
-    }
+    } 
+
     this._super();
   },
   tagName: 'div',

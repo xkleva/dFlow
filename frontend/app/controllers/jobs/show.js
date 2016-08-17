@@ -4,6 +4,9 @@ import ENV from 'd-flow-ember/config/environment';
 export default Ember.Controller.extend({
   session: Ember.inject.service(),
   application: Ember.inject.controller(),
+  open: '',
+
+  metadataIsOpen: Ember.computed.equal('open', 'metadata'),
 
   pdfUrl: Ember.computed('model', function() {
     var token =  this.get('session.data.authenticated.token');
@@ -31,6 +34,9 @@ export default Ember.Controller.extend({
   actions: {
     flowStepSuccess(flowStep) {
       this.send('flowStepSuccessDoStuff', this.get('model'), flowStep);
+    },
+    setOpen(string) {
+      this.set('open', string);
     }
   }
   
