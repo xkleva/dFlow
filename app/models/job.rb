@@ -29,7 +29,6 @@ class Job < ActiveRecord::Base
 
   after_create :create_log_entry
   after_create :create_flow_steps
-  before_validation :default_values
   after_validation :init_flow_parameters
 
   before_validation :set_treenode_ids
@@ -137,14 +136,16 @@ class Job < ActiveRecord::Base
     deleted_at.present?
   end
 
-  def default_values
-    @created_by ||= 'not_set'
+  def created_by
+    @created_by || 'not_set'
   end
-
+  
   # Creates a JobActivity object for CREATE event
   def create_log_entry(event="CREATE", message="_ACTIVITY_CREATED")
+    Rails.logger.info("username: #{created_by}, event: #{event}, message: #{message}")
     entry = JobActivity.new(username: created_by, event: event, message: message)
     job_activities << entry
+    self.save
   end
 
   # Retrieve source label from config

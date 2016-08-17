@@ -1,0 +1,51 @@
+<div class="panel panel-default">
+  <div class="panel-heading" style="padding-top:8px;">
+    <span class="panel-title">Köhanterare</span>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="container">
+        {{#if model}}
+          <div class="row">
+            <label class="col-xs-2">Startad</label>
+            <div class="col-xs-10">{{startedAt}}</div>
+          </div>
+          {{#if model.aborted_at}}
+          <div class="row">
+            <label class="col-xs-2">Begärd stängning</label>
+            <div class="col-xs-10">{{abortedAt}}</div>
+          </div>
+          {{/if}}
+          <div class="row">
+            <label class="col-xs-2">Version</label>
+            <div class="col-xs-10">{{model.version_string}}</div>
+          </div>
+          {{#if model.last_flow_step}}
+            <div class="row">
+              <label class="col-xs-2">Senaste jobb</label>
+              <div class="col-xs-10">
+                {{#link-to 'jobs.show' model.last_flow_step.job_id}}
+                {{model.last_flow_step.job_id}}
+                {{/link-to}}
+              </div>
+            </div>
+            <div class="row">
+              <label class="col-xs-12">Senaste flödessteg</label>
+              {{flow-table flowSteps=lastFlowStepArray viewMode=true class="col-xs-12 panelized-table"}}
+            </div>
+          {{/if}}
+        {{else}}
+          <label class="col-xs-12">Köhanteraren är inte igång</label>
+        {{/if}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <button disabled="{{unless canStart 'disabled'}}" class="btn btn-default" {{action 'startQueueManager'}}>Starta</button>
+        <button disabled="{{unless canStop 'disabled'}}" class="btn btn-default" {{action 'stopQueueManager' model.pid}}>Stoppa</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

@@ -50,3 +50,7 @@
 #jsoneditor1 {
   height: 800px;
 }
+
+.panelized-table {
+    padding-right: 45px;
+}

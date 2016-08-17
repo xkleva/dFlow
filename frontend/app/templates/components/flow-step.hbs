@@ -12,7 +12,9 @@
     <strong>Avslutad:</strong> {{finishedAt}}
   {{else}}
     {{#if enteredAt}}
-      <button class="btn btn-primary" {{action 'flowStepSuccess' flowStep}}>{{t 'flowStep.manual_finish'}}</button>
+      {{#unless viewMode}}
+        <button class="btn btn-primary" {{action 'flowStepSuccess' flowStep}}>{{t 'flowStep.manual_finish'}}</button>
+      {{/unless}}
     {{/if}}
   {{/if}}
 </td>

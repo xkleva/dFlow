@@ -7,24 +7,37 @@ class QueueManager
 
   def self.run(loop: true)
     DfileApi.logger = QueueManager.logger
+    if QueueManagerPid.can_start?
+      QueueManagerPid.start(pid: Process.pid)
+    end
     while(true) do
       sleep_time = 10
-      # Check if PID file exists
-      pid_file = Pathname.new(QUEUE_MANAGER_CONFIG['pid_file_location'])
-
-      # If PID file doesn't exist, exit
-      if !pid_file.exist?
-        logger.warn "No PID file exists, aborting QueueManager"
+      
+      # Check if system things there is a running qm, abort if not
+      running_qm = QueueManagerPid.running_qm
+      if !running_qm
+        logger.fatal "Process #{Process.pid} tried to run, but was not started"
+        return
+      end
+      # Check if PID exists and is mine
+      if running_qm.pid != Process.pid
+        logger.fatal "PID #{running_qm.pid} doesn't match my process #{Process.pid}, aborting QueueManager"
         return
       end
 
-      # If PID is not current PID, exit
-      current_pid = File.open(pid_file.to_s).read.to_s.strip
-      if current_pid != Process.pid.to_s
-        logger.fatal "PID #{current_pid} - from file #{pid_file} doesn't match my process #{Process.pid}, aborting QueueManager"
+      # Check if this process should be aborted.
+      if running_qm.aborted_at
+        running_qm.finish
+        logger.fatal "QueueManager was told to abort gracefully."
         return
       end
 
+      if !QueueManagerPid.can_run?(pid: Process.pid)
+        running_qm.finish
+        logger.fatal "QueueManager was not allowed to run. Aborting..."
+        return
+      end
+      
       job = get_job_waiting_for_automatic_process
       if job
         logger.info "Starting #{job.flow_step.process} for job #{job.id}"
@@ -45,20 +58,22 @@ class QueueManager
 
   # Returns a single job with a configured automatic process waiting
   def self.get_job_waiting_for_automatic_process
-      job_ids = Job.where(quarantined: false, deleted_at: nil).where.not(state: "FINISH").select(:id)
-      steps = FlowStep.where.not(entered_at: nil).where(finished_at: nil, aborted_at: nil).where(job_id: job_ids)
-      steps = steps.where('started_at IS NULL OR process IN (?)', SYSTEM_DATA["processes"].select { |x| x["state"] == "WAITFOR"}.map {|x| x["code"]})
-      steps = steps.order(updated_at: :asc)
+    job_ids = Job.where(quarantined: false, deleted_at: nil).where.not(state: "FINISH").select(:id)
+    steps = FlowStep.where.not(entered_at: nil).where(finished_at: nil, aborted_at: nil).where(job_id: job_ids)
+    steps = steps.where('started_at IS NULL OR process IN (?)', SYSTEM_DATA["processes"].select { |x| x["state"] == "WAITFOR"}.map {|x| x["code"]})
+    steps = steps.order(updated_at: :asc)
 
-      processes = SYSTEM_DATA['processes'].select {|x| ['PROCESS', 'WAITFOR'].include? x['state']}.map {|x| x['code']}
-      automatic_steps = steps.select {|x| processes.include? x.process}
-      if automatic_steps.empty?
-        return
-      end
+    processes = SYSTEM_DATA['processes'].select {|x| ['PROCESS', 'WAITFOR'].include? x['state']}.map {|x| x['code']}
+    automatic_steps = steps.select {|x| processes.include? x.process}
+    if automatic_steps.empty?
+      return
+    end
 
-      # Run process for first job
-      job = automatic_steps.first.job
-      return job
+    # Run process for first job
+    job = automatic_steps.first.job
+    job.created_by = "QueueManager"
+    
+    return job
   end
 
   # Starts correct process for chosen job
@@ -66,7 +81,8 @@ class QueueManager
 
     process = job.flow_step.process
     if job.flow_step.start!(username: process)
-
+      qm = QueueManagerPid.running_qm
+      qm.update_attribute(:last_flow_step_id, job.flow_step.id)
       case job.flow_step.state
       when "PROCESS"
         process_runner(job: job, process_object: Object.const_get(job.flow_step.process.downcase.camelize))
@@ -118,7 +134,7 @@ class QueueManager
 
   # Creates a logger object
   def self.logger
-    #@@logger ||= Logger.new(STDOUT)
+#    @@logger ||= Logger.new(STDOUT)
     @@logger ||= Logger.new("#{Rails.root}/log/queue_manager.log")
     @@logger.level = ENV['LOG_LEVEL'].to_i || Logger::INFO
     @@logger
