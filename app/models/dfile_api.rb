@@ -344,6 +344,9 @@ class DfileApi
       end
       sleep 0.1
     end
+    if flow_step
+      flow_step.update_attribute('status', redis.get("dFile:processes:#{process_id}:progress"))
+    end
 
     value = redis.get("dFile:processes:#{process_id}:value")
 

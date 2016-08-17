@@ -5,7 +5,6 @@ class Flow < ActiveRecord::Base
   validate :validate_json, on: :update
   validate :validate_steps, on: :update
   validate :validate_parameters, on: :update
-  validate :validate_folder_paths, on: :update
 
   def as_json(options={})
     {
@@ -153,34 +152,32 @@ class Flow < ActiveRecord::Base
     
   end
 
-  def validate_folder_paths
+  # Returns the order of flow step numbers
+  def flow_step_order_array
+    array = []
+    current_step = first_step 
+    stopper = 0
+    array << current_step['step']
+    while(current_step['step'] != last_step['step'] && stopper < 1000) do
+      stopper += 1
+      current_step = steps_array.find{|x| x["step"] = current_step["goto_true"]}
+      array << current_step["step"]
+    end
 
+    return array
   end
 
   # Returns true if given step_nr occurs anywhere below flow_step
-  def flow_step_is_before?(flow_step, step_nr)
-    return false if flow_step.nil? || step_nr.nil?
-    if flow_step["goto_true"] == step_nr
-      return true
-    elsif flow_step["goto_false"] == step_nr
-      return true
-    elsif flow_step["goto_true"] && flow_step_is_before?(find_flow_step(flow_step["goto_true"]),step_nr)
-      return true
-    elsif flow_step["goto_false"] && flow_step_is_before?(find_flow_step(flow_step["goto_false"]),step_nr)
-      return true
-    else
-      return false
+  def flow_step_is_before?(current_step:, other_step:)
+    array = flow_step_order_array
+    if !array.index(current_step)
+      raise StandardError, "step #{current_step} does not exist in flow"
     end
-  end
+    if !array.index(other_step)
+      raise StandardError, "step #{other_step} does not exist in flow"
+    end
 
-  # Returns a flow_step hash from total array
-  def find_flow_step(step_nr)
-    return steps_array.find{|x| x["step"] == step_nr}
-  end
-
-  # Returns the lowest step nr witin flow
-  def first_step_nr
-    first_step["step"]
+    return array.index(current_step) < array.index(other_step)
   end
 
   # Returns start step
@@ -190,7 +187,7 @@ class Flow < ActiveRecord::Base
 
   # Returns final step
   def last_step
-    steps_array.find{|x| x["goto_true"].nil? && x["goto_false"].nil?}
+    steps_array.find{|x| x["goto_true"]["end"]}
   end
 
   def step_nr_valid?(step_nr)
@@ -204,7 +201,7 @@ class Flow < ActiveRecord::Base
     end
     # If no step nr is assigned, use the lowest one
     if !step_nr
-      step_nr = first_step_nr
+      step_nr = first_step['step']
     else
       if !step_nr_valid?(step_nr)
         raise StandardError, "Invalid step nr #{step_nr}"
@@ -226,7 +223,7 @@ class Flow < ActiveRecord::Base
             flow_step.job = job
             flow_step.enter!
           end
-          if flow_step_is_before?(find_flow_step(flow_step.step), step_nr)
+          if flow_step_is_before?(current_step: flow_step.step, other_step: step_nr)
             flow_step.update_attribute('entered_at', DateTime.now)
             flow_step.update_attribute('started_at', DateTime.now)
             flow_step.update_attribute('finished_at', DateTime.now)

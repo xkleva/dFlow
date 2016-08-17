@@ -1,0 +1,21 @@
+DUPLICATE_NAME:
+  -
+    name: param1
+    type: 'radio'
+    options: 
+      - 'a'
+      - 'b'
+  -
+    name: param1
+    type: 'radio'
+    options:
+      - 'a'
+      - 'b'
+
+INVALID_NAME:
+  -
+    name: 123!@#
+    type: radio
+    options:
+      - a
+      - b

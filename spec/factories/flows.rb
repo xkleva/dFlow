@@ -9,7 +9,7 @@ FactoryGirl.define do
             step: 10,
             process: "CONFIRMATION",
             description: "confirmation",
-            goto_true: 100,
+            goto_true: 20,
             params: {
                 start: true,
                 manual: true,
@@ -17,7 +17,7 @@ FactoryGirl.define do
             }
         },
         {
-            step: 100,
+            step: 20,
             process: "CONFIRMATION",
             description: "confirmation2",
             params: {

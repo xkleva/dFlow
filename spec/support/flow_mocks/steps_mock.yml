@@ -1,0 +1,141 @@
+MISSING_START:
+  -
+    step: 10
+    goto_true: 20
+    process: CONFIRMATION
+    params: 
+      manual: true
+  -
+    step: 20
+    process: CONFIRMATION
+    params:
+      manual: true
+      end: true
+
+MISSING_END:
+  -
+    step: 10
+    goto_true: 20
+    process: CONFIRMATION
+    params: 
+      manual: true
+      start: true
+  -
+    step: 20
+    process: CONFIRMATION
+    params:
+      manual: true
+
+MORE_THAN_ONE_START:
+  -
+    step: 10
+    goto_true: 20
+    process: CONFIRMATION
+    params: 
+      manual: true
+      start: true
+  -
+    step: 20
+    process: CONFIRMATION
+    params:
+      manual: true
+      start: true
+  -
+    step: 30
+    process: CONFIRMATION
+    params:
+      manual: true
+      end: true
+        
+MORE_THAN_ONE_END:
+  -
+    step: 10
+    goto_true: 20
+    process: CONFIRMATION
+    params: 
+      manual: true
+      start: true
+  -
+    step: 20
+    process: CONFIRMATION
+    params:
+      manual: true
+      end: true
+  -
+    step: 30
+    process: CONFIRMATION
+    params:
+      manual: true
+      end: true
+
+DUPLICATE_STEPS:
+  -
+    step: 10
+    goto_true: 20
+    process: CONFIRMATION
+    params: 
+      manual: true
+      start: true
+  -
+    step: 10
+    process: CONFIRMATION
+    params:
+      manual: true
+      end: true
+
+DUPLICATE_GOTO:
+  -
+    step: 10
+    goto_true: 30
+    process: CONFIRMATION
+    params: 
+      manual: true
+      start: true
+  -
+    step: 20
+    goto_true: 30
+    process: CONFIRMATION
+    params:
+      manual: true
+  -
+    step: 30
+    process: CONFIRMATION
+    params:
+      manual: true
+      end: true
+
+GOTO_NOT_EXIST:
+  -
+    step: 10
+    goto_true: 30
+    process: CONFIRMATION
+    params: 
+      manual: true
+      start: true
+  -
+    step: 20
+    process: CONFIRMATION
+    params:
+      manual: true
+      end: true
+
+ALL_STEPS_NOT_POINTED_AT:
+  -
+    step: 10
+    goto_true: 20
+    process: CONFIRMATION
+    params: 
+      manual: true
+      start: true
+  -
+    step: 20
+    goto_true: 10
+    process: CONFIRMATION
+    params:
+      manual: true
+  -
+    step: 30
+    process: CONFIRMATION
+    params:
+      manual: true
+      end: true
