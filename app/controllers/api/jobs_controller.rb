@@ -161,13 +161,13 @@ class Api::JobsController < Api::ApiController
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
     
-    if job.flow_id != job_params[:flow]['id'] && job_params[:flow].present?
+    if job.flow_id != job_params[:flow_id] && job_params[:flow_id].present?
       flow_is_changed = true
     end
 
-    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :flow, :current_flow_step, :flow_parameters))
+    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :current_flow_step, :flow_parameters))
       if flow_is_changed
-        job.change_flow
+        job.change_flow(flow_id: params[:flow_id])
       end
       @response[:job] = job
     else

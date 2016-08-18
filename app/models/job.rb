@@ -431,21 +431,32 @@ class Job < ActiveRecord::Base
   end
 
   # Changes the flow, aborts all previous flow steps and creates new ones
-  def change_flow(flow_name: nil, step_nr: nil)
-    pp "Change flow"
-    if flow_name
-      flow = Flow.find_by_name(flow_name)
-      if !flow
-        raise StandardError, "No flow found with name #{flow_name}"
+  def change_flow(flow_name: nil, step_nr: nil, flow_id: nil)
+    if flow_name || flow_id
+      if flow_name
+        flow = Flow.where(name: flow_name).first
+        if !flow
+          raise StandardError, "No flow found with name #{flow_name}"
+        end
+      elsif flow_id
+        flow = Flow.find(flow_id)
+        if !flow
+          raise StandardError, "No flow found with id #{flow_id}"
+        end
       end
       if !flow.valid?
-        raise StandardError, "Fow is invalid: #{flow_name} #{flow.errors.full_messages.inspect}"
+        raise StandardError, "Flow is invalid: #{flow_name} #{flow.errors.full_messages.inspect}"
       end
-      self.update_attribute('flow', flow)
+      self.update_attribute('flow_id', flow.id)
       self.update_attribute('flow_parameters', flow_parameters_hash.merge(flow.parameters_hash).to_json)
+    else
+      flow = self.flow
     end
+
     if step_nr
       self.update_attribute('current_flow_step', step_nr)
+    else
+      self.update_attribute('current_flow_step', flow.first_step['step'])
     end
     create_flow_steps
     self.update_attribute('state', flow_step.main_state)
