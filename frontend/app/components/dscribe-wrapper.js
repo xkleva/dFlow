@@ -8,7 +8,11 @@ export default Ember.Component.extend(InViewportMixin, {
     var that = this;
     var token =  this.get('session.data.authenticated.token');
     if (this.get('imagesFolderPath') && this.get('imagesSource')){
-    this.store.find('thumbnail', '?source_dir=' + this.get('imagesFolderPath') + '&source=' + this.get('imagesSource')+ '&image=' + this.get('image.num') + '&token=' + token).then(function(response){
+      var filetypeString = '';
+      if (!!this.get('filetype')) {
+        filetypeString = "&filetype=" + this.get('filetype');
+      }
+    this.store.find('thumbnail', '?source_dir=' + this.get('imagesFolderPath') + '&source=' + this.get('imagesSource')+ '&image=' + this.get('image.num') + filetypeString + '&token=' + token).then(function(response){
       that.set('small', response.thumbnail);
     });
     } 

@@ -46,5 +46,5 @@
   </tbody>
 </table>
 {{#each packageMetadata.images as |image|}}
-  {{dscribe-wrapper image=image imagesFolderPath=flowStep.parsed_params.images_folder_path imagesSource=flowStep.parsed_params.source}}
+  {{dscribe-wrapper image=image imagesFolderPath=flowStep.parsed_params.images_folder_path imagesSource=flowStep.parsed_params.source filetype=flowStep.parsed_params.filetype}}
 {{/each}}

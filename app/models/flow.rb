@@ -160,7 +160,7 @@ class Flow < ActiveRecord::Base
     array << current_step['step']
     while(current_step['step'] != last_step['step'] && stopper < 1000) do
       stopper += 1
-      current_step = steps_array.find{|x| x["step"] = current_step["goto_true"]}
+      current_step = steps_array.find{|x| x["step"] == current_step["goto_true"]}
       array << current_step["step"]
     end
 
@@ -187,7 +187,7 @@ class Flow < ActiveRecord::Base
 
   # Returns final step
   def last_step
-    steps_array.find{|x| x["goto_true"]["end"]}
+    steps_array.find{|x| x["params"]["end"]}
   end
 
   def step_nr_valid?(step_nr)
