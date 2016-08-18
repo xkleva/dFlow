@@ -252,5 +252,27 @@ RSpec.describe Flow, :type => :model do
         expect(job.flow_steps.pluck(:id)).to_not include(fs1.id)
       end
     end
+
+    context "for an existing job with a given step_nr" do
+      it "should recreate all flow steps, and set earlier steps as finished" do
+        job = create(:job)
+        flow = create(:flow)
+        
+        flow.apply_flow(job: job, step_nr: 20)
+
+        job.reload
+
+        expect(job.flow_steps.where(step: 10).first.finished_at).to_not be nil
+        expect(job.flow_steps.where(step: 20).first.finished_at).to be nil
+      end
+    end
+    context "for an invalid step nr" do
+      it "should raise an exception" do
+        job = create(:job)
+        flow = create(:flow)
+
+        expect{flow.apply_flow(job: job, step_nr: 123)}.to raise_error
+      end
+    end
   end
 end
