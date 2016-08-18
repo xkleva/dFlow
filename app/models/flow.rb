@@ -1,4 +1,5 @@
 class Flow < ActiveRecord::Base 
+  attr_accessor :flow_steps
   default_scope {where( :deleted_at => nil )} #Hides all deleted jobs from all queries. To override, use 'Flow.noscoped' 
 
   validates :name, uniqueness: true

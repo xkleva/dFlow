@@ -136,6 +136,45 @@ RSpec.describe Flow, :type => :model do
     end
   end
 
+  # METHODS
+  describe "step_array, parameters_array, folder_paths_array" do
+    context "for a valid json value of steps, parameters, folder_paths" do
+      it "should return an array" do
+        flow = build(:flow)
+        flow.steps = '[]'
+        flow.parameters = '[]'
+        flow.folder_paths = '[]'
+
+        expect(flow.steps_array).to be_an Array
+        expect(flow.parameters_array).to be_an Array
+        expect(flow.folder_paths_array).to be_an Array
+      end
+    end
+    context "for an INvalid json value of steps, parameters, folder_paths" do
+      it "should raise an exception" do
+        flow = build(:flow)
+        flow.steps = 'asd'
+        flow.parameters = 'asd'
+        flow.folder_paths = 'asd'
+
+        expect{folder.steps_array}.to raise_error
+        expect{folder.parameters_array}.to raise_error
+        expect{folder.folder_paths_array}.to raise_error
+      end
+    end
+  end
+
+  describe "generate_flow_steps" do
+    it "should set instance variable @flow_steps with FlowStep objects" do
+      flow = build(:flow)
+      job = build(:job, id: 111)
+
+      flow.generate_flow_steps(111)
+
+      expect(flow.flow_steps.first).to be_a FlowStep
+    end
+  end
+
   describe "flow_step_order_array" do
     context "for a valid flow" do
       it "should return an array of flow steps in order" do
