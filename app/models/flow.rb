@@ -183,12 +183,12 @@ class Flow < ActiveRecord::Base
 
   # Returns start step
   def first_step
-    steps_array.find{|x| x["params"]["start"]}
+    steps_array.find{|x| x["params"] && x["params"]["start"]}
   end
 
   # Returns final step
   def last_step
-    steps_array.find{|x| x["params"]["end"]}
+    steps_array.find{|x| x["params"] && x["params"]["end"]}
   end
 
   def step_nr_valid?(step_nr)
