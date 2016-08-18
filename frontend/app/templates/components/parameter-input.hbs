@@ -3,11 +3,24 @@
 {{#if isRadio}}
   <div class="col-xs-5">
     {{#x-select value=value class="form-control"}}
-      {{#each parameter.options as |option|}}
-      {{#x-option value=option}}{{option}}{{/x-option}}
+      {{#if prompt}}
+        {{#x-option}}-- Välj --{{/x-option}}
+      {{/if}}
+      {{#each optionList as |option|}}
+      {{#x-option value=option.value}}{{option.label}}{{/x-option}}
     {{/each}}
   {{/x-select}}
   <span id="helpBlock2" class="help-block">{{parameter.info}}</span>
+  </div>
+  {{#if value}}
+  <div class="col-xs-5 form-choice">
+    Valt alternativ: {{value}}
+  </div>
+  {{/if}}
+{{/if}}
+{{#if isText}}
+  <div class="col-xs-5">
+    {{input type="text" value=value class="form-control"}}
   </div>
 {{/if}}
 </div>
