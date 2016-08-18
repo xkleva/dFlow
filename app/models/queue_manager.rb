@@ -58,11 +58,23 @@ class QueueManager
 
   # Returns a single job with a configured automatic process waiting
   def self.get_job_waiting_for_automatic_process
+    waitfor_processes = SYSTEM_DATA["processes"].select { |x| x["state"] == "WAITFOR"}.map {|x| x["code"]}
     job_ids = Job.where(quarantined: false, deleted_at: nil).where.not(state: "FINISH").select(:id)
     steps = FlowStep.where.not(entered_at: nil).where(finished_at: nil, aborted_at: nil).where(job_id: job_ids)
-    steps = steps.where('started_at IS NULL OR process IN (?)', SYSTEM_DATA["processes"].select { |x| x["state"] == "WAITFOR"}.map {|x| x["code"]})
+    steps = steps.where('started_at IS NULL OR process IN (?)', waitfor_processes)
     steps = steps.order(updated_at: :asc)
 
+    waitfor_limit = APP_CONFIG['queue_manager']['processes']['queue_manager_waitfor_limit'].to_i
+    logger.info "WAITFOR: Limit: #{waitfor_limit}"
+    if waitfor_limit > 0
+      waitfor_count = FlowStep.queued_steps(process_states: 'WAITFOR').count
+      logger.info "WAITFOR: Count: #{waitfor_count}"
+      if waitfor_count >= waitfor_limit
+        steps = steps.where("process IN (?)", waitfor_processes)
+        logger.info "WAITFOR: Steps: #{steps.map { |x| [x["job_id"], x["state"], x["code"]]}}"
+      end
+    end
+    
     processes = SYSTEM_DATA['processes'].select {|x| ['PROCESS', 'WAITFOR'].include? x['state']}.map {|x| x['code']}
     automatic_steps = steps.select {|x| processes.include? x.process}
     if automatic_steps.empty?

@@ -23,6 +23,19 @@ class QueueManagerPid < ActiveRecord::Base
     return false
   end
   
+  # If QueueManager has limited number of WAITFOR processes,
+  # check if the limit is reached.
+  def self.queue_manager_limited?
+    waitfor_limit = APP_CONFIG['queue_manager']['processes']['queue_manager_waitfor_limit'].to_i
+    return false if waitfor_limit <= 0
+
+    waitfor_count = FlowStep.queued_steps(process_states: 'WAITFOR').count
+    if waitfor_count >= waitfor_limit
+      return true
+    end
+    return false
+  end
+  
   # If there is no running QueueManager, it cannot continue to run,
   # otherwise it has to be the same pid as stored in the database
   # for it to be allowed to continue

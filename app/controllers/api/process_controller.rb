@@ -11,12 +11,16 @@ class Api::ProcessController < Api::ApiController
 
   # Returns a list of jobs waiting to be automatically processed
   def queued_jobs
-    job_ids = Job.where(quarantined: false, deleted_at: nil).where.not(state: "FINISH").select(:id)
-    steps = FlowStep.where.not(entered_at: nil).where(finished_at: nil, aborted_at: nil).where(job_id: job_ids).where('process in (?)', SYSTEM_DATA['processes'].select {|x| ['PROCESS', 'WAITFOR'].include? x['state']}.map {|x| x['code']}).order(:started_at, updated_at: :asc)
-
+    steps = FlowStep.queued_steps
     @response[:flow_steps] = steps
+    
+    limit = APP_CONFIG['queue_manager']['processes']['queue_manager_waitfor_limit'].to_i
+    
+    @response[:meta] = {
+      queue_manager_limit_count: limit,
+      queue_manager_limited: QueueManagerPid.queue_manager_limited?
+    }
     render_json
-
   end
 
   api :GET, '/process/request_job/:code', ' Returns a job for given code'

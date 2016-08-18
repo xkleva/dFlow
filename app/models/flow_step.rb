@@ -29,6 +29,22 @@ class FlowStep < ActiveRecord::Base
     params_hash['start'] == true
   end
 
+  # List of steps in queue for automated run.
+  # Optionally limited by state
+  def self.queued_steps(process_states: ['PROCESS', 'WAITFOR'])
+    if process_states.kind_of?(String)
+      process_states = [process_states]
+    end
+    automated_processes = SYSTEM_DATA['processes'].select do |x|
+      process_states.include?(x['state'])
+    end.map do |x| 
+      x['code']
+    end
+    
+    job_ids = Job.where(quarantined: false, deleted_at: nil).where.not(state: "FINISH").select(:id)
+    return FlowStep.where.not(entered_at: nil).where(finished_at: nil, aborted_at: nil).where(job_id: job_ids).where('process in (?)', automated_processes).order(:started_at, updated_at: :asc)
+  end
+
   def self.new_from_json(json:, job_id: nil, flow:)
     json["flow_id"] = flow.id
     json["job_id"] = job_id

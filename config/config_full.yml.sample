@@ -2,13 +2,6 @@
 username: 'admin'
 password: '1234'
 
-_external_auth:
-  info: "Välj ifall en extern inloggningstjänst skall användas"
-  type: radio
-  options:
-    - true
-    - false
-  system: true
 _cas_url:
   system: true
   info: "Ange adress till CAS-inloggning"
@@ -150,6 +143,9 @@ queue_manager:
   _processes:
     info: "Inställningar som rör processerna"
   processes:
+    _queue_manager_waitfor_limit:
+      info: "Ange max antal tillåtna WAITFOR-processer för QueueManager (tomt för obegränsat)"
+    queue_manager_waitfor_limit: 
     _mets:
       info: "Inställningar som rör metsprocessen"
     mets:

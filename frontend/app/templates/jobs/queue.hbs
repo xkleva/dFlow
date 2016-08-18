@@ -1,4 +1,11 @@
 <button class="btn btn-default"{{action 'refreshModel'}}>Uppdatera</button>
+<hr/>
+{{#if model.meta.queue_manager_limited}}
+  <div class="col-xs-12 alert alert-warning">
+    Köhanteraren är begränsad till {{model.meta.queue_manager_limit_count}} samtidiga WAITFOR-processer.<br/>
+    Övriga processer kommer ej bearbetas förrän WAITFOR hamnat under gränsen igen.
+  </div>
+{{/if}}
   <table class="table">
     <thead>
       <tr>
