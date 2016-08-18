@@ -196,9 +196,6 @@ class Flow < ActiveRecord::Base
 
   # Create flow steps for job id
   def apply_flow(job:, step_nr: nil)
-    if !job
-      raise StandardError, "Job missing"
-    end
     # If no step nr is assigned, use the lowest one
     if !step_nr
       step_nr = first_step['step']

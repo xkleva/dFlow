@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Flow, :type => :model do
+  before :all do
+    @steps_mocks = YAML.load_file("#{Rails.root}/spec/support/flow_mocks/steps_mock.yml")
+  end
   # Validations
 
   describe "name" do
@@ -35,9 +38,6 @@ RSpec.describe Flow, :type => :model do
   end
 
   describe "steps validations" do
-    before :all do
-      @steps_mocks = YAML.load_file("#{Rails.root}/spec/support/flow_mocks/steps_mock.yml")
-    end
     context "flow is missing a start step" do
       it "should return an error message" do
         flow = create(:flow) 
@@ -183,6 +183,74 @@ RSpec.describe Flow, :type => :model do
     end
   end
 
+  describe "first_step" do
+    context "for a flow with a start_step" do
+      it "should return the flow step with start parameter" do
+        flow = build(:flow)
 
+        expect(flow.first_step).to be_a Hash
+        expect(flow.first_step['step']).to eq 10
+      end
+    end
+    context "for a flow mising a start step" do
+      it "should return nil" do
+        flow = build(:flow, steps: @steps_mocks['MISSING_START'].to_json)
 
+        expect(flow.first_step).to be nil
+      end
+    end
+  end
+
+  describe "last_step" do
+    context "for a flow with a last step" do
+      it "should return the flow step with end parameter" do
+        flow = build(:flow)
+
+        expect(flow.last_step).to be_a Hash
+        expect(flow.last_step['step']).to eq 20
+      end
+    end
+    context "for a flow mising an end step" do
+      it "should return nil" do
+        flow = build(:flow, steps: @steps_mocks['MISSING_END'].to_json)
+
+        expect(flow.last_step).to be nil
+      end
+    end
+  end
+
+  describe "step_nr_valid?" do
+    context "for a flow which includes step nr" do
+      it "should return true" do
+        flow = build(:flow)
+
+        expect(flow.step_nr_valid?(10)).to be true
+      end
+    end
+    context "for a flow without step nr" do
+      it "should return false" do
+        flow = build(:flow)
+
+        expect(flow.step_nr_valid?(123)).to eq false
+      end
+    end
+  end
+
+  describe "apply_flow" do
+    context "for an existing job job without step nr" do
+      it "should recreate all flow steps" do
+        job = create(:job)
+        fs1 = create(:flow_step, job: job)
+        job.flow_steps << fs1
+        flow = create(:flow)
+        time = DateTime.now
+
+        flow.apply_flow(job: job)
+        job.reload
+
+        expect(fs1.aborted_at).to_not be nil
+        expect(job.flow_steps.pluck(:id)).to_not include(fs1.id)
+      end
+    end
+  end
 end
