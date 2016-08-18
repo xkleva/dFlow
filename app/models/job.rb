@@ -342,7 +342,7 @@ class Job < ActiveRecord::Base
         reset_flow_steps
       end
       flow.folder_paths_array.each do |folder_path|
-        DfileApi.move_to_trash(source_dir: self.substitute_parameters(folder_path))
+        DfileApi.move_to_trash(source_dir: self.substitute_parameters(string: folder_path))
       end
       self.update_attribute('quarantined', false) if quarantined
       create_log_entry("RESTART", message)
@@ -392,7 +392,7 @@ class Job < ActiveRecord::Base
   def files_list
     files_list = []
     flow.folder_paths_array.each do |folder_path|
-      folder_path = substitute_parameters(folder_path)
+      folder_path = substitute_parameters(string: folder_path)
       children = DfileApi.list_files(source_dir: folder_path)
       if children.present?
         files_list << {name: folder_path, children: DfileApi.list_files(source_dir: folder_path)}
@@ -514,8 +514,12 @@ class Job < ActiveRecord::Base
   end
  
   # Substitutes defined variable names according to map
-  def substitute_parameters(string)
-    string % Job.variables_hash(self).merge(self.flow_parameters_hash.symbolize_keys)
+  def substitute_parameters(string:, require_value: false)
+    if require_value
+      return string % Job.variables_hash(self).merge(self.flow_parameters_hash.symbolize_keys).reject!{|key, value| value.blank?}
+    else
+      return string % Job.variables_hash(self).merge(self.flow_parameters_hash.symbolize_keys)
+    end
   end
 
   def self.variables_hash(job)

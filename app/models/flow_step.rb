@@ -185,6 +185,7 @@ class FlowStep < ActiveRecord::Base
 
   def enter!(username: nil)
     return true if entered?
+    return false if !parsed_params(quarantine_if_empty: true)
     # Skip step if conditions are not met
     if !condition_met?
       self.finished_at = DateTime.now
@@ -297,12 +298,17 @@ class FlowStep < ActiveRecord::Base
     FlowStep.where(job_id: job_id, step: flow_step, aborted_at: nil).first
   end
 
-  def parsed_params
+  def parsed_params(quarantine_if_empty: false)
     hash = params_hash
     new_hash = {}
     hash.each do |key, value|
       if (value.kind_of? String) && (key != "format")
-        new_hash[key] = job.substitute_parameters(value)
+        begin
+        new_hash[key] = job.substitute_parameters(string: value, require_value: quarantine_if_empty)
+        rescue KeyError => e
+          job.quarantine!(msg: "A parameter in #{key} is not set: #{e}")
+          return nil
+        end
       elsif key == "format"
         new_hash['format_params'] = value
       else
@@ -326,7 +332,7 @@ class FlowStep < ActiveRecord::Base
   # Check if conditions for running flow step are met. If none exist, return true.
   def condition_met?
     if condition.present?
-      parsed_condition = job.substitute_parameters(condition)
+      parsed_condition = job.substitute_parameters(string: condition)
       return eval(parsed_condition)
     end
     return true

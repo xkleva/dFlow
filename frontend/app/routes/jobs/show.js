@@ -14,6 +14,7 @@ export default Ember.Route.extend({
     } else {
       job_model = Job.create(Ember.$.extend(model, {container: Ember.getOwner(that)}));
     }
+    controller.set('newFlowStep', model.current_flow_step);
     controller.set('model', job_model);
   },
   actions: {
@@ -80,6 +81,7 @@ export default Ember.Route.extend({
 
     // Resets quarantine flag for job
     unQuarantineJob(job){
+      job.set('current_flow_step', this.controller.get('newFlowStep'));
       this.store.find('job', job.id + '/unquarantine?step=' + job.current_flow_step).then(
         () => {
           this.refresh(job.id); // Refresh children of current model
@@ -93,6 +95,7 @@ export default Ember.Route.extend({
 
     // Resets quarantine flag for job
     setFlowStep(job, recreateFlow){
+      job.set('current_flow_step', this.controller.get('newFlowStep'));
       this.store.find('job', job.id + '/new_flow_step?step=' + job.current_flow_step + '&recreate_flow=' + recreateFlow).then(
         () => {
           this.refresh(job.id); // Refresh children of current model

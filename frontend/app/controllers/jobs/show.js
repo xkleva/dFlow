@@ -13,7 +13,7 @@ export default Ember.Controller.extend({
     return ENV.APP.serviceURL + '/assets/file?file_path=' + this.get('model.flow_step.parsed_params.pdf_file_path') + '&token=' + token;
   }),
 
-  flowStepItems: Ember.computed('model.flow', 'model.flow_steps', function(){
+  flowStepItems: Ember.computed('model.flow', 'model.flow_steps', 'model.current_flow_step', function(){
     var flowStepItems = [];
     for(var y = 0 ; y < this.get('model.flow_steps').sortBy('step').length ; y++ ){
       var flowStep = this.get('model.flow_steps')[y];

@@ -10,7 +10,7 @@
         <div class="input-group">
         <span class="input-group-addon" id="status-text">{{t 'jobs.status'}}
           </span>
-          {{#x-select value=model.current_flow_step class="form-control"}}
+          {{#x-select value=newFlowStep class="form-control"}}
             {{#each flowStepItems as |option|}}
               {{#x-option value=option.value}}{{option.label}}{{/x-option}}
               {{/each}}
@@ -42,7 +42,7 @@
         <div class="input-group">
         <span class="input-group-addon" id="status-text">{{t 'jobs.status'}}
           </span>
-          {{#x-select value=model.current_flow_step class="form-control"}}
+          {{#x-select value=newFlowStep class="form-control"}}
             {{#each flowStepItems as |option|}}
               {{#x-option value=option.value}}{{option.label}}{{/x-option}}
               {{/each}}
