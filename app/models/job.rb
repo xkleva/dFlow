@@ -527,7 +527,7 @@ class Job < ActiveRecord::Base
   def substitute_parameters(string:, require_value: false)
     new_string = escape_non_variable_substitutions(string)
     if require_value
-      return new_string % Job.variables_hash(self).merge(self.flow_parameters_hash.symbolize_keys).reject!{|key, value| value.blank?}
+      return new_string % Job.variables_hash(self).merge(self.flow_parameters_hash.symbolize_keys).reject {|key, value| value.blank?}
     else
       return new_string % Job.variables_hash(self).merge(self.flow_parameters_hash.symbolize_keys)
     end
