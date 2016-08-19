@@ -45,6 +45,16 @@
         <button disabled="{{unless canStop 'disabled'}}" class="btn btn-default" {{action 'stopQueueManager' model.pid}}>Stoppa</button>
       </div>
     </div>
+    {{#if meta.log_output}}
+      <div class="row">
+        <div class="panel-heading">
+          <div class="panel-title">Logg</div>
+        </div>
+        <div class="col-xs-12">
+          <pre>{{meta.log_output}}</pre>
+        </div>
+      </div>
+    {{/if}}
   </div>
 </div>
 
