@@ -8,7 +8,8 @@ class Api::QueueManagerController < ApplicationController
     @response[:queue_managers] = qms
     @response[:meta] = {
       can_start: QueueManagerPid.can_start?,
-      can_stop: QueueManagerPid.can_stop?
+      can_stop: QueueManagerPid.can_stop?,
+      log_output: QueueManagerPid.fetch_log_lines
     }
     render_json
   end

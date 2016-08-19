@@ -1,4 +1,6 @@
 class QueueManagerPid < ActiveRecord::Base
+  LOGFILE="log/queue_manager.log"
+  LOGFILE_LAST_LIMIT=1000
   belongs_to :last_flow_step, class_name: "FlowStep"
   
   validates :pid, presence: true
@@ -9,6 +11,14 @@ class QueueManagerPid < ActiveRecord::Base
     super.merge({
         last_flow_step: last_flow_step,
       })
+  end
+
+  # Fetch last lines from logfile
+  def self.fetch_log_lines(lines: 50)
+    if lines.to_i > LOGFILE_LAST_LIMIT || lines.to_i < 1
+      return ""
+    end
+    `tail -n #{lines.to_i} #{LOGFILE}`
   end
   
   # A new QueueManager can start if there is no one running already
@@ -88,7 +98,7 @@ class QueueManagerPid < ActiveRecord::Base
   # Actually run QueueManager via rake task. This process will then immediately do the startup
   # procedure with its own pid to fill the database with proper data.
   def self.execute_queue_manager!
-    system("(cd \"#{Rails.root}\"; RAILS_ENV=\"#{Rails.env}\" nohup bundle exec rake queue_manager:run >> log/queue_manager.log 2>&1) &")
+    system("(cd \"#{Rails.root}\"; RAILS_ENV=\"#{Rails.env}\" nohup bundle exec rake queue_manager:run >> #{LOGFILE} 2>&1) &")
   end
 
   def is_really_running?
