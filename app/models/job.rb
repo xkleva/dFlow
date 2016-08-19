@@ -512,13 +512,22 @@ class Job < ActiveRecord::Base
   def recreate_flow(step_nr: nil)
     change_flow(flow_name: self.flow.name, step_nr: step_nr) 
   end
- 
+
+  def escape_non_variable_substitutions(string)
+    string.gsub(/%(^{[a-z0-9_-]}|%|[^{])/) do |x| 
+      x = "%%#{$1}" if $1[0..0] != "{"
+      x = "%%" if $1 == "%"
+      x
+    end
+  end
+  
   # Substitutes defined variable names according to map
   def substitute_parameters(string:, require_value: false)
+    new_string = escape_non_variable_substitutions(string)
     if require_value
-      return string % Job.variables_hash(self).merge(self.flow_parameters_hash.symbolize_keys).reject!{|key, value| value.blank?}
+      return new_string % Job.variables_hash(self).merge(self.flow_parameters_hash.symbolize_keys).reject!{|key, value| value.blank?}
     else
-      return string % Job.variables_hash(self).merge(self.flow_parameters_hash.symbolize_keys)
+      return new_string % Job.variables_hash(self).merge(self.flow_parameters_hash.symbolize_keys)
     end
   end
 
