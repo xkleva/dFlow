@@ -1,12 +1,14 @@
 MISSING_START:
   -
     step: 10
+    description: "desc"
     goto_true: 20
     process: CONFIRMATION
     params: 
       manual: true
   -
     step: 20
+    description: "desc"
     process: CONFIRMATION
     params:
       manual: true
@@ -15,6 +17,7 @@ MISSING_START:
 MISSING_END:
   -
     step: 10
+    description: "desc"
     goto_true: 20
     process: CONFIRMATION
     params: 
@@ -22,6 +25,7 @@ MISSING_END:
       start: true
   -
     step: 20
+    description: "desc"
     process: CONFIRMATION
     params:
       manual: true
@@ -29,6 +33,7 @@ MISSING_END:
 MORE_THAN_ONE_START:
   -
     step: 10
+    description: "desc"
     goto_true: 20
     process: CONFIRMATION
     params: 
@@ -36,12 +41,14 @@ MORE_THAN_ONE_START:
       start: true
   -
     step: 20
+    description: "desc"
     process: CONFIRMATION
     params:
       manual: true
       start: true
   -
     step: 30
+    description: "desc"
     process: CONFIRMATION
     params:
       manual: true
@@ -50,6 +57,7 @@ MORE_THAN_ONE_START:
 MORE_THAN_ONE_END:
   -
     step: 10
+    description: "desc"
     goto_true: 20
     process: CONFIRMATION
     params: 
@@ -57,12 +65,14 @@ MORE_THAN_ONE_END:
       start: true
   -
     step: 20
+    description: "desc"
     process: CONFIRMATION
     params:
       manual: true
       end: true
   -
     step: 30
+    description: "desc"
     process: CONFIRMATION
     params:
       manual: true
@@ -71,6 +81,7 @@ MORE_THAN_ONE_END:
 DUPLICATE_STEPS:
   -
     step: 10
+    description: "desc"
     goto_true: 20
     process: CONFIRMATION
     params: 
@@ -78,6 +89,7 @@ DUPLICATE_STEPS:
       start: true
   -
     step: 10
+    description: "desc"
     process: CONFIRMATION
     params:
       manual: true
@@ -87,18 +99,21 @@ DUPLICATE_GOTO:
   -
     step: 10
     goto_true: 30
+    description: "desc"
     process: CONFIRMATION
     params: 
       manual: true
       start: true
   -
     step: 20
+    description: "desc"
     goto_true: 30
     process: CONFIRMATION
     params:
       manual: true
   -
     step: 30
+    description: "desc"
     process: CONFIRMATION
     params:
       manual: true
@@ -107,6 +122,7 @@ DUPLICATE_GOTO:
 GOTO_NOT_EXIST:
   -
     step: 10
+    description: "desc"
     goto_true: 30
     process: CONFIRMATION
     params: 
@@ -114,6 +130,7 @@ GOTO_NOT_EXIST:
       start: true
   -
     step: 20
+    description: "desc"
     process: CONFIRMATION
     params:
       manual: true
@@ -122,6 +139,7 @@ GOTO_NOT_EXIST:
 ALL_STEPS_NOT_POINTED_AT:
   -
     step: 10
+    description: "desc"
     goto_true: 20
     process: CONFIRMATION
     params: 
@@ -129,12 +147,14 @@ ALL_STEPS_NOT_POINTED_AT:
       start: true
   -
     step: 20
+    description: "desc"
     goto_true: 10
     process: CONFIRMATION
     params:
       manual: true
   -
     step: 30
+    description: "desc"
     process: CONFIRMATION
     params:
       manual: true

@@ -2,12 +2,21 @@
 require 'rails_helper'
 
 RSpec.describe Job, :type => :model do
+  subject {build(:job)}
   before :each do
-    WebMock.disable_net_connect!
     login_users
   end
-  after :each do
-    WebMock.allow_net_connect!
+
+  # RELATIONS
+  it {should belong_to(:treenode)}
+  it {should belong_to(:flow)}
+  it {should have_many(:job_activities)}
+  it {should have_many(:publication_logs)}
+  it {should have_many(:flow_steps)}
+
+  # VALIDATIONS
+  describe "id" do
+    it {should validate_uniqueness_of(:id)}
   end
 
   describe "title" do
@@ -17,19 +26,39 @@ RSpec.describe Job, :type => :model do
   describe "catalog_id" do
     it {should validate_presence_of(:catalog_id)}
   end
+  
+  describe "treenode" do
+    it {should validate_presence_of(:treenode_id)}
+  end
 
   describe "source" do
     it {should validate_presence_of(:source)}
     it {should_not allow_value("no-such-source").for(:source)}
   end
 
-  describe "treenode" do
-    it {should validate_presence_of(:treenode_id)}
-  end
-
   describe "copyright" do
     it {should allow_value(true,false).for(:copyright)}
     it {should_not allow_value(nil).for(:copyright)}
+  end
+
+  describe "xml_validity" do
+    it "should return error if xml is invalid" do
+      job = build(:job, xml: '<xll><aas>')
+
+      expect(job.valid?).to be false
+      expect(job.errors.messages[:xml]).to include("XML must be valid")
+    end
+  end
+
+  describe "flow" do
+    it {should validate_presence_of(:flow)}
+    it "should validate flow" do
+      job = build(:job, flow: create(:flow, steps: YAML.load_file("#{Rails.root}/spec/support/flow_mocks/steps_mock.yml")['MISSING_START'].to_json))
+
+      job.validate_flow
+
+      expect(job.errors.messages[:flow]).to_not be nil
+    end
   end
 
   describe "deleted_at" do
@@ -234,27 +263,6 @@ RSpec.describe Job, :type => :model do
     end
   end
 
-  #describe "restart job" do
-  #  context "for a job with a different status" do
-  #    it "should set start status and create log entries" do
-
-  #      stub_request(:get, /http:\/\/dfile\.example\.org\/move_to_trash\?api_key=test_key&source_dir=PACKAGING:\d+/).
-  #      with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-  #      to_return(:status => 200, :body => "", :headers => {})
-
-
-  #      job = create(:job, created_by: 'TestUser', message: 'Restarted')
-  #      @old_count = job.job_activities.count
-  #      
-  #      job.restart
-  #      job.reload
-
-  #      expect(job.flow_step.description).to eq 'Waiting to begin'
-  #      expect(job.job_activities.count).to eq @old_count+1
-  #    end
-  #  end
-  #end
-
   describe "create job with stepnr" do
     context "for a new job" do
       it "should set current flow step to given number" do
@@ -263,7 +271,7 @@ RSpec.describe Job, :type => :model do
       end
       it "should set state according to given step" do
         job = create(:job, current_flow_step: 30)
-        expect(job.state).to eq "PROCESS"
+        expect(job.state).to eq "ACTION"
       end
       it "should complete all previous steps" do
         job = create(:job, current_flow_step: 30)

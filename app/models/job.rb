@@ -7,32 +7,40 @@ class Job < ActiveRecord::Base
   scope :active, -> {where(quarantined: false, deleted_at: nil)}
   Job.per_page = 50
 
+  # RELATIONS
   belongs_to :treenode
   belongs_to :flow
   has_many :job_activities, :dependent => :destroy
   has_many :publication_logs, :dependent => :destroy
-
   has_many :flow_steps, -> {where(aborted_at: nil)}, :dependent => :destroy
 
+  # BEFORE VALIDATION
+  before_validation :set_treenode_ids
+
+  # VALIDATIONS
   validates :id, :uniqueness => true
   validates :title, :presence => true
   validates :catalog_id, :presence => true
   validates :treenode_id, :presence => true
   validates :source, :presence => true
-  validates :copyright, :inclusion => {:in => [true, false]}
+  validates :flow, :presence => true
   validate :source_in_list
+  validates :copyright, :inclusion => {:in => [true, false]}
   validate :xml_validity
+  validate :validate_flow
   validates_associated :job_activities
+
+  # AFTER VALIDATION
+  after_validation :init_flow_parameters
+
+  # AFTER CREATE
+  after_create :create_log_entry
+  after_create :create_flow_steps
+
+  # ACCESSORS
   attr_accessor :created_by
   attr_accessor :message
   attr_accessor :nolog # Flag, set to true to inactivate job activity creation
-
-  after_create :create_log_entry
-  after_create :create_flow_steps
-  after_validation :init_flow_parameters
-
-  before_validation :set_treenode_ids
-  validate :validate_flow
 
   def as_json(options = {})
     if !id 
@@ -83,9 +91,10 @@ class Job < ActiveRecord::Base
   end
 
   def validate_flow
-    flow.validate
-    flow.errors.full_messages.each do |msg|
-      errors.add(:flow, msg)
+    if flow.present? && !flow.valid?
+      flow.errors.full_messages.each do |msg|
+        errors.add(:flow, msg)
+      end
     end
   end
 
@@ -196,7 +205,7 @@ class Job < ActiveRecord::Base
 
   # Checks validity
   def xml_validity
-    errors.add(:base, "Marc must be valid xml") unless xml_valid?(xml)
+    errors.add(:xml, "XML must be valid") unless xml_valid?(xml)
   end
 
   # Check if source is in list of configured sources

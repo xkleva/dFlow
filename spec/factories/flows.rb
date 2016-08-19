@@ -9,12 +9,21 @@ FactoryGirl.define do
             step: 10,
             process: "CONFIRMATION",
             description: "confirmation",
-            goto_true: 20,
+            goto_true: 30,
             params: {
                 start: true,
                 manual: true,
                 msg: "Starta digitalisering"
             }
+        },
+        {
+          step: 30,
+          process: "CONFIRMATION",
+          description: "confirmation",
+          goto_true: 20,
+          params: {
+            manual: true
+          }
         },
         {
             step: 20,
