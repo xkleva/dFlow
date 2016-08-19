@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe FlowStep, :type => :model do
+  subject {build(:flow_step)}
   describe "step" do
 
     it "should fail on duplicate step ids for job" do
@@ -30,7 +31,7 @@ RSpec.describe FlowStep, :type => :model do
   end
 
   describe "description" do
-    it {should_not validate_presence_of(:description)}
+    it {should validate_presence_of(:description)}
     it {should allow_value("Test desc").for(:description)}
   end
 
@@ -102,7 +103,7 @@ RSpec.describe FlowStep, :type => :model do
     end
     context "with parameter start not set" do
       it "should return false" do
-        flow_step = build(:flow_step, step: 10)
+        flow_step = build(:flow_step, :end_step, step: 10)
 
         expect(flow_step.start_step?).to be_falsey
       end
@@ -121,32 +122,9 @@ RSpec.describe FlowStep, :type => :model do
     end
     context "for step with no goto_true step" do
       it "should return a FlowStep object" do
-        job = create(:job)
-        flow_step = create(:flow_step, job: job, step: 100, goto_true: nil)
-        flow_step2 = create(:flow_step, job: job, step: 200)
+        flow_step = create(:flow_step, :end_step, goto_true: nil)
 
         expect(flow_step.goto_true_step).to be nil
-      end
-    end
-  end
-
-  describe "goto_false_step" do
-    context "for step with a goto_false step" do
-      it "should return a FlowStep object" do
-        job = create(:job)
-        flow_step = create(:flow_step, job: job, step: 100, goto_false: 200)
-        flow_step2 = create(:flow_step, job: job, step: 200)
-
-        expect(flow_step.goto_false_step).to be_a FlowStep
-      end
-    end
-    context "for step with no goto_false step" do
-      it "should return a FlowStep object" do
-        job = create(:job)
-        flow_step = create(:flow_step, job: job, step: 100, goto_true: 200, goto_false: nil)
-        flow_step2 = create(:flow_step, job: job, step: 200)
-
-        expect(flow_step.goto_false_step).to be nil
       end
     end
   end
@@ -154,28 +132,25 @@ RSpec.describe FlowStep, :type => :model do
   describe "is_before?" do
     context "for a step two steps in front of given step" do
       it "should return true" do
-        job = create(:job)
-        step1 = job.flow_steps.where(step: 20).first
+        step1 = build(:flow_step, step: 30)
 
-        expect(step1.is_before?(40)).to be_truthy
+        expect(step1.is_before?(20)).to be_truthy
       end
     end
 
     context "for a step two steps behind front of given step" do
       it "should return true" do
-        job = create(:job)
-        step1 = job.flow_steps.where(step: 40).first
+        step1 = build(:flow_step, step: 20)
 
-        expect(step1.is_before?(20)).to be_falsey
+        expect(step1.is_before?(30)).to be_falsey
       end
     end
 
     context "for same step number as given step" do
       it "should return false" do
-        job = create(:job)
-        step1 = job.flow_steps.where(step: 40).first
+        step1 = build(:flow_step, step: 20)
 
-        expect(step1.is_before?(40)).to be_falsey
+        expect(step1.is_before?(20)).to be_falsey
       end
     end
   end
@@ -183,28 +158,25 @@ RSpec.describe FlowStep, :type => :model do
   describe "is_after?" do
     context "for a step two steps in front of given step" do
       it "should return false" do
-        job = create(:job)
-        step1 = job.flow_steps.where(step: 20).first
+        step1 = build(:flow_step, step: 10)
 
-        expect(step1.is_after?(40)).to be_falsey
+        expect(step1.is_after?(20)).to be_falsey
       end
     end
 
     context "for a step two steps behind front of given step" do
       it "should return true" do
-        job = create(:job)
-        step1 = job.flow_steps.where(step: 40).first
+        step1 = build(:flow_step, step: 20)
 
-        expect(step1.is_after?(20)).to be_truthy
+        expect(step1.is_after?(10)).to be_truthy
       end
     end
 
     context "for same step number as given step" do
       it "should return false" do
-        job = create(:job)
-        step1 = job.flow_steps.where(step: 40).first
+        step1 = build(:flow_step, step: 30)
 
-        expect(step1.is_after?(40)).to be_falsey
+        expect(step1.is_after?(20)).to be_falsey
       end
     end
   end
@@ -213,27 +185,13 @@ RSpec.describe FlowStep, :type => :model do
     context "for a flow_step not already entered" do
       it "should update entered_at flag and job" do
         job = create(:job)
-        flow_step = create(:flow_step, job: job, step: 100)
+        flow_step = job.flow_steps.where(step: 30).first
         
         flow_step.enter!
         job.reload
 
-        expect(job.current_flow_step).to eq 100
+        expect(job.current_flow_step).to eq 30
         expect(flow_step.entered_at).to be_truthy
-      end
-    end
-
-    context "for a flow_step already entered" do
-      it "should not do anything" do
-        job = create(:job)
-        timestamp = DateTime.now
-        flow_step = create(:flow_step, job: job, step: 100, entered_at: timestamp)
-        
-        flow_step.enter!
-        job.reload
-
-        expect(job.current_flow_step).to_not eq 100
-        expect(flow_step.entered_at).to eq timestamp
       end
     end
   end
@@ -311,27 +269,17 @@ RSpec.describe FlowStep, :type => :model do
         expect(job.state).to eq "START"
       end
     end
-    context "for an entered second flow_step (automatic confirmation)" do
-      it "should return PROCESS" do
-        job = create(:job)
-        job.flow_step.finish!
-        job.reload
-
-        expect(job.flow_step.main_state).to eq "PROCESS"
-        expect(job.state).to eq "PROCESS"
-      end
-    end
     context "for an entered last step" do
       it "should return PROCESS" do
-        job = create(:job, current_flow_step: 40)
+        job = create(:job, current_flow_step: 20)
 
-        expect(job.flow_step.main_state).to eq "PROCESS"
-        expect(job.state).to eq "PROCESS"
+        expect(job.flow_step.main_state).to eq "ACTION"
+        expect(job.state).to eq "ACTION"
       end
     end
     context "for a finished last step" do
       it "should return FINISH" do
-        job = create(:job, current_flow_step: 50)
+        job = create(:job, current_flow_step: 20)
         job.flow_step.finish!
         job.reload
 
@@ -341,7 +289,7 @@ RSpec.describe FlowStep, :type => :model do
     end
     context "for a manual ACTION step" do
       it "should return ACTION" do
-        job = create(:job, current_flow_step: 50)
+        job = create(:job, current_flow_step: 20)
 
         expect(job.flow_step.main_state).to eq "ACTION"
         expect(job.state).to eq "ACTION"
@@ -355,7 +303,7 @@ RSpec.describe FlowStep, :type => :model do
         job = create(:job)
 
         fs = job.flow_step.next_step
-        expect(fs.step).to eq 20
+        expect(fs.step).to eq 30
       end
     end
     context "where next step has already been entered" do

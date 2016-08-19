@@ -8,7 +8,17 @@ FactoryGirl.define do
     association :flow, factory: [:flow]
     process "CONFIRMATION"
     description "Test confirmation flow step"
-    params "{\"manual\":true, \"end\":true}"
+    start_step
+
+    trait :end_step do
+      params "{\"manual\":true, \"end\":true}"
+      goto_true nil
+    end
+
+    trait :start_step do
+      params "{\"manual\":true, \"start\":true}"
+      goto_true 30
+    end
   end
 
 end

@@ -160,22 +160,12 @@ class FlowStep < ActiveRecord::Base
 
   # Returns true if step_nr occurs before given step
   def is_before?(step_nr)
-    if goto_true == step_nr
-      return true
-    elsif goto_false == step_nr
-      return true
-    elsif goto_true_step && goto_true_step.is_before?(step_nr)
-      return true
-    elsif goto_false_step && goto_false_step.is_before?(step_nr)
-      return true
-    else
-      return false
-    end
+    return flow.flow_step_is_before?(current_step:step, other_step:step_nr)
   end
 
   # Returns true if step_nr occurs after given step
   def is_after?(step_nr)
-    return !is_before?(step_nr) && !is_equal?(step_nr)
+    return !flow.flow_step_is_before?(current_step:step, other_step:step_nr)
   end
 
   # Returns true if current step has given step_nr
