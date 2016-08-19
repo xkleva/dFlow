@@ -7,10 +7,11 @@ module Import
     attr_accessor :job
     attr_accessor :row_num
     
-    def initialize(treenode_id:, copyright:, flow_id:, columns:, row:, row_num:)
+    def initialize(treenode_id:, copyright:, flow_id:, flow_parameters:, columns:, row:, row_num:)
       @treenode_id = treenode_id
       @copyright = copyright
       @flow_id = flow_id
+      @flow_parameters = flow_parameters
       @columns = columns
       @row_num = row_num
       fixed_row = row.map do |val|
@@ -43,6 +44,7 @@ module Import
       @job_data["treenode_id"] = @treenode_id
       @job_data["copyright"] = @copyright
       @job_data["flow_id"] = @flow_id
+      @job_data["flow_parameters"] = @flow_parameters.to_json
       @job_data["metadata"] = @job_data["metadata"].to_json
       @job_data["created_by"] = "import"
       @job = Job.new(@job_data)
@@ -68,7 +70,7 @@ class ImportJobs
   SLOWDOWN=false
   SLOWBY=0.13
   
-  def self.run(logger: nil, process_id:, file_path:, source_name:, treenode_id:, copyright:, flow_id:)
+  def self.run(logger: nil, process_id:, file_path:, source_name:, treenode_id:, copyright:, flow_id:, flow_parameters: {})
     @source_data = {}
     @source = Source.find_by_name(source_name)
     @process_id = process_id
@@ -116,6 +118,7 @@ class ImportJobs
       @jobs << Import::JobEntry.new(treenode_id: treenode_id,
                                 copyright: copyright,
                                 flow_id: flow_id,
+                                flow_parameters: flow_parameters,
                                 columns: @columns,
                                 row: row,
                                 row_num: i+1)

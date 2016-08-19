@@ -63,17 +63,6 @@
           </div>
         </div>
 
-        <div class="col-xs-12 form-group {{if error.errors.flow 'has-error'}}">
-          <label class="col-xs-2 control-label">{{t 'jobs.flow'}}</label>
-          <div class="col-xs-4">
-            {{#x-select value=model.flow_id class="form-control"}}
-            {{#each flowSelection as |option|}}
-            {{#x-option value=option.value}}{{option.label}}{{/x-option}}
-            {{/each}}
-            {{/x-select}}
-          </div> 
-        </div>
-
         <div class="col-xs-12 form-group {{if error.errors.copyright 'has-error'}}">
           <label class="col-xs-2 control-label">{{t 'jobs.copyright'}}</label>
           <div class="col-xs-4">
@@ -83,6 +72,32 @@
               {{/each}}
             {{/x-select}}
           </div>
+        </div>
+
+        <div class="col-xs-12 form-group {{if error.errors.flow 'has-error'}}">
+          <label class="col-xs-2 control-label">{{t 'jobs.flow'}}</label>
+          <div class="col-xs-4">
+            {{#x-select value=model.flow_id class="form-control"}}
+            {{#x-option}}-- Välj --{{/x-option}}
+            {{#each flowSelection as |option|}}
+            {{#x-option value=option.value}}{{option.label}}{{/x-option}}
+            {{/each}}
+            {{/x-select}}
+          </div> 
+        </div>
+
+        <div class="col-xs-12 flow-param-group">
+          {{#each currentFlow.parameters.parameters as |parameter|}}
+          <div class="row">
+            <div class="col-xs-offset-2 col-xs-10">
+              {{parameter-input parameter=parameter values=model.flow_parameters}}
+            </div>
+          </div>
+        {{else}}
+          <div class="col-xs-offset-2 col-xs-4">
+            Inga flödesparametrar är definierade.
+          </div>
+          {{/each}}
         </div>
 
         <div class="col-xs-12 form-group {{if error.errors.file_path 'has-error'}}">

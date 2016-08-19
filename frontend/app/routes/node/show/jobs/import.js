@@ -2,7 +2,9 @@ import Ember from 'ember';
 
 export default Ember.Route.extend({
   model: function() {
-    return {};
+    return {
+      flow_parameters: {}
+    };
   },
   setupController: function(controller, model) {
     if(controller.get('preventUpdate')) {

@@ -121,7 +121,7 @@ class ScriptManager
     
     if process_object && process_object["required_params"]
       process_object["required_params"].each do |param|
-        if !params[param]
+        if !params.compact.has_key?(param)
           errors[param] ||= []
           errors[param] << "Missing mandatory parameter"
         end

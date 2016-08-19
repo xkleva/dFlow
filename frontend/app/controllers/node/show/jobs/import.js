@@ -13,6 +13,10 @@ export default Ember.Controller.extend({
   isRunning: Ember.computed.equal('progress.state', 'RUNNING'),
   jobError: Ember.computed.equal('progress.action', 'JOB_ERROR'),
   
+  currentFlow: Ember.computed('model.flow_id', function(){
+    return this.get('application.flows').findBy('id', this.get('model.flow_id'));
+  }),
+
   actions: {
     importFile: function(model) {
       var that = this;
@@ -24,7 +28,8 @@ export default Ember.Controller.extend({
           treenode_id: that.get('node.model.id'),
           flow_id: model.flow_id,
           source_name: model.source_name,
-          file_path: model.file_path
+          file_path: model.file_path,
+          flow_parameters: model.flow_parameters
         }
       }).then(function(response) {
         that.set('process_id', response.id);
