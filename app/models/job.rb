@@ -513,6 +513,8 @@ class Job < ActiveRecord::Base
     change_flow(flow_name: self.flow.name, step_nr: step_nr) 
   end
 
+  # Make % into %% for everything not on the format of %{variable} so
+  # that parameters can contain % without causing error
   def escape_non_variable_substitutions(string)
     string.gsub(/%(^{[a-z0-9_-]}|%|[^{])/) do |x| 
       x = "%%#{$1}" if $1[0..0] != "{"
