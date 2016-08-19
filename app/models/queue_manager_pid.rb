@@ -15,6 +15,7 @@ class QueueManagerPid < ActiveRecord::Base
 
   # Fetch last lines from logfile
   def self.fetch_log_lines(lines: 50)
+    return "" if !File.exist?(LOGFILE)
     if lines.to_i > LOGFILE_LAST_LIMIT || lines.to_i < 1
       return ""
     end
