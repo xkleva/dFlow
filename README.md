@@ -33,11 +33,11 @@ The configuration interface is accessible through `http://<host>/setup`. For a l
 
 Everything in the configuration interface simply creates a new version of `config/config_full.yml`, meaning that all changes can be made directly to the configuration file just as well as through the interface.
 
-After **saving** though the interface, make sure the server is **restarted** (this will happen automatically on any production server using *Passenger*, but not on local instances), and the page manually reloaded. Otherwise the old data will be shown, and any subsequent changes will overwrite the previously made ones.
+After **saving** though the interface, make sure the server is **restarted** (this will happen automatically on any production server using *Passenger*, but not on local instances), and the page manually reloaded. Otherwise the old data will be shown, and any subsequent changes will overwrite the previously made ones.  
 ## Workflows
 A workflow defines which steps a job goes through to be processed. A Workflow is built up of [Steps] (#flow-steps), which each points to a specific [Process] (#processes). 
 ### Creating a workflow
-Workflows are created through the interface under *Flows*. The button *Create new flow* will create a new flow with a generated name, which can be changed in the next step.
+Workflows are created through the interface under *Flows*. The button *Create new flow* will create a new flow with a generated name, which can be changed in the next step.  
 ### Workflow name
 The workflow name has to be unique, and the preferred convention is to use upper snake-case (e.g. MY_FLOW).
 ### Workflow parameters
@@ -47,7 +47,7 @@ A workflow can have any number of predefined parameters. These parameters get th
 **name** (String, lower snake-case e.g. 'my_parameter') - The name of the parameter, decides what it will be called in the GUI, as well as how to call it from a flow step.  
 **info** (String) - A description, meant to be able to guide the user as to what the parameter means. (e.g. 'Assign the number of pages this job has')  
 **type** (Predefined input types, i.e. one of 'radio') - The type of input for the user.  
-**options** (List of values) - The list of values available when using a predefined input type such as 'radio'. The option elements can be assigned as simple strings, or as a Hash object containing the keys **value** and **label**. The label can then be used to explain the value when using a dropdown, for example.
+**options** (List of values) - The list of values available when using a predefined input type such as 'radio'. The option elements can be assigned as simple strings, or as a Hash object containing the keys **value** and **label**. The label can then be used to explain the value when using a dropdown, for example.  
 
 **Example:** Defines one parameter 'processing_station' for the current flow, using a radio input.
 ```json
@@ -70,8 +70,8 @@ A workflow can have any number of predefined parameters. These parameters get th
 
 ### Folder paths
 The folder paths define which folders the flow can possibly store files in. These folder paths are used for two functions:
-1. **Listing files** - When listing files for a given job, DFlow looks through all given folder paths and displays the ones that exist and contains files or folders.
-2. **Restarting a job** - When restarting a job, all folders that are defined in folder paths and exist, will be moved from its current location to a subfolder called "RESTARTED". This is to be able to be sure that the job is completely restarted, and no old files remain in the file structure. The RESTARTED folder will have to be emptied manually. **Tha folder paths must be valid DFile Paths**
+1. **Listing files** - When listing files for a given job, DFlow looks through all given folder paths and displays the ones that exist and contains files or folders.  
+2. **Restarting a job** - When restarting a job, all folders that are defined in folder paths and exist, will be moved from its current location to a subfolder called "RESTARTED". This is to be able to be sure that the job is completely restarted, and no old files remain in the file structure. The RESTARTED folder will have to be emptied manually. **Tha folder paths must be valid DFile Paths**  
 
 **Example** - Defines a processing, packaging and store location for a job
 ```json
@@ -90,7 +90,7 @@ The flow steps define the core of the workflow, as nothing would be done without
 **process** (Process - Available values are defined in [Processes] (#processes)) - The name of the process to be run for this step. The process has to be predefined.  
 **goto_true** (Integer - Another existing step identifier) - Points to which step should be run when this step is finished.  
 **condition** (Evaluable statement) (Not mandatory) - A condition which has to return **true** for the step to execute, otherwise the step will finish and the next one be started. Example of a condition is "%{copyright} == 'true'".  
-**params** - The parameters available for the given **process**, see documentation on each process.
+**params** - The parameters available for the given **process**, see documentation on each process.  
 
 **Example 1:** A manual flow step which should only run if job is copyrighted, and starts step nr **30** when done:
 ```json
@@ -197,11 +197,11 @@ This process only finishes the current flow step
 ##### Description 
 Displays a link to a PDF file, which is meant to be checked for quality deficiencies.
 ##### Parameters
-**pdf_file_path** (Path) - Path to a previously generated PDF file to be quality checked.
-**manual** (true / false) - Should be set to **true** to get a confirmation button.
-**msg** (String, e.g. "Operation done!")
+**pdf_file_path** (Path) - Path to a previously generated PDF file to be quality checked.  
+**manual** (true / false) - Should be set to **true** to get a confirmation button.  
+**msg** (String, e.g. "Operation done!")  
 ##### Expected outcome
-This process only finishes the current flow step.
+This process only finishes the current flow step.  
 ##### Examples
 **Example 1:** The manual task of reviewing a pdf file needs a place in the workflow. When done, the user klicks a confirmation button in DFlow to move the workflow to the next step in the process.
 ```json
@@ -222,16 +222,16 @@ This process only finishes the current flow step.
 ##### Description 
 Displays thumbnails for a given path of images, and lets the user assign physical and logical metadata per image.
 ##### Parameters
-**images_folder_path** (Path) - Path to the **job root folder** where images can be found. A **thumbnails** folder will be created under this directory.
-**source** (Relative folder path) - The relative folder path from **images_folder_path**, e.g. 'web' if the files are located in <job_folder>/web, and 'web/jpg' if the files are located in <job_folder>/web/jpg.
-**filetype** (Filetype, e.g. 'jpg, tif') - Filetype of files in source folder.
-**save** (true / false) - Should be set to **true**, means that the operation will save the job as well as move to the next flow step.
-**manual** (true / false) - Should be set to **true** to get a confirmation button.
-**msg** (String, e.g. "Metadata done!")
+**images_folder_path** (Path) - Path to the **job root folder** where images can be found. A **thumbnails** folder will be created under this directory.  
+**source** (Relative folder path) - The relative folder path from **images_folder_path**, e.g. 'web' if the files are located in <job_folder>/web, and 'web/jpg' if the files are located in <job_folder>/web/jpg.  
+**filetype** (Filetype, e.g. 'jpg, tif') - Filetype of files in source folder.  
+**save** (true / false) - Should be set to **true**, means that the operation will save the job as well as move to the next flow step.  
+**manual** (true / false) - Should be set to **true** to get a confirmation button.  
+**msg** (String, e.g. "Metadata done!")  
 ##### Expected outcome
 This process finishes the current flow step, **and** saves the job including the set metadata!.
 ##### Examples
-**Example 1:** The task of assigning metadata needs a place in the flow. When done, the user klicks a confirmation button in DFlow to move the workflow to the next step in the process, as well as save the metadata.
+**Example 1:** The task of assigning metadata needs a place in the flow. When done, the user klicks a confirmation button in DFlow to move the workflow to the next step in the process, as well as save the metadata.  
 ```json
 {
     "step": 60,
