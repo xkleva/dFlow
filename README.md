@@ -12,15 +12,16 @@ DFlow is a Ruby-On-Rails Application, built to support workflows for large digit
     *  [Making an API-request] (#making-an-api-request)
     *  [Triggered processes] (#triggered-processes)
         * [CONFIRMATION] (#confirmation)
+        * [QUALITY_CONTROL] (#quality_control)
+        * [ASSIGN_METADATA] (#assign_metadata)
     *  [Waiting processes] (#waiting-processes)
-        *  [WAITFOR_FILES] (#waitfor_files)
-        *  [WAITFOR_FILE] (#waitfor_file)
+        *  [WAIT_FOR_FILES] (#wait_for_files)
+        *  [WAIT_FOR_FILE] (#wait_for_file)
     *  [Running processes] (#running-processes)
         *  [COPY_FILE] (#copy_file)
         *  [COPY_FOLDER] (#copy_folder)
         *  [MOVE_FOLDER] (#move_folder)
         *  [DELETE_JOB_FILES] (#delete_job_files)
-        *  [CHANGE_PACKAGE_LOCATION] (#change_package_location)
         *  [COLLECT_JOB_METADATA] (#collect_job_metadata)
         *  [CREATE_FORMAT] (#create_format)
         *  [CREATE_METS_FILE] (#create_mets_file)
@@ -36,54 +37,9 @@ After **saving** though the interface, make sure the server is **restarted** (th
 ## Workflows
 A workflow defines which steps a job goes through to be processed. A Workflow is built up of [Steps] (#flow-steps), which each points to a specific [Process] (#processes). 
 ### Creating a workflow
-Workflows are dined using the [configuration interface] (#configuration-interface), in the text-box 'Workflows'. The syntax used is JSON, and the input format has to be valid JSON to save properly. Use a JSON validator ([like this one] (http://jsonlint.com/) to check the validity before saving.
-
-Each workflow has three possible attributes, **name**, **parameters**, and **steps**
-
-**Example of a valid workflow:**
-```json
-  {
-    "name": "MY_FLOW",
-    "parameters": [
-      {
-        "name": "processing_station",
-        "info": "Which station was used",
-        "type": "radio",
-        "options": [
-          "STATION1",
-          "STATION2",
-          "STATION3"
-        ]
-      }
-    ],
-    "steps": [
-      {
-        "step": 10,
-        "process": "CONFIRMATION",
-        "description": "Waiting for processing",
-        "goto_true": 20,
-        "params": {
-          "start": true,
-          "manual": true,
-          "msg": "Start processing"
-        }
-      },
-      {
-        "step": 20,
-        "process": "CONFIRMATION",
-        "description": "Processing done",
-        "goto_true": null,
-        "params": {
-          "start": true,
-          "manual": true,
-          "msg": "Start processing"
-        }
-      }
-    ]
-}
-```
+Workflows are created through the interface under *Flows*. The button *Create new flow* will create a new flow with a generated name, which can be changed in the next step.
 ### Workflow name
-The workflow name has to be unique, and the preferred convention is to use upper snake-case (e.g. MY_FLOW). The workflow name should **not** contain **spaces**.
+The workflow name has to be unique, and the preferred convention is to use upper snake-case (e.g. MY_FLOW).
 ### Workflow parameters
 A workflow can have any number of predefined parameters. These parameters get their values from user-input per job. This makes the workflow highly flexible, and reduces the need for having many almost-identical workflows when there are only small differences.
 
@@ -91,7 +47,7 @@ A workflow can have any number of predefined parameters. These parameters get th
 **name** (String, lower snake-case e.g. 'my_parameter') - The name of the parameter, decides what it will be called in the GUI, as well as how to call it from a flow step.  
 **info** (String) - A description, meant to be able to guide the user as to what the parameter means. (e.g. 'Assign the number of pages this job has')  
 **type** (Predefined input types, i.e. one of 'radio') - The type of input for the user.  
-**options** (List of values) - The list of values available when using a predefined input type such as 'radio'.  
+**options** (List of values) - The list of values available when using a predefined input type such as 'radio'. The option elements can be assigned as simple strings, or as a Hash object containing the keys **value** and **label**. The label can then be used to explain the value when using a dropdown, for example.
 
 **Example:** Defines one parameter 'processing_station' for the current flow, using a radio input.
 ```json
@@ -103,11 +59,31 @@ A workflow can have any number of predefined parameters. These parameters get th
         "options": [
           "STATION1",
           "STATION2",
-          "STATION3"
+          {
+            value: "STATION3",
+            label: "This will select Station 3 for you"
+          }
         ]
       }
     ]
 ```
+
+### Folder paths
+The folder paths define which folders the flow can possibly store files in. These folder paths are used for two functions:
+1. **Listing files** - When listing files for a given job, DFlow looks through all given folder paths and displays the ones that exist and contains files or folders.
+2. **Restarting a job** - When restarting a job, all folders that are defined in folder paths and exist, will be moved from its current location to a subfolder called "RESTARTED". This is to be able to be sure that the job is completely restarted, and no old files remain in the file structure. The RESTARTED folder will have to be emptied manually. **Tha folder paths must be valid DFile Paths**
+
+**Example** - Defines a processing, packaging and store location for a job
+```json
+{
+    "folder_paths": [
+        "PROCESSING:/%{job_id}",
+        "PACKAGING:/%{package_name}",
+        "STORE:/%{package_name}"
+    ]
+}
+```
+
 ### Flow steps
 The flow steps define the core of the workflow, as nothing would be done without them. Each step has the following options:  
 **step** (Integer) - The step identifier, must be a number.  
@@ -153,7 +129,6 @@ source_folder_path: %{processing_station}:/%{job_id}
 ..
 ```
 
-**OBSERVE: All parameters can use variables EXCEPT 'format'. This is due to 'format' needing to maintain its own variable-like definitions.**
 #### Predefined variables
 Variables are predefined in the code [app/model/flow_step.rb#substitute_parameters] (https://github.com/ub-digit/dFlow/blob/master/app/models/flow_step.rb#L273-L285). This is where new variables should be added if needed.
 
@@ -218,11 +193,66 @@ This process only finishes the current flow step
   },
 ```
 *****
+#### QUALITY_CONTROL
+##### Description 
+Displays a link to a PDF file, which is meant to be checked for quality deficiencies.
+##### Parameters
+**pdf_file_path** (Path) - Path to a previously generated PDF file to be quality checked.
+**manual** (true / false) - Should be set to **true** to get a confirmation button.
+**msg** (String, e.g. "Operation done!")
+##### Expected outcome
+This process only finishes the current flow step.
+##### Examples
+**Example 1:** The manual task of reviewing a pdf file needs a place in the workflow. When done, the user klicks a confirmation button in DFlow to move the workflow to the next step in the process.
+```json
+{
+    "step": 60,
+    "process": "QUALITY_CONTROL",
+    "description": "Check quality of PDF file",
+    "goto_true": 70,
+    "params": {
+      "pdf_file_path": "PROCESSING:/%{job_id}/pdf/%{job_id}.pdf",
+      "manual": true,
+      "msg": "Quality control done!"
+    }
+  },
+```
+*****
+#### ASSIGN_METADATA
+##### Description 
+Displays thumbnails for a given path of images, and lets the user assign physical and logical metadata per image.
+##### Parameters
+**images_folder_path** (Path) - Path to the **job root folder** where images can be found. A **thumbnails** folder will be created under this directory.
+**source** (Relative folder path) - The relative folder path from **images_folder_path**, e.g. 'web' if the files are located in <job_folder>/web, and 'web/jpg' if the files are located in <job_folder>/web/jpg.
+**filetype** (Filetype, e.g. 'jpg, tif') - Filetype of files in source folder.
+**save** (true / false) - Should be set to **true**, means that the operation will save the job as well as move to the next flow step.
+**manual** (true / false) - Should be set to **true** to get a confirmation button.
+**msg** (String, e.g. "Metadata done!")
+##### Expected outcome
+This process finishes the current flow step, **and** saves the job including the set metadata!.
+##### Examples
+**Example 1:** The task of assigning metadata needs a place in the flow. When done, the user klicks a confirmation button in DFlow to move the workflow to the next step in the process, as well as save the metadata.
+```json
+{
+    "step": 60,
+    "process": "ASSIGN_METADATA",
+    "description": "Assign metadata per image",
+    "goto_true": 80,
+    "params": {
+        "manual": true,
+        "images_folder_path": "PROCESSING:/%{job_id}",
+        "source": "web",
+        "save": true,
+        "msg": "Metadata klar!",
+        "filetype": "jpg"
+    }
+  },
+```
 ### Waiting processes
 A *waiting process* works much like a triggered process, in that it's only function is to finish the current flow step and move to the next one. The trigger in this case however, is its **condition**, which can consist of waiting for a **specific file to exist** or a **specific number of files** to exist, for example.  
 Waiting processes are run by the internal Queue Manager, and shares queue with all other waiting processes in it.
 *****
-#### WAITFOR_FILE
+#### WAIT_FOR_FILE
 ##### Description 
 Waits for a given file to exist before finishing.
 ##### Parameters
@@ -243,7 +273,7 @@ The process keeps repeating until given file is found.
   },
 ```
 *****
-#### WAITFOR_FILES
+#### WAIT_FOR_FILES
 ##### Description 
 Waits until given folder contains the given amount of files of a given type before finishing.
 ##### Parameters
@@ -302,7 +332,7 @@ Copies a folder to given location.
 ##### Parameters
 **source_folder_path** (Path) - Path of source folder  
 **destination_folder_path** (Path) - Path of destination folder (including the copied folder, i.e. not its parent)  
-**format** (Format string, e.g. '%04d' for 0001.jpg) (Not mandatory) - Tells new format of file names after being copied, can be omitted if filenames should remain the same.  
+**format_string** (Format string, e.g. '%04d' for 0001.jpg) (Not mandatory) - Tells new format of file names after being copied, can be omitted if filenames should remain the same.  
 **filetype** (Filetype, e.g. 'tif', 'jpg' et.c.) (Not mandatory) - If given, only copies files with the given filetype. Files will only be copied from the source folder, **subdirectories or nested files will NOT be copied**.
 ##### Expected outcome
 Source folder contents are copied to the destination folder, with new filenames if **format** is given.
@@ -317,7 +347,8 @@ Source folder contents are copied to the destination folder, with new filenames 
     "params": {
       "source_folder_path": "MACHINE1:/scans/%{job_id}/tif",
       "destination_folder_path": "PROCESSING:/%{job_id}/tif",
-      "format": "%04d"
+      "format_string": "%04d",
+      "filetype": "tif"
     }
   },
 ```
@@ -328,7 +359,7 @@ Moves a folder to given location.
 ##### Parameters
 **source_folder_path** (Path) - Path of source folder  
 **destination_folder_path** (Path) - Path of destination folder (including the copied folder, i.e. not its parent)  
-**format** (Format string, e.g. '%04d' for 0001.jpg) (Not mandatory) - Tells new format of file names after being copied, can be omitted if filenames should remain the same.
+**format_string** (Format string, e.g. '%04d' for 0001.jpg) (Not mandatory) - Tells new format of file names after being copied, can be omitted if filenames should remain the same.
 ##### Expected outcome
 Source folder contents are copied to the destination folder, with new filenames if **format** is given. Source folder is then deleted.
 ##### Examples
@@ -342,7 +373,8 @@ Source folder contents are copied to the destination folder, with new filenames 
     "params": {
       "source_file_path": "MACHINE1:/scans/%{job_id}/tif",
       "destination_file_path": "PROCESSING:/%{job_id}/tif",
-      "format": "%04d"
+      "format_string": "%04d",
+      "filetype": "tif"
     }
   },
 ```
@@ -364,27 +396,6 @@ If there is a folder named after the jobs id in the given directory, it should b
     "goto_true": 70,
     "params": {
       "job_parent_path": "PROCESSING:/"
-    }
-  },
-```
-*****
-#### CHANGE_PACKAGE_LOCATION
-##### Description 
-Changes the current default location for the job files, which decides which files are to be displayed in the DFlow interface.
-##### Parameters
-**job_parent_path** (Path) - New path for job files
-##### Expected outcome
-The package location for the job is updated, and the files showin in the interface should reflect the change.
-##### Examples
-**Example 1:** A job has been moved from PACKAGING to STORE, which should be reflected in DFlow.
-```json
-{
-    "step": 60,
-    "process": "CHANGE_PACKAGE_LOCATION",
-    "description": "Change package location to STORE",
-    "goto_true": 70,
-    "params": {
-      "new_package_location": "STORE:/{package_name}"
     }
   },
 ```
@@ -419,7 +430,7 @@ Creates a new image format using ImageMagick with given parameters.
 **source_folder_path** (Path) - Path of folder containing files to create new image format from.  
 **destination_folder_path** (Path) - Path of folder where resulting files should end up.  
 **to_filetype** (Extension, e.g. tif, jpg) - Extension of generated files.  
-**format** (String, ImageMagick convert parameter string) - A valid ImageMagick parameter string for the **convert** command, saying which arguments should apply to the new format.
+**format_string** (String, ImageMagick convert parameter string) - A valid ImageMagick parameter string for the **convert** command, saying which arguments should apply to the new format.
 ##### Expected outcome
 A new format is created using the given formatting parameters.
 ##### Examples
@@ -434,7 +445,7 @@ A new format is created using the given formatting parameters.
         "source_folder_path": "PROCESSING:/%{job_id}/mst/tif_lzw",
          "destination_folder_path": "PROCESSING:/%{job_id}/web/jpg",
          "to_filetype": "jpg",
-         "format": "-unsharp 0.3x0.5+4.0+0 -level 10%,93% -quality 94"
+         "format_string": "-unsharp 0.3x0.5+4.0+0 -level 10%,93% -quality 94"
     }
 },
 ```
