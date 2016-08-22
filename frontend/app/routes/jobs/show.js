@@ -14,7 +14,9 @@ export default Ember.Route.extend({
     } else {
       job_model = Job.create(Ember.$.extend(model, {container: Ember.getOwner(that)}));
     }
-    controller.set('newFlowStep', model.current_flow_step);
+    Ember.run.later(function() {
+      controller.set('newFlowStep', model.current_flow_step);
+    });
     controller.set('model', job_model);
   },
   actions: {

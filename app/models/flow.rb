@@ -4,8 +4,8 @@ class Flow < ActiveRecord::Base
 
   validates :name, uniqueness: true
   validate :validate_json, on: :update
-  validate :validate_steps, on: :update
   validate :validate_parameters, on: :update
+  validate :validate_steps, on: :update
 
   def as_json(options={})
     {
@@ -71,7 +71,9 @@ class Flow < ActiveRecord::Base
   def generate_flow_steps(job_id)
     @flow_steps = []
     steps_array.each do |flow_step|
-      @flow_steps << FlowStep.new_from_json(json: flow_step.dup, job_id: job_id, flow: self)
+      step = FlowStep.new_from_json(json: flow_step.dup, job_id: job_id, flow: self)
+      step.flow_parameters_hash = self.parameters_hash
+      @flow_steps << step
     end
   end
 

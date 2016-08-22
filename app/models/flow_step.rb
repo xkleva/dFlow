@@ -14,6 +14,8 @@ class FlowStep < ActiveRecord::Base
   validates :description, presence: true
   validates :goto_true, numericality: { only_integer: true, allow_nil: true}, presence: true, unless: :is_last_step
   validates :goto_true, absence: true, if: :is_last_step
+  
+  attr_accessor :flow_parameters_hash
 
   def step_differs_from_goto
     if self.step == self.goto_true
@@ -175,7 +177,7 @@ class FlowStep < ActiveRecord::Base
 
   def enter!(username: nil)
     return true if entered?
-    return false if !parsed_params(quarantine_if_empty: true)
+    job.set_current_flow_step(self)
     # Skip step if conditions are not met
     if !condition_met?
       self.finished_at = DateTime.now
@@ -192,8 +194,8 @@ class FlowStep < ActiveRecord::Base
     else
       self.entered_at = DateTime.now
       self.save!(validate: false)
+      return false if !parsed_params(quarantine_if_empty: true)
       job.nolog = true
-      job.set_current_flow_step(self)
       job.update_attribute('state', main_state)
     end
   end
@@ -294,7 +296,10 @@ class FlowStep < ActiveRecord::Base
     hash.each do |key, value|
       if (value.kind_of? String) && (key != "format")
         begin
-        new_hash[key] = job.substitute_parameters(string: value, require_value: quarantine_if_empty)
+        new_hash[key] = Job.substitute_parameters(string: value,
+                                                  require_value: quarantine_if_empty,
+                                                  job_variables: job.variables,
+                                                  flow_variables: job.flow_parameters_hash)
         rescue KeyError => e
           job.quarantine!(msg: "A parameter in #{key} is not set: #{e}")
           return nil
@@ -308,11 +313,28 @@ class FlowStep < ActiveRecord::Base
     return new_hash
   end
 
+  def params_validation
+    hash = params_hash
+    new_hash = {}
+    hash.each do |key, value|
+      if (value.kind_of? String) && (key != "format")
+        begin
+          new_hash[key] = Job.substitute_parameters(string: value, 
+                                                    job_variables: Job.validatable_hash,
+                                                    flow_variables: flow_parameters_hash)
+        end
+      elsif key == "format"
+        new_hash['format_params'] = value
+      else
+        new_hash[key] = value
+      end
+    end
+    return new_hash
+  end
+  
   def validate_variables
-    self.job = Job.new(id: 0, flow: flow) unless self.job
-    job.flow_parameters = flow.parameters_hash.merge(job.flow_parameters_hash).to_json
     begin
-      self.parsed_params
+      self.params_validation
     rescue KeyError => e
       errors.add(:params, "Step: #{step} - Undefined variable #{e}")
     end
@@ -322,7 +344,9 @@ class FlowStep < ActiveRecord::Base
   # Check if conditions for running flow step are met. If none exist, return true.
   def condition_met?
     if condition.present?
-      parsed_condition = job.substitute_parameters(string: condition)
+      parsed_condition = Job.substitute_parameters(string: condition,
+                                                   job_variables: job.variables,
+                                                   flow_variables: job.flow_parameters_hash)
       return eval(parsed_condition)
     end
     return true
