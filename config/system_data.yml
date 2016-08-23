@@ -70,6 +70,8 @@ processes:
     - manual
     - images_folder_path
     - save
+    - source
+    - filetype
 - code: IMPORT_PACKAGE_METADATA
   state: PROCESS
 - code: CREATE_METS_PACKAGE

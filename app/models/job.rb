@@ -401,7 +401,7 @@ class Job < ActiveRecord::Base
   def files_list
     files_list = []
     flow.folder_paths_array.each do |folder_path|
-      folder_path = substitute_parameters(string: folder_path, job_variables: self.variables, flow_variables: self.flow_parameters_hash)
+      folder_path = self.substitute_parameters(string: folder_path, job_variables: self.variables, flow_variables: self.flow_parameters_hash)
       children = DfileApi.list_files(source_dir: folder_path)
       if children.present?
         files_list << {name: folder_path, children: DfileApi.list_files(source_dir: folder_path)}
