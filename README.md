@@ -6,6 +6,7 @@ DFlow is a Ruby-On-Rails Application, built to support workflows for large digit
 * [Configuration Interface] (#configuration-interface)
 * [Workflows] (#workflows)
     * [Workflow Parameters] (#workflow-parameters)
+    * [Folder paths] (#folder-paths)
     * [Flow steps] (#flow-steps)
 * [Processes] (#processes)
     *  [Using Variables] (#using-variables) 
