@@ -61,8 +61,8 @@ A workflow can have any number of predefined parameters. These parameters get th
           "STATION1",
           "STATION2",
           {
-            value: "STATION3",
-            label: "This will select Station 3 for you"
+            "value": "STATION3",
+            "label": "This will select Station 3 for you"
           }
         ]
       }
@@ -99,7 +99,7 @@ The flow steps define the core of the workflow, as nothing would be done without
     "step": 20,
     "process": "CONFIRMATION",
     "description": "Check with copyright owners",
-    "condition": "%{copyright} == 'true'"
+    "condition": "%{copyright} == 'true'",
     "goto_true": 30,
     "params": {
       "start": true,
@@ -187,7 +187,7 @@ This process only finishes the current flow step
     "step": 60,
     "process": "CONFIRMATION",
     "description": "External application: Create JPG files",
-    "goto_true": 70
+    "goto_true": 70,
     "params": {
       "manual": false
     }
