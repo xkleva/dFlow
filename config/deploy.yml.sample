@@ -3,10 +3,6 @@ production:
   port: 22
   user: username
   path: '/apps/dFlow'
-  linked_files:
-    - 'config/database.yml'
-    - 'config/config_full.yml'
-    - 'config/passwd'
   nvm_path: "/home/apps/.nvm/versions/node/v6.3.1/bin/"
 
 staging:
@@ -14,10 +10,6 @@ staging:
   port: 22
   user: username
   path: '/apps/dFlow'
-  linked_files:
-    - 'config/database.yml'
-    - 'config/config_full.yml'
-    - 'config/passwd'
   nvm_path: "/home/apps/.nvm/versions/node/v6.3.1/bin/"
 
 lab:
@@ -25,8 +17,4 @@ lab:
   port: 22
   user: username
   path: '/apps/dFlow'
-  linked_files:
-    - 'config/database.yml'
-    - 'config/config_full.yml'
-    - 'config/passwd'
   nvm_path: "/home/apps/.nvm/versions/node/v6.3.1/bin/"
