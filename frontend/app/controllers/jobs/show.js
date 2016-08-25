@@ -4,7 +4,10 @@ import ENV from 'd-flow-ember/config/environment';
 export default Ember.Controller.extend({
   session: Ember.inject.service(),
   application: Ember.inject.controller(),
+  flowSelection: Ember.computed.alias('application.flowSelection'),
+  flows: Ember.computed.alias('application.flows'),
   open: '',
+  setFlowParams: Ember.computed.equal('model.flow_step.process', 'ASSIGN_FLOW_PARAMETERS'),
 
   metadataIsOpen: Ember.computed.equal('open', 'metadata'),
 
@@ -12,6 +15,11 @@ export default Ember.Controller.extend({
     var token =  this.get('session.data.authenticated.token');
     return ENV.APP.serviceURL + '/assets/file?file_path=' + this.get('model.flow_step.parsed_params.pdf_file_path') + '&token=' + token;
   }),
+
+  currentFlow: Ember.computed('model.flow_id', function(){
+    return this.get('flows').findBy('id', this.get('model.flow_id'));
+  }),
+
 
   flowStepItems: Ember.computed('model.flow', 'model.flow_steps', 'model.current_flow_step', function(){
     var flowStepItems = [];

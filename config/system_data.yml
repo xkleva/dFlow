@@ -72,6 +72,11 @@ processes:
     - save
     - source
     - filetype
+- code: ASSIGN_FLOW_PARAMETERS
+  state: ACTION
+  required_params:
+    - manual
+    - save
 - code: IMPORT_PACKAGE_METADATA
   state: PROCESS
 - code: CREATE_METS_PACKAGE

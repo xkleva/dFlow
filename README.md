@@ -244,8 +244,32 @@ This process finishes the current flow step, **and** saves the job including the
         "images_folder_path": "PROCESSING:/%{job_id}",
         "source": "web",
         "save": true,
-        "msg": "Metadata klar!",
+        "msg": "Metadata done!",
         "filetype": "jpg"
+    }
+  },
+```
+#### ASSIGN_FLOW_PARAMETERS
+##### Description 
+Displays a form with the available parameters in the current flow.
+##### Parameters
+**save** (true / false) - Should be set to **true**, means that the operation will save the job as well as move to the next flow step.  
+**manual** (true / false) - Should be set to **true** to get a confirmation button.  
+**msg** (String, e.g. "Assign done!")  
+##### Expected outcome
+This process finishes the current flow step, **and** saves the job including the new parameters!.
+##### Examples
+**Example 1:** The task of assigning flow parameters needs a place in the flow. When done, the user klicks a confirmation button in DFlow to move the workflow to the next step in the process, as well as save the new flow parameters.  
+```json
+{
+    "step": 60,
+    "process": "ASSIGN_FLOW_PARAMETERS",
+    "description": "Assign or change flow parameters",
+    "goto_true": 80,
+    "params": {
+        "manual": true,
+        "save": true,
+        "msg": "Assign done!"
     }
   },
 ```

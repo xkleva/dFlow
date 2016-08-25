@@ -70,7 +70,7 @@
           </a>
           {{else}}
             {{#if model.waitingForManualAction}}
-              <button class="btn btn-primary" {{action 'flowStepSuccessDoStuff' model model.flow_step}}>{{model.flow_step.params.msg}}</button>
+              <button class="btn btn-primary" {{action 'flowStepSuccessDoStuff' model model.flow_step}}>{{model.flow_step.parsed_params.msg}}</button>
             {{/if}}
           {{/if}}
           {{#if model.flow_step.parsed_params.pdf_file_path}}
@@ -164,19 +164,21 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-xs-12">
-        <h4>Flödesparameterar</h4>
-      </div>
-      {{#each-in model.flow_parameters as |key value|}}
+    {{#unless setFlowParams}}
+      <div class="row">
+        <div class="col-xs-12">
+          <h4>Flödesparametrar för {{currentFlow.name}}</h4>
+        </div>
+        {{#each-in model.flow_parameters as |key value|}}
         <div class="col-xs-4">
           <strong>{{key}}</strong>
         </div>
         <div class="col-xs-8">
           [ {{value}} ]
         </div>
-      {{/each-in}}
-    </div>
+        {{/each-in}}
+      </div>
+    {{/unless}}
   </div>
   <div class="col-xs-6">
   {{#if session.data.authenticated.can_manage_jobs}}
@@ -190,6 +192,20 @@
     {{/if}}
   {{/if}}
   </div>
+  {{#if setFlowParams}}
+    <div class="col-xs-12">
+      <h4>Flödesparametrar för {{currentFlow.name}}</h4>
+
+      {{#each currentFlow.parameters.parameters as |parameter|}}
+      <div class="row">
+        {{parameter-input parameter=parameter values=model.flow_parameters}}
+      </div>
+    {{else}}
+      Inga flödesparametrar är definierade.
+      {{/each}}
+    </div>
+  {{/if}}
+
 </div>
 
 <div class="col-xs-12" style="margin-top:20px">
