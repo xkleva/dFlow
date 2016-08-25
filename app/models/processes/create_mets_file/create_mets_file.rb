@@ -1,3 +1,4 @@
+# coding: utf-8
 #require_relative 'sources/dublin_core'
 #require_relative 'sources/libris'
 #require_relative 'sources/manuscript'
@@ -232,10 +233,10 @@ class CreateMetsFile
       %Q{<mets:metsHdr ID="#{mets_data[:id]}"
       CREATEDATE="#{mets_data[:created_at]}" LASTMODDATE="#{mets_data[:updated_at]}"
       RECORDSTATUS="complete">
-      <mets:agent ROLE="CREATOR" TYPE="ORGANIZATION" ID="#{mets_data[:creator_sigel]}">
+      <mets:agent ROLE="CREATOR" TYPE="ORGANIZATION" ID="creator_#{mets_data[:creator_sigel]}">
       <mets:name>#{mets_data[:creator_name]}</mets:name>
       </mets:agent>
-      <mets:agent ROLE="ARCHIVIST" TYPE="ORGANIZATION" ID="#{mets_data[:archivist_sigel]}">
+      <mets:agent ROLE="ARCHIVIST" TYPE="ORGANIZATION" ID="archivist_#{mets_data[:archivist_sigel]}">
       <mets:name>#{mets_data[:archivist_name]}</mets:name>
       </mets:agent>
       </mets:metsHdr>}
