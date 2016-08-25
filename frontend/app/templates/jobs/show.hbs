@@ -57,6 +57,7 @@
             {{#if model.flow_step.status}} 
               <br/>{{model.flow_step.status}}
             {{/if}}
+            <a class="job-refresh" {{action 'refreshModel'}}><i class="fa fa-refresh"></i></a>
           {{else}}<strong>{{t 'jobs.states.FINISH'}}</strong>
           {{/unless}}
         </div>

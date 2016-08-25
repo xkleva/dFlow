@@ -62,3 +62,8 @@
 .flow-param-group {
     padding-bottom: 15px;
 }
+
+.job-refresh {
+    float: right;
+    margin-top: 10px;
+}

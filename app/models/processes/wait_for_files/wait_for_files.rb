@@ -7,6 +7,10 @@ class WaitForFiles
     job.flow_step.update_attribute('status', "File count: #{file_list.count}/#{count}")
 
     if file_list.count != count.to_i
+      if file_list.count > count.to_i
+        file_suffix = count.to_i == 1 ? "file" : "files"
+        raise StandardError, "There are too many files. Expected #{count.to_i} #{file_suffix}, but found #{file_list.count} instead"
+      end
       return false
     else
       return true
