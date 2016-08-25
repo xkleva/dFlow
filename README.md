@@ -307,7 +307,8 @@ Waits until given folder contains the given amount of files of a given type befo
 **filetype** (File extension, e.g. tif, jpg, xml) - Extension of files to look for  
 **count** (Number) - Number of files to look for  
 ##### Expected outcome
-The process keeps repeating until the given number of files are found.
+The process keeps repeating until the given number of files are found. If more files than expected
+are found, the job is put into quarantine.
 ##### Examples
 **Example 1:** An external process creates jpg files, and the workflow must wait until all files are created before proceeding.
 *****
