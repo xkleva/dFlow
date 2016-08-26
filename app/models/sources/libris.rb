@@ -59,7 +59,13 @@ class Libris < Source
       job_data[:metadata] = {}
       job_data[:metadata][:type_of_record] =  marc_record.leader[6..7]
       job_data[:metadata][:language] = "swe"
-      job_data[:metadata][:year] = marc_record['260']['c'].to_i if (marc_record['260'] && marc_record['260']['c'])
+      if (marc_record['260'] && marc_record['260']['c'])
+        year = marc_record['260']['c'].gsub(/[^\d]/,'').to_i
+        future_date = DateTime.now + 5.years
+        if year >= 1000 && year < future_date.year
+          job_data[:metadata][:year] = year
+        end
+      end
       job_data[:source_name] = Source.find_name_by_class_name(self.name)
       job_data[:source_label] = Source.find_label_by_name(job_data[:source_name])
       job_data[:is_periodical] = is_periodical(job_data[:metadata][:type_of_record])
