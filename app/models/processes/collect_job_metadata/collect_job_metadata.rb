@@ -5,6 +5,11 @@ class CollectJobMetadata
 
     logger.info "File count for #{folder_path} *.#{filetype} : #{file_list.count}"
 
+    # Quarantine if count is 0
+    if file_list.count == 0
+      raise StandardError, "No images were found."
+    end
+    
     images = []
 
     file_list.each do |image|
