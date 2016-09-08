@@ -90,7 +90,7 @@ The flow steps define the core of the workflow, as nothing would be done without
 **step** (Integer) - The step identifier, must be a number.  
 **process** (Process - Available values are defined in [Processes] (#processes)) - The name of the process to be run for this step. The process has to be predefined.  
 **goto_true** (Integer - Another existing step identifier) - Points to which step should be run when this step is finished.  
-**condition** (Evaluable statement) (Not mandatory) - A condition which has to return **true** for the step to execute, otherwise the step will finish and the next one be started. Example of a condition is "%{copyright} == 'true'".  
+**condition** (Evaluable statement) (Not mandatory) - A condition which has to return **true** for the step to execute, otherwise the step will finish and the next one be started. Example of a condition is "'%{copyright}' == 'true'".  
 **params** - The parameters available for the given **process**, see documentation on each process.  
 
 **Example 1:** A manual flow step which should only run if job is copyrighted, and starts step nr **30** when done:
@@ -99,7 +99,7 @@ The flow steps define the core of the workflow, as nothing would be done without
     "step": 20,
     "process": "CONFIRMATION",
     "description": "Check with copyright owners",
-    "condition": "%{copyright} == 'true'",
+    "condition": "'%{copyright}' == 'true'",
     "goto_true": 30,
     "params": {
       "start": true,
@@ -137,6 +137,7 @@ Variables are predefined in the code [app/model/flow_step.rb#substitute_paramete
 **page_count** : The number of pages(images) of the job. Typically assigned using process COLLECT_JOB_METADATA.  
 **package_name** : The package name of the job, using the ID and a formatting string defined in the configuration file. For example, format 'GUB%07d' for job id '123' gives package name 'GUB0000123'.  
 **copyright** : Returns a boolean string value of copyright, i.e. 'true' (copyrighted) or 'false' (not copyrighted).  
+**copyright_protected** : Same as "copyright", but is easier to understand when used in a condition.  
 **chron_1, chron_2, chron_3** : Returns the metadata values for chronology. Generally used for periodicals.  
 **ordinality_1, ordinality_2, ordinality_3** : Returns the metadata values for ordinality. Generally used for periodicals.  
 ### Making an API-request
@@ -429,7 +430,7 @@ If there is a folder named after the jobs id in the given directory, it should b
 *****
 #### COLLECT_JOB_METADATA
 ##### Description 
-Collects metadata from a given file folder, storing file names and file count as metadata for the job in DFlow.
+Collects metadata from a given file folder, storing file names and file count as metadata for the job in DFlow. Zero files in the folder is considered an error and will put the job into quarantine.
 ##### Parameters
 **folder_path** (Path) - Path of files from which to derive metadata, presumable a folder containing master images.  
 **filetype** (Extension, e.g. tif, jpg) - The extension of the files in given folder, to be able to seperate possible extra files (thumbs.db, .DS_STORE, .tmp et.c.)
