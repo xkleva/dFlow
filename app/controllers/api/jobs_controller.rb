@@ -26,7 +26,7 @@ class Api::JobsController < Api::ApiController
       jobs = jobs.where(treenode_id: params[:node_id])
     end
 
-    if params[:query]
+    if params[:query].present?
       Job.index_jobs
       jobs = jobs.where("search_title LIKE ?", "%#{params[:query].norm}%")
     end
