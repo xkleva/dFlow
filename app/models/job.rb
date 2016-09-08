@@ -560,6 +560,7 @@ class Job < ActiveRecord::Base
       page_count: job.page_count || '-1', 
       package_name: job.package_name, 
       copyright: job.copyright.to_s,
+      copyright_protected: job.copyright.to_s,
       chron_1: job.metadata_value('chron_1_value') || 'undefined',
       chron_2: job.metadata_value('chron_2_value') || 'undefined',
       chron_3: job.metadata_value('chron_3_value') || 'undefined',
