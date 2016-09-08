@@ -416,17 +416,19 @@ class Job < ActiveRecord::Base
   end
 
   def set_current_flow_step(flow_step)
+    @flow_step = nil
     self.update_attribute('current_flow_step', flow_step.step)
     self.update_attribute('state', flow_step.main_state)
   end
 
   # Returns current flow step object
   def flow_step
-    FlowStep.job_flow_step(job_id: id, flow_step: current_flow_step)
+    @flow_step ||= FlowStep.job_flow_step(job_id: id, flow_step: current_flow_step)
   end
 
    # Creates flow_steps for flow
   def create_flow_steps
+    @flow_step = nil
     if !flow.apply_flow(job: self, step_nr: self.current_flow_step)
       raise StandardError, "Could not create flow for job"
     end
@@ -441,6 +443,7 @@ class Job < ActiveRecord::Base
 
   # Changes the flow, aborts all previous flow steps and creates new ones
   def change_flow(flow_name: nil, step_nr: nil, flow_id: nil)
+    @flow_step = nil
     if flow_name || flow_id
       if flow_name
         flow = Flow.where(name: flow_name).first
@@ -473,6 +476,7 @@ class Job < ActiveRecord::Base
 
   # Sets jobs to finished
   def finish_job
+    @flow_step = nil
     self.update_attribute('current_flow_step', flow.last_step)
     self.update_attribute('state', 'FINISH')
   end
@@ -483,6 +487,7 @@ class Job < ActiveRecord::Base
   
   # Resets flow steps from step_nr and sets earlier steps as done.
   def reset_flow_steps(step_nr: nil)
+    @flow_step = nil
     if step_nr
       flow_step = flow_steps.where(step: step_nr).first
       if !flow_step
