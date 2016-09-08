@@ -62,11 +62,13 @@ class User < ActiveRecord::Base
   # First clear all invalid tokens. Then look for our provided token.
   # If we find one, we know it is valid, and therefor update its validity
   # further into the future
-  def validate_token(provided_token)
+  def validate_token(provided_token, extend_expire = true)
     clear_expired_tokens
     token_object = access_tokens.find_by_token(provided_token)
     return false if !token_object
-    token_object.update_attribute(:token_expire, Time.now + DEFAULT_TOKEN_EXPIRE)
+    if extend_expire
+      token_object.update_attribute(:token_expire, Time.now + DEFAULT_TOKEN_EXPIRE)
+    end
     true
   end
 

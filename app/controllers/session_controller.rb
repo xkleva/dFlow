@@ -42,8 +42,12 @@ class SessionController < ApplicationController
   def show
     @response = {}
     token = params[:id]
+    extend_expire = true
+    if params[:no_extend].present?
+      extend_expire = false
+    end
     token_object = AccessToken.find_by_token(token)
-    if token_object && token_object.user.validate_token(token)
+    if token_object && token_object.user.validate_token(token, extend_expire)
       @response[:user] = token_object.user.as_json
       @response[:user][:role] = token_object.user.role_object
       @response[:access_token] = token

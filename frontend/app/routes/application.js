@@ -11,6 +11,28 @@ export default Ember.Route.extend(ApplicationRouteMixin, {
     console.log('routeurl', routeUrl);
     return baseUrl + '/' + routeUrl;
   },
+  checkLoggedInState: function() {
+    var that = this;
+    var token = this.get('session.data.authenticated.token');
+    Ember.run.later(function() {
+      if(token) {
+        Ember.$.ajax({
+			    type: 'GET',
+			    url: ENV.APP.authenticationBaseURL+'/'+token+'?no_extend=true'
+		    }).then(function(data) {
+          if(data.access_token !== token) {
+            that.get('session').invalidate();
+          }
+		    }, function(response) {
+          if(response.status === 401) {
+            that.get('session').invalidate();
+            console.log("User expired", response);
+          }
+        });
+      }
+      that.checkLoggedInState();
+    },1000*60*10); // Check every 10 minutes
+  },
   beforeModel: function(transition) {
     var that = this;
     var session = this.get('session');
@@ -73,6 +95,7 @@ export default Ember.Route.extend(ApplicationRouteMixin, {
     }
 
     controller.set('version_info', model.version_info);
+    this.checkLoggedInState();
   },
   actions: {
     sessionAuthenticationFailed: function(error) {
