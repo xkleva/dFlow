@@ -17,7 +17,7 @@ class Api::JobsController < Api::ApiController
   example '{"jobs":[{"id":1001002,"name":null,"title":"Water and water pollution handbook.","display":"Water and water pollution handbook.","source_label":"Libris","catalog_id":1234,"breadcrumb_string":"Projekt / OCR-projektet","treenode_id":6}]}'.pretty_json
   see 'jobs#show'
   def index
-    jobs = Job.all.eager_load(:treenode).eager_load(:flow_steps)
+    jobs = Job.all
     pagination = {}
     metaquery = {}
     metaquery[:query] = params[:query] # Not implemented yet
