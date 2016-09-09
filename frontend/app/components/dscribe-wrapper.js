@@ -12,13 +12,18 @@ export default Ember.Component.extend(InViewportMixin, {
       if (!!this.get('filetype')) {
         filetypeString = "&filetype=" + this.get('filetype');
       }
-    this.store.find('thumbnail', '?source_dir=' + this.get('imagesFolderPath') + '&source=' + this.get('imagesSource')+ '&image=' + this.get('image.num') + filetypeString + '&token=' + token).then(function(response){
+    this.store.find('thumbnail', '?source_dir=' + this.get('imagesFolderPath') + '&source=' + this.get('imagesSource')+ '&size=300&image=' + this.get('image.num') + filetypeString + '&token=' + token).then(function(response){
       that.set('small', response.thumbnail);
     });
     } 
 
     this._super();
   },
+  fileUrl: Ember.computed('imagesFolderPath', 'imagesSource', 'image.num', 'filetype', function() {
+    var token =  this.get('session.data.authenticated.token');
+    var file_path = this.get('imagesFolderPath')+"/"+this.get('imagesSource')+"/"+this.get('image.num')+'.'+this.get('filetype');
+    return "/assets/file?file_path="+file_path+'&token='+token;
+  }),
   tagName: 'div',
   classNames: ['col-sm-6'],
 
