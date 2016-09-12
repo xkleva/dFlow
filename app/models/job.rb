@@ -423,7 +423,7 @@ class Job < ActiveRecord::Base
 
   # Returns current flow step object
   def flow_step
-    @flow_step ||= FlowStep.job_flow_step(job_id: id, flow_step: current_flow_step)
+    FlowStep.job_flow_step(job_id: id, flow_step: current_flow_step)
   end
 
    # Creates flow_steps for flow
