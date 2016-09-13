@@ -10,6 +10,10 @@ export default Ember.Controller.extend({
   setFlowParams: Ember.computed.equal('model.flow_step.process', 'ASSIGN_FLOW_PARAMETERS'),
 
   metadataIsOpen: Ember.computed.equal('open', 'metadata'),
+  jobActivityIsOpen: Ember.computed.equal('open', 'job_activity'),
+  filesIsOpen: Ember.computed.equal('open', 'files'),
+  flowIsOpen: Ember.computed.equal('open', 'flow'),
+  pubLogIsOpen: Ember.computed.equal('open', 'pub_log'),
 
   pdfUrl: Ember.computed('model', function() {
     var token =  this.get('session.data.authenticated.token');
