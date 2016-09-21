@@ -3,12 +3,16 @@ import Job from 'd-flow-ember/models/job';
 
 export default Ember.Route.extend({
   i18n: Ember.inject.service(),
+  beforeModel: function() {
+    Ember.$("#app-outer").addClass("loading");
+  },
   model: function(params) {
     return this.store.find('job', params.id);
   },
   setupController: function(controller, model) {
     var that = this;
     var job_model;
+    Ember.$("#app-outer").removeClass("loading");
     if (!!model.container) {
       job_model = model;
     } else {

@@ -107,8 +107,9 @@ export default Ember.Route.extend(ApplicationRouteMixin, {
       this.controller.set('job_id_error', null);
 
       if (job_id) {
-        that.store.find('job', job_id).then(function() {
-          that.transitionTo('jobs.show', job_id);
+        Ember.$("#app-outer").addClass("loading");
+        that.store.find('job', job_id).then(function(job) {
+          that.transitionTo('jobs.show', job);
         },
         function(){
           that.controller.set('job_id_error', this.get('i18n').t('jobs.idMissing') + ': ' + job_id);
