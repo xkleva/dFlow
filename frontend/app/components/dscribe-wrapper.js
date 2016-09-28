@@ -12,7 +12,7 @@ export default Ember.Component.extend(InViewportMixin, {
       if (!!this.get('filetype')) {
         filetypeString = "&filetype=" + this.get('filetype');
       }
-    this.store.find('thumbnail', '?source_dir=' + this.get('imagesFolderPath') + '&source=' + this.get('imagesSource')+ '&size=300&image=' + this.get('image.num') + filetypeString + '&token=' + token).then(function(response){
+    this.store.find('thumbnail', '?source_dir=' + this.get('imagesFolderPath') + '&source=' + this.get('imagesSource')+ '&size=200&image=' + this.get('image.num') + filetypeString + '&token=' + token).then(function(response){
       that.set('small', response.thumbnail);
     });
     } 
