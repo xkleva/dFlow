@@ -34,6 +34,10 @@ module Import
     def generate_job
       @job_data["name"] = @name if @name
       @job_data["metadata"] ||= {}
+      if @job_data[:metadata]
+        @job_data["metadata"].merge!(@job_data[:metadata])
+        @job_data.delete(:metadata)
+      end
       @job_data["metadata"].merge!(@row_hash)
       if @job_data[:source_name]
         @job_data["source"] = @job_data[:source_name].dup
