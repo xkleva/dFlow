@@ -25,7 +25,7 @@ class CollectJobMetadata
     if job.update_attribute('package_metadata', {images: images, image_count: images.size}.to_json)
       return true
     else
-      return false
+      raise StandardError, "Unable to update database."
     end
 
   end
