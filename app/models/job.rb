@@ -561,7 +561,8 @@ class Job < ActiveRecord::Base
   
   def self.variables_hash(job)
     {
-      job_id: job.id, 
+      job_id: job.id,
+      catalog_id: job.catalog_id,
       page_count: job.page_count || '-1', 
       package_name: job.package_name, 
       copyright: job.copyright.to_s,
