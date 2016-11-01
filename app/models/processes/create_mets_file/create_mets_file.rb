@@ -50,7 +50,8 @@ class CreateMetsFile
       "jpg" => "image/jpeg",
       "tif" => "image/tiff",
       "xml" => "text/xml",
-      "pdf" => "text/pdf"
+      "pdf" => "text/pdf",
+      "txt" => "text/plain"
     }
     def initialize(job_id:, path:, filename:, size:)
       @job_id = job_id
