@@ -159,10 +159,6 @@ processes:
   state: PROCESS
   required_params:
     - libris_id
-    - sigel
     - url
-    - type
-    - place
-    - agency
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"
