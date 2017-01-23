@@ -51,9 +51,9 @@ ActiveRecord::Schema.define(version: 20160817080049) do
     t.text     "folder_paths", default: "[]"
     t.text     "steps",        default: "[]"
     t.boolean  "active",       default: true
+    t.datetime "deleted_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "deleted_at"
   end
 
   create_table "job_activities", force: :cascade do |t|

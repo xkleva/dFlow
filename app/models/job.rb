@@ -43,7 +43,7 @@ class Job < ActiveRecord::Base
   attr_accessor :nolog # Flag, set to true to inactivate job activity creation
 
   def as_json(options = {})
-    if !id 
+    if !id
       json = {
         name: name,
         title: title
@@ -148,7 +148,7 @@ class Job < ActiveRecord::Base
   def created_by
     @created_by || 'not_set'
   end
-  
+
   # Creates a JobActivity object for CREATE event
   def create_log_entry(event="CREATE", message="_ACTIVITY_CREATED")
     Rails.logger.info("username: #{created_by}, event: #{event}, message: #{message}")
@@ -160,6 +160,13 @@ class Job < ActiveRecord::Base
   # Retrieve source label from config
   def source_label
     Source.find_label_by_name(source)
+  end
+  def get_publication_log_entry entry_type
+    log_entry = publication_logs.where(publication_type: entry_type).first
+    if log_entry
+      return log_entry.comment
+    end
+    return nil
   end
 
   # Combine selected metadata into a single string to use in search_title
@@ -344,7 +351,7 @@ class Job < ActiveRecord::Base
 
   # Restarts job by setting status and moving files
   def restart(recreate_flow: false)
-    Job.transaction do 
+    Job.transaction do
       if recreate_flow
         flow.apply_flow(job: self, step_nr: nil)
       else
@@ -484,7 +491,7 @@ class Job < ActiveRecord::Base
   def page_count
     package_metadata_hash['image_count'] || -1
   end
-  
+
   # Resets flow steps from step_nr and sets earlier steps as done.
   def reset_flow_steps(step_nr: nil)
     @flow_step = nil
@@ -500,8 +507,8 @@ class Job < ActiveRecord::Base
       end
     end
 
-    flow_steps.each do |step| 
-      if step.is_before?(flow_step.step) 
+    flow_steps.each do |step|
+      if step.is_before?(flow_step.step)
         step.force_finish!
       end
 
@@ -524,19 +531,19 @@ class Job < ActiveRecord::Base
   end
 
   def recreate_flow(step_nr: nil)
-    change_flow(flow_name: self.flow.name, step_nr: step_nr) 
+    change_flow(flow_name: self.flow.name, step_nr: step_nr)
   end
 
   # Make % into %% for everything not on the format of %{variable} so
   # that parameters can contain % without causing error
   def self.escape_non_variable_substitutions(string)
-    string.gsub(/%(^{[a-z0-9_-]}|%|[^{])/) do |x| 
+    string.gsub(/%(^{[a-z0-9_-]}|%|[^{])/) do |x|
       x = "%%#{$1}" if $1[0..0] != "{"
       x = "%%" if $1 == "%"
       x
     end
   end
-  
+
   # Substitutes defined variable names according to map
   def self.substitute_parameters(string:, require_value: false, job_variables:, flow_variables:)
     new_string = Job.escape_non_variable_substitutions(string)
@@ -549,7 +556,7 @@ class Job < ActiveRecord::Base
 
   def self.validatable_hash
     new_hash = {}
-    Job.variables_hash(Job.new(id: 0)).each do |k,v| 
+    Job.variables_hash(Job.new(id: 0)).each do |k,v|
       new_hash[k] = "undefined"
     end
     new_hash
@@ -558,13 +565,13 @@ class Job < ActiveRecord::Base
   def variables
     Job.variables_hash(self)
   end
-  
+
   def self.variables_hash(job)
     {
       job_id: job.id,
       catalog_id: job.catalog_id,
-      page_count: job.page_count || '-1', 
-      package_name: job.package_name, 
+      page_count: job.page_count || '-1',
+      package_name: job.package_name,
       copyright: job.copyright.to_s,
       copyright_protected: job.copyright.to_s,
       chron_1: job.metadata_value('chron_1_value') || 'undefined',
@@ -572,7 +579,8 @@ class Job < ActiveRecord::Base
       chron_3: job.metadata_value('chron_3_value') || 'undefined',
       ordinality_1: job.metadata_value('ordinal_1_value') || 'undefined',
       ordinality_2: job.metadata_value('ordinal_2_value') || 'undefined',
-      ordinality_3: job.metadata_value('ordinal_3_value') || 'undefined'
+      ordinality_3: job.metadata_value('ordinal_3_value') || 'undefined',
+      gupea_url: job.get_publication_log_entry('GUPEA') || 'undefined'
     }
 
   end

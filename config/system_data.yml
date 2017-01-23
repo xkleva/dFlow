@@ -28,6 +28,7 @@ publication_types:
 - WIKIPEDIA
 - GUPEA
 - LIBRIS
+- DCAT
 sources:
 - name: libris
   label: Libris
@@ -62,7 +63,7 @@ processes:
 - code: QUALITY_CONTROL
   state: ACTION
   required_params:
-  - pdf_file_path 
+  - pdf_file_path
   - manual
 - code: ASSIGN_METADATA
   state: ACTION
@@ -154,5 +155,14 @@ processes:
     - copyright
     - flow_id
     - source_name
+- code: CREATE_LIBRIS_ITEM
+  state: PROCESS
+  required_params:
+    - libris_id
+    - sigel
+    - url
+    - type
+    - place
+    - agency
 queue_manager:
   pid_file_location: "/tmp/dflow_queue_manager_pid"
