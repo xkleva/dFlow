@@ -28,7 +28,8 @@ publication_types:
 - WIKIPEDIA
 - GUPEA
 - LIBRIS
-- DCAT
+- DCAT_LIBRIS_ID
+- DCAT_HOLDING_ID
 sources:
 - name: libris
   label: Libris

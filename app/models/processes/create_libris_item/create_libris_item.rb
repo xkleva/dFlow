@@ -39,11 +39,11 @@ class CreateLibrisItem
     if !response || response["error"]
       raise StandardError, "Error from dcat service: #{response['error']['msg']}"
     else
-      publicationlog = PublicationLog.new(job: job, publication_type: 'DCAT', comment: response['electronic_item_id'])
+      publicationlog = PublicationLog.new(job: job, publication_type: 'DCAT_LIBRIS_ID', comment: response['electronic_item_id'])
       if !publicationlog.save
         raise StandardError, "Couldn't save publicationlog due to errors: #{publicationlog.errors}"
       end
-      publicationlog = PublicationLog.new(job: job, publication_type: 'DCAT', comment: response['holding_item_id'])
+      publicationlog = PublicationLog.new(job: job, publication_type: 'DCAT_HOLDING_ID', comment: response['holding_id'])
       if !publicationlog.save
         raise StandardError, "Couldn't save publicationlog due to errors: #{publicationlog.errors}"
       end
