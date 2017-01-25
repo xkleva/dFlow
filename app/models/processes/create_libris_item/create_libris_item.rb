@@ -38,9 +38,9 @@ class CreateLibrisItem
 
     if !response
       raise StandardError, "Unknown error when trying to connect to dCat service}"
-    elsif !response["error"]
+    elsif response.code != 201 && !response["error"]
       raise StandardError, "Error from dCat service, code: #{response.code}"
-    elsif response["error"]
+    elsif response.code != 201 && response["error"]
       raise StandardError, "Error from dCat service, code: #{response.code}, message: #{response['error']['msg']}"
     else
       publicationlog = PublicationLog.new(job: job, publication_type: 'DCAT_LIBRIS_ID', comment: response['electronic_item_id'])
