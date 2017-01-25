@@ -36,8 +36,12 @@ class CreateLibrisItem
     }
     response = HTTParty.post("#{dcat_base_url}/?api_key=#{dcat_api_key}", :query => query)
 
-    if !response || response["error"]
-      raise StandardError, "Error from dcat service: #{response['error']['msg']}"
+    if !response
+      raise StandardError, "Unknown error when trying to connect to dCat service}"
+    elsif !response["error"]
+      raise StandardError, "Error from dCat service, code: #{response.code}"
+    elsif response["error"]
+      raise StandardError, "Error from dCat service, code: #{response.code}, message: #{response['error']['msg']}"
     else
       publicationlog = PublicationLog.new(job: job, publication_type: 'DCAT_LIBRIS_ID', comment: response['electronic_item_id'])
       if !publicationlog.save
