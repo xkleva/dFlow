@@ -570,11 +570,11 @@ A PDF-file is created at the location specified from the source documents.
 Creates an electronic item and a holding item in Libris.
 ##### Parameters
 **libris_id** (Integer) - Identifier of the print item in Libris, used as original.
-**sigel** (String) - Sigel of the digitizing library, used in marc field 040a.
+**sigel** (String) (not mandatory) - Sigel of the digitizing library, used in marc field 040a.
 **url** (String) - Link to the electronic resource.
-**type** (String) - Reproduction type, used in field 533 a. E.g. *Digitalt faksimil och elektronisk text.*
-**place** (String) - Reproduction place, used in field 533 b. E.g. *Göteborg : *
-**agency** (String) - Reproduction agency, used in field 533 c. E.g. *Göteborgs universitetsbibliotek,*
+**type** (String) (not mandatory) - Reproduction type, used in field 533 a. E.g. *Digitalt faksimil och elektronisk text.*
+**place** (String) (not mandatory) - Reproduction place, used in field 533 b. E.g. *Göteborg : *
+**agency** (String) (not mandatory) - Reproduction agency, used in field 533 c. E.g. *Göteborgs universitetsbibliotek,*
 **bibliographic_code** (String) (not mandatory) - Additional bibliographic code, used in 042 subfield 9.
 **create_holding** (true / false) (not mandatory) - If true, a holding item will be created.
 **publicnote** (String) (not mandatory) - Public note, used in field 856 z.
@@ -593,11 +593,7 @@ An electronic item is created in Libris
         "goto_true": 155,
         "params": {
           "libris_id": "%{catalog_id}",
-          "url": "%{gupea_url}",
-          "sigel": "Gdig",
-          "type": "Digitalt faksimil och elektronisk text.",
-          "place": "Göteborg : ",
-          "agency": "Göteborgs universitetsbibliotek,"
+          "url": "%{gupea_url}"
         }
       },
 ```
