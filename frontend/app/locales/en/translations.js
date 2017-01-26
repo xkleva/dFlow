@@ -168,7 +168,8 @@ export default {
       START: "Ej påbörjad",
       FINISH: "Klar",
       PROCESS: "Under arbete",
-      ACTION: "Väntar på manuell hantering"
+      ACTION: "Väntar på manuell hantering",
+      WAITFOR: "Väntar på filer"
     }
   },
   activityevent: {
