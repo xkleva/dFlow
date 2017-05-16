@@ -9,7 +9,7 @@ class PdfHelper
 
     pdf.text "#{job.id}", :size=>24, :style=>:bold
 
-    pdf.text "#{job.treenode.name}", :size=>12
+    pdf.text "#{job.treenode.breadcrumb_as_string}", :size=>12
 
     pdf.font_size = 12
 
@@ -24,7 +24,7 @@ class PdfHelper
       end
 
       pdf.text "Titel", :style=>:bold
-      pdf.text "#{job.title} "
+      pdf.text "#{job.display} "
       pdf.move_down md_value
 
       pdf.text "Författare", :style=>:bold
@@ -67,7 +67,7 @@ class PdfHelper
         else
           pdf.text "________________________"
         end
-        
+
         pdf.move_down md_value*2
 
         pdf.text "Utrustning", :style=>:bold
