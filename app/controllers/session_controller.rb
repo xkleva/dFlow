@@ -66,13 +66,9 @@ class SessionController < ApplicationController
       ticket: ticket
     }.to_param
     casValidateUrl = "#{casBaseUrl}/serviceValidate?#{casParams}"
-    pp ["casValidateUrl", casValidateUrl]
     open(casValidateUrl) do |u|
-      pp u.read
       doc = Nokogiri::XML(u.read)
-      pp doc
       doc.remove_namespaces!
-      pp ["reply", doc.to_xml]
       username = doc.search('//serviceResponse/authenticationSuccess/user').text
       return username if username
     end
