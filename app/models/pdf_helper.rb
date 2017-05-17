@@ -9,7 +9,9 @@ class PdfHelper
 
     pdf.text "#{job.id}", :size=>24, :style=>:bold
 
-    pdf.text "#{job.treenode.breadcrumb_as_string}", :size=>12
+    pdf.bounding_box([0, pdf.cursor], :width => (110).send(:mm)) do
+      pdf.text "#{job.treenode.breadcrumb_as_string}", :size=>12
+    end
 
     pdf.font_size = 12
 
