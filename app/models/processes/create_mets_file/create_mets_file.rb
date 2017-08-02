@@ -299,7 +299,7 @@ class CreateMetsFile
       end
       %Q(<mets:file ID="#{file_group.name}#{file.number}"
         MIMETYPE="#{file_group.mimetype}"
-        #{checksum_string}">
+        #{checksum_string}>
         <mets:FLocat LOCTYPE="URL" xlink:href="#{file_group.name}/#{file.name}" />
         </mets:file>)
     end
