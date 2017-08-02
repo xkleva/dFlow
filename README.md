@@ -495,6 +495,7 @@ Creates a METS-file for the current job using given parameters.
 **copyright_false_text** (String) (not mandatory) - String representaion for a non copyrighted job. Defaults to 'pd' if not assigned.
 **require_physical** (true/false) (not mandatory) - If true, requires that the **physical** metadata is set for all image objects within the job.
 **validate_group_names** (true/false) (not mandatory) - If true, requires validation of group names against existing group names according to the **source xml** of the job.
+**checksum** (true/false) (not mandatory) - Default: false. If true, perform SHA-512 checksum on each file and include in METS file.
 ##### Expected outcome
 A mets file is created consisting the given formats and files.
 ##### Examples
