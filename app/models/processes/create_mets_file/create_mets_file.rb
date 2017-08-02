@@ -34,7 +34,7 @@ class CreateMetsFile
     copyright_text = copyright_false_text if !job.copyright
 
     # Normalise checksum to boolean
-    if checksum == true || ['true', 't', 'yes', 'y'].include?(checksum.downcase)
+    if checksum == true || (checksum.kind_of?(String) && ['true', 't', 'yes', 'y'].include?(checksum.downcase))
       checksum = true
     else
       checksum = false
