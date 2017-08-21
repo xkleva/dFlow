@@ -40,6 +40,10 @@ class QueueManager
       
       job = get_job_waiting_for_automatic_process
       if job
+        if job.flow_step && job.flow_step.finished_at
+          job.quarantine!(msg: "Error. FlowStep #{job.current_flow_step} already finished at #{job.flow_step.finished_at}")
+          return
+        end
         logger.info "Starting #{job.flow_step.process} for job #{job.id}"
         execute_process(job: job)
         logger.info "Done processing, repeating"
