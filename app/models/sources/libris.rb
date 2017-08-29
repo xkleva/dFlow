@@ -54,7 +54,7 @@ class Libris < Source
     job_data = {}
     if (record)
       marc_record = MARC::XMLReader.new(StringIO.new(record.to_xml)).first
-      job_data[:title] = [marc_record['245']['a'],marc_record['245']['b']].compact.join(" ")
+      job_data[:title] = [marc_record['245']['a'],marc_record['245']['b'],marc_record['245']['p'],marc_record['245']['n']].compact.join(" ")
       job_data[:author] = marc_record['100']['a'] if marc_record['100']
       job_data[:metadata] = {}
       job_data[:metadata][:type_of_record] =  marc_record.leader[6..7]
