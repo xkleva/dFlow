@@ -4,7 +4,7 @@ class Api::FlowsController < Api::ApiController
 
   api!
   def index
-    @response[:flows] = Flow.all.as_json({full: true})
+    @response[:flows] = Flow.order(:name).all.as_json({full: true})
 
     render_json
   end
