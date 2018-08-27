@@ -7,13 +7,14 @@ module Import
     attr_accessor :job
     attr_accessor :row_num
     
-    def initialize(treenode_id:, copyright:, flow_id:, flow_parameters:, columns:, row:, row_num:)
+    def initialize(treenode_id:, copyright:, flow_id:, flow_parameters:, columns:, row:, row_num:, source:)
       @treenode_id = treenode_id
       @copyright = copyright
       @flow_id = flow_id
       @flow_parameters = flow_parameters
       @columns = columns
       @row_num = row_num
+      @source = source
       fixed_row = row.map do |val|
         if val.is_a? Float
           val.to_i.to_s
@@ -32,6 +33,10 @@ module Import
     end
   
     def generate_job
+      if @source.name == "DublinCore"
+        generate_dc_job_data
+        @row_hash = {}
+      end
       @job_data["name"] = @name if @name
       @job_data["metadata"] ||= {}
       if @job_data[:metadata]
@@ -52,6 +57,15 @@ module Import
       @job_data["metadata"] = @job_data["metadata"].to_json
       @job_data["created_by"] = "import"
       @job = Job.new(@job_data)
+    end
+
+    # Generate DC job via DublinCoreXml and return provided job_data
+    # as if job was created manually.
+    def generate_dc_job_data
+      @job_data["name"] = @name if @name
+      @row_hash["source"] = @row_hash["dc_source"]
+      @row_hash.delete("dc_source")
+      @job_data = @source.fetch_source_data(nil, @row_hash)
     end
     
     def valid?
@@ -125,7 +139,9 @@ class ImportJobs
                                 flow_parameters: flow_parameters,
                                 columns: @columns,
                                 row: row,
-                                row_num: i+1)
+                                row_num: i+1,
+                                source: @source)
+      
       @redis.set("dFlow:scripts:#{@process_id}:action", "PROCESSING_ROW")
       @redis.set("dFlow:scripts:#{@process_id}:type", "INFO")
       @redis.set("dFlow:scripts:#{@process_id}:message", "Processed #{i+1} of #{row_count}")

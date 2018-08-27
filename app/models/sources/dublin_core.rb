@@ -27,6 +27,7 @@ class DublinCore < DublinCoreXML
 
   # Builds the xml
   def self.build_xml(dc)
+    dc.symbolize_keys!
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.simpledc(
           'xmlns' => 'http://www.ub.gu.se/xml-schemas/simple-dc/v1/',
