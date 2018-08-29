@@ -47,9 +47,7 @@ class DublinCoreXML < Source
     dc = {}
     doc = Nokogiri::XML(xml)
     @@dc_terms.each do |dc_term|
-      #term = doc.search("//#{dc_term}").text
       term = doc.search("//dc:#{dc_term}").text
-      #doc.xpath('//dc:title', 'dc' => "URI")
       dc[dc_term] = term if not term.blank?
     end
     return dc
