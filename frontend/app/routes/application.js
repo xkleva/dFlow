@@ -66,7 +66,9 @@ export default Ember.Route.extend(ApplicationRouteMixin, {
     controller.set('ticket', null);
     //console.log(model.roles);
     controller.set('roleSelection', model.roles.roles);
-    controller.set('sourceSelection', model.sources);
+    controller.set('sourceSelection', model.sources.filter(function(source) {
+      return !source.hidden;
+    }));
     controller.set('copyrightSelection', [
       {label: this.get('i18n').t('jobs.copyright_values.unselected'), value: null},
       {label: this.get('i18n').t('jobs.copyright_values.true'), value: true},
