@@ -40,9 +40,11 @@ sources:
 - name: document
   label: Document
   class_name: Document
+  hidden: true
 - name: letter
   label: Letter
   class_name: Letter
+  hidden: true
 events:
 - name: QUARANTINE
 - name: UNQUARANTINE
