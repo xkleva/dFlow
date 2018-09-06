@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  mount_ember_app :frontend, to: "/"
   apipie
   resources :session
   get 'setup', to: 'setup#index'
@@ -59,5 +58,5 @@ Rails.application.routes.draw do
     post 'script', to: 'script#create'
     get 'script/:id', to: 'script#show'
   end
-
+  mount_ember_app :frontend, to: "/"
 end
