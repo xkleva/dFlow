@@ -6,10 +6,10 @@ export default Ember.Route.extend(ApplicationRouteMixin, {
   i18n: Ember.inject.service(),
   session: Ember.inject.service(),
   casService: function() {
-    var baseUrl = window.location.origin + ENV.rootURL;
+    var baseUrl = window.location.origin;
     var routeUrl = this.router.generate('application');
     console.log('routeurl', routeUrl);
-    return baseUrl + '/' + routeUrl;
+    return baseUrl + routeUrl;
   },
   checkLoggedInState: function() {
     var that = this;
@@ -77,7 +77,7 @@ export default Ember.Route.extend(ApplicationRouteMixin, {
 
     var flowSelectionArray = Ember.A([]);
     model.flows.forEach(function(flow){
-     flowSelectionArray.push({label: flow.name, value: flow.id}); 
+     flowSelectionArray.push({label: flow.name, value: flow.id});
     });
     controller.set('flowSelection', flowSelectionArray);
     controller.set('flows', model.flows);

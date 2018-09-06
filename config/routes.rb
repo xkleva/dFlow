@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
-  root to: 'root#index'
-  mount_ember_app :frontend, to: "/index"
+  mount_ember_app :frontend, to: "/"
   apipie
   resources :session
   get 'setup', to: 'setup#index'
@@ -54,7 +53,7 @@ Rails.application.routes.draw do
     resources :publication_log
 
     resources :flows
-    
+
     resources :queue_manager
 
     post 'script', to: 'script#create'
