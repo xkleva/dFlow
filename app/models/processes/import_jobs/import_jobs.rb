@@ -133,6 +133,8 @@ class ImportJobs
       # Ignore empty rows
       next if row.compact.empty?
 
+      next if row[@columns.index('ignore')].present?
+
       @jobs << Import::JobEntry.new(treenode_id: treenode_id,
                                 copyright: copyright,
                                 flow_id: flow_id,
@@ -141,7 +143,7 @@ class ImportJobs
                                 row: row,
                                 row_num: i+1,
                                 source: @source)
-      
+
       @redis.set("dFlow:scripts:#{@process_id}:action", "PROCESSING_ROW")
       @redis.set("dFlow:scripts:#{@process_id}:type", "INFO")
       @redis.set("dFlow:scripts:#{@process_id}:message", "Processed #{i+1} of #{row_count}")
