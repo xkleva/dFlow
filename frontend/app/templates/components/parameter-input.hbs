@@ -10,7 +10,7 @@
       {{#x-option value=option.value}}{{option.label}}{{/x-option}}
     {{/each}}
   {{/x-select}}
-  <span id="helpBlock2" class="help-block">{{parameter.info}}</span>
+  <span class="help-block">{{parameter.info}}</span>
   </div>
   {{#if value}}
   <div class="col-xs-5 form-choice">
@@ -21,6 +21,7 @@
 {{#if isText}}
   <div class="col-xs-5">
     {{input type="text" value=value class="form-control"}}
+    <span class="help-block">{{parameter.info}}</span>
   </div>
 {{/if}}
 </div>
