@@ -82,4 +82,45 @@ class Libris < Source
     ['as', 'cs'].include?(type_of_record)
   end
 
+  def self.find_duplicates(sheet)
+    column_names = []
+    duplicates = []
+    sheet.to_a.each.with_index do |row,i|
+
+      # Read the column names in the first rowvalidate_job_fields
+      if i == 0
+        column_names = row
+        next
+      end
+
+      # Ignore the 2nd and 3rd rows (placeholders for info about the spreadsheet)
+      next if i <= 2
+
+      # Ignore any empty rows
+      next if row.compact.empty?
+
+      # Ignore rows which are explicitly marked to be skipped (ignored)
+      next if ignore_row?(row, column_names)
+
+      # Check if the libris catalog id already exists in the system
+      catalog_id = find_cell(row, 'catalog_id', column_names).to_s
+      if !Job.where(['catalog_id = ? and source = ?', catalog_id, 'libris']).empty?
+        duplicates << catalog_id
+      end
+    end
+    # Philosophical question: How can duplicates be unique?
+    return duplicates.uniq
+    # Philosofical answer: Context is everything!
+  end
+
+private
+
+  def self.find_cell(row, column_name, column_names)
+    row[column_names.index(column_name)]
+  end
+
+  def self.ignore_row?(row, column_names)
+    column_names.include?('ignore') && row[column_names.index('ignore')].present?
+  end
+
 end
