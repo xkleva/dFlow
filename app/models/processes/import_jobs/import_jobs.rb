@@ -94,7 +94,8 @@ class ImportJobs
     @process_id = process_id
     @jobs = []
     @redis = ScriptManager.redis
-    
+
+    # Load the Excel workbook containing jobs to import
     begin
       excel_file_data = DfileApi.download_file(source_file: file_path)
     rescue OpenURI::HTTPError
@@ -114,10 +115,27 @@ class ImportJobs
       @redis.set("dFlow:scripts:#{@process_id}:message", "Could not open file #{file_path}, not an Excel file?")
       return
     end
+
+    # The jobs to import are located in the first worksheet
     sheet = excel_file.worksheet(0)
-    
+
+    # Check for duplicates, i.e. already existing jobs
+    begin
+      @duplicates = @source.find_duplicates(sheet)
+    rescue
+      @duplicates = []
+    end
+
+    if @duplicates.present?
+      @redis.set("dFlow:scripts:#{@process_id}:state", "ABORTED")
+      @redis.set("dFlow:scripts:#{@process_id}:action", "DUPLICATION_ERROR")
+      @redis.set("dFlow:scripts:#{@process_id}:type", "ERROR")
+      @redis.set("dFlow:scripts:#{@process_id}:message", "Följande ID:n finns redan i systemet: #{@duplicates.join(", ")}")
+      return
+    end
+
+    # Read the rows of the spreadsheet
     row_count = sheet.to_a.count
-    
     @redis.set("dFlow:scripts:#{@process_id}:state", "RUNNING")
     @redis.set("dFlow:scripts:#{@process_id}:count", 0)
     sheet.to_a.each.with_index do |row,i| 
@@ -133,6 +151,10 @@ class ImportJobs
       # Ignore empty rows
       next if row.compact.empty?
 
+      # Ignore rows which are explicitly marked to be skipped (ignored)
+      next if @columns.include?('ignore') && row[@columns.index('ignore')].present?
+
+      # Read the row and collect it for later processingDuplicates found
       @jobs << Import::JobEntry.new(treenode_id: treenode_id,
                                 copyright: copyright,
                                 flow_id: flow_id,
@@ -141,7 +163,7 @@ class ImportJobs
                                 row: row,
                                 row_num: i+1,
                                 source: @source)
-      
+
       @redis.set("dFlow:scripts:#{@process_id}:action", "PROCESSING_ROW")
       @redis.set("dFlow:scripts:#{@process_id}:type", "INFO")
       @redis.set("dFlow:scripts:#{@process_id}:message", "Processed #{i+1} of #{row_count}")
@@ -235,7 +257,6 @@ class ImportJobs
   
   def self.status(process_id:)
     redis = ScriptManager.redis
-    
     successful = 0
     error = []
     
