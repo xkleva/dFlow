@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
   apipie
   resources :session
-  get 'setup', to: 'setup#index'
-  post 'setup', to: 'setup#update'
-  get 'config', to: 'setup#configindex'
+  # When the following three lines are commented out no setup (config) GUI is provided
+  # get 'setup', to: 'setup#index'
+  # post 'setup', to: 'setup#update'
+  # get 'config', to: 'setup#configindex'
 
   # Assets routes
   get 'assets/work_order/:asset_id', to: 'assets#work_order'
