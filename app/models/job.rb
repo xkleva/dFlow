@@ -349,6 +349,10 @@ class Job < ActiveRecord::Base
     return sprintf(APP_CONFIG['package_name'], id)
   end
 
+  def package_dir
+    return sprintf(APP_CONFIG['package_dir'], id / APP_CONFIG['dir_size'])
+  end
+
   # Restarts job by setting status and moving files
   def restart(recreate_flow: false)
     Job.transaction do
@@ -574,6 +578,7 @@ class Job < ActiveRecord::Base
       type_of_record: job.metadata_value('type_of_record'),
       page_count: job.page_count || '-1',
       package_name: job.package_name,
+      package_dir: job.package_dir,
       copyright: job.copyright.to_s,
       copyright_protected: job.copyright.to_s,
       chron_1: job.metadata_value('chron_1_value') || 'undefined',

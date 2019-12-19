@@ -55,6 +55,12 @@ redis_db:
 _package_name:
   info: "Ange vilket format som paket ska lagras som, ex: GUB%07d för GUB0000001"
 package_name: GUB%07d
+_package_dir:
+  info: 'Ange vilket format katalogstrukturen ska ha, ex: GUB%04d för GUB0000'
+package_dir: GUB%04d
+_dir_size:
+  info: 'Ange antalet paket som kan lagras under en katalog, ex: 1000'
+dir_size: 1000
 _pdf_settings:
   info: "Konfigurerbara inställningar för ett jobbs arbetsorder"
 pdf_settings:
