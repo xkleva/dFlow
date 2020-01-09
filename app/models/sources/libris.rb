@@ -82,6 +82,31 @@ class Libris < Source
     ['as', 'cs'].include?(type_of_record)
   end
 
+  def self.has_types(sheet)
+    column_names = []
+    sheet.to_a.each.with_index do |row,i|
+
+      # Read the column names in the first rowvalidate_job_fields
+      if i == 0
+        column_names = row
+        next
+      end
+
+      # Ignore the 2nd and 3rd rows (placeholders for info about the spreadsheet)
+      next if i <= 2
+
+      # Ignore any empty rows
+      next if row.compact.empty?
+
+      # Ignore rows which are explicitly marked to be skipped (ignored)
+      next if ignore_row?(row, column_names)
+
+      # Check if the type is not present
+      return false if find_cell(row, 'type', column_names).blank?
+    end
+    return true
+  end
+
   def self.find_duplicates(sheet)
     column_names = []
     duplicates = []
@@ -102,6 +127,9 @@ class Libris < Source
       # Ignore rows which are explicitly marked to be skipped (ignored)
       next if ignore_row?(row, column_names)
 
+      # Ignore rows for certain types
+      next if skip_duplicate_check?(row, column_names)
+
       # Check if the libris catalog id already exists in the system
       catalog_id = find_cell(row, 'catalog_id', column_names).to_s
       if !Job.where(['catalog_id = ? and source = ?', catalog_id, 'libris']).empty?
@@ -121,6 +149,10 @@ private
 
   def self.ignore_row?(row, column_names)
     column_names.include?('ignore') && row[column_names.index('ignore')].present?
+  end
+
+  def self.skip_duplicate_check?(row, column_names)
+    column_names.include?('type') && row[column_names.index('type')].downcase.eql?("s")
   end
 
 end
