@@ -37,9 +37,12 @@ class Api::SourcesController < Api::ApiController
       return
     end
 
+    job = Job.find_by_catalog_id(catalog_id)
+    # If a job whith this catalog id exists in dFlow, check the item type in the metadata field
+    is_monograph = job.present? && JSON.parse(job.metadata)["type_of_record"] && JSON.parse(job.metadata)["type_of_record"][1].eql?("m")
 
-    duplicate = !Job.where(["catalog_id = ? and source = ?", catalog_id, source_name]).empty?
- 
+    duplicate = is_monograph && !Job.where(["catalog_id = ? and source = ?", catalog_id, source_name]).empty?
+
     # Fetch source data
     # Now here we should delegate to the source_object to deal with the params
     # since the params depends on source type.
