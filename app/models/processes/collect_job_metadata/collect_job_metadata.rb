@@ -9,7 +9,7 @@ class CollectJobMetadata
     if file_list.count == 0
       raise StandardError, "No images were found."
     end
-    
+
     images = []
 
     file_list.each do |image|
@@ -22,17 +22,23 @@ class CollectJobMetadata
       images << img_object
     end
 
-    if job.update_attribute('package_metadata', {images: images, image_count: images.size}.to_json)
+    res = get_file_metadata(folder_path: folder_path)
+    if res.compact.blank?
+      raise StandardError, "Unable to get scanner info"
+    end
+
+    if job.update_attributes({package_metadata: {images: images, image_count: images.size}.to_json, scanner_make: res["make"], scanner_model: res["model"], scanner_software: res["software"]})
       return true
     else
       raise StandardError, "Unable to update database."
     end
-
   end
 
   def self.get_files(folder_path:, filetype:)
-
     return DfileApi.list_files(source_dir: folder_path, extension: filetype)
   end
 
+  def self.get_file_metadata(folder_path:)
+    return DfileApi.get_file_metadata_info(source_dir: folder_path)
+  end
 end

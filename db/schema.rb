@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160817080049) do
+ActiveRecord::Schema.define(version: 20200211125347) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,6 +43,9 @@ ActiveRecord::Schema.define(version: 20160817080049) do
     t.string   "condition"
     t.integer  "flow_id"
   end
+
+  add_index "flow_steps", ["job_id"], name: "idx_flow_steps_job_id", using: :btree
+  add_index "flow_steps", ["step"], name: "idx_flow_steps_step", using: :btree
 
   create_table "flows", force: :cascade do |t|
     t.string   "name"
@@ -94,6 +97,9 @@ ActiveRecord::Schema.define(version: 20160817080049) do
     t.string   "package_location"
     t.text     "flow_parameters",   default: ""
     t.integer  "flow_id"
+    t.text     "scanner_make"
+    t.text     "scanner_model"
+    t.text     "scanner_software"
   end
 
   add_index "jobs", ["parent_ids"], name: "index_jobs_on_parent_ids", using: :gin
