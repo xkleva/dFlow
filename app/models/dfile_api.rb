@@ -330,6 +330,18 @@ class DfileApi
     return process_result
   end
 
+  def self.get_file_metadata_info(source_dir:)
+    response = HTTParty.get("#{host}/get_file_metadata_info", query: {
+      source_dir: source_dir,
+      api_key: api_key
+    })
+
+    if response.success?
+      return JSON.parse(response.body)
+    else
+      raise StandardError, "Couldn't get file in #{source_dir}, with message #{response['msg']}"
+    end
+  end
 
   private
   # Returns result from redis db
