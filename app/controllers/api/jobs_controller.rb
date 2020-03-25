@@ -117,7 +117,7 @@ class Api::JobsController < Api::ApiController
     end
     job_params[:created_by] = @current_user.username
     parameters = ActionController::Parameters.new(job_params)
-    job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :current_flow_step, :package_location, :flow_parameters))
+    job = Job.new(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :priority, :package_metadata, :current_flow_step, :package_location, :flow_parameters))
 
     # If ID is given, use it for creation
     if params[:force_id]
@@ -165,7 +165,7 @@ class Api::JobsController < Api::ApiController
       flow_is_changed = true
     end
 
-    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :package_metadata, :current_flow_step, :flow_parameters))
+    if job.update_attributes(parameters.permit(:name, :title, :author, :metadata, :xml, :source, :catalog_id, :comment, :object_info, :flow_id, :flow_params, :treenode_id, :copyright, :created_by, :status, :quarantined, :message, :priority, :package_metadata, :current_flow_step, :flow_parameters))
       if flow_is_changed
         job.change_flow(flow_id: params[:flow_id])
       end

@@ -63,10 +63,10 @@ class QueueManager
   # Returns a single job with a configured automatic process waiting
   def self.get_job_waiting_for_automatic_process
     waitfor_processes = SYSTEM_DATA["processes"].select { |x| x["state"] == "WAITFOR"}.map {|x| x["code"]}
-    job_ids = Job.where(quarantined: false, deleted_at: nil).where.not(state: "FINISH").select(:id)
-    steps = FlowStep.where.not(entered_at: nil).where(finished_at: nil, aborted_at: nil).where(job_id: job_ids)
+    steps = FlowStep.joins(:job).where.not(entered_at: nil).where(finished_at: nil, aborted_at: nil)
+    steps = steps.where('jobs.quarantined = ? and jobs.deleted_at is ? and jobs.state != ?', false, nil, "FINISH")
     steps = steps.where('started_at IS NULL OR process IN (?)', waitfor_processes)
-    steps = steps.order(updated_at: :asc)
+    steps = steps.order('jobs.priority asc, flow_steps.updated_at asc')
 
     waitfor_limit = APP_CONFIG['queue_manager']['processes']['queue_manager_waitfor_limit'].to_i
     logger.info "WAITFOR: Limit: #{waitfor_limit}"

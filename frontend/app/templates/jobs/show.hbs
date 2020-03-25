@@ -165,6 +165,28 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-xs-3">
+        <strong>{{t 'jobs.priority'}}</strong>
+      </div>
+      <div class="col-xs-9">
+        {{prioritySelection.label}}
+        {{#if isPriorityNormal}}
+        <div class="label label-default active btn-xs">{{t 'jobs.priority_values.normal'}}</div>
+        {{else}}
+          {{#if isPriorityHigh}}
+          <div class="label label-danger active btn-xs">{{t 'jobs.priority_values.high'}}</div>
+          {{else}}
+            {{#if isPriorityLow}}
+            <div class="label label-success active btn-xs">{{t 'jobs.priority_values.low'}}</div>
+            {{else}}
+            <div class="label label-default active btn-xs">{{t 'jobs.priority_values.none'}}</div>
+            {{/if}}
+          {{/if}}
+        {{/if}}
+       </div>
+    </div>
+
     {{#unless setFlowParams}}
       <div class="row">
         <div class="col-xs-12">

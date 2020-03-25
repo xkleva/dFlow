@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200316102727) do
+ActiveRecord::Schema.define(version: 20200316130308) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,6 +101,7 @@ ActiveRecord::Schema.define(version: 20200316102727) do
     t.text     "scanner_make"
     t.text     "scanner_model"
     t.text     "scanner_software"
+    t.integer  "priority",          default: 2,     null: false
   end
 
   add_index "jobs", ["parent_ids"], name: "index_jobs_on_parent_ids", using: :gin
