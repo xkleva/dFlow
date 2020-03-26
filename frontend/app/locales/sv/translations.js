@@ -100,6 +100,7 @@ export default {
     title: "Titel",
     author: "Författare",
     copyright: "Copyright",
+    priority: "Prioritet",
     comment: "Kommentarer",
     object_info: "Objektinformation",
     id: "ID",
@@ -111,6 +112,12 @@ export default {
       'unselected': "Välj",
       'true': "Får EJ publiceras",
       'false': "Får publiceras"
+    },
+    priority_values: {
+      "normal": "Normal",
+      "high": "Hög",
+      "low": "Låg",
+      "none": "Ingen"
     },
     search: "Sök",
     searchById: "Sök på jobb-ID",

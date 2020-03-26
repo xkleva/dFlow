@@ -24,6 +24,15 @@ export default Ember.Controller.extend({
     return this.get('flows').findBy('id', this.get('model.flow_id'));
   }),
 
+  isPriorityNormal: Ember.computed('model.priority', function(){
+    return (this.get('model.priority') == 2);
+  }),
+  isPriorityHigh: Ember.computed('model.priority', function(){
+    return (this.get('model.priority') == 1);
+  }),
+  isPriorityLow: Ember.computed('model.priority', function(){
+    return (this.get('model.priority') == 3);
+  }),
 
   flowStepItems: Ember.computed('model.flow', 'model.flow_steps', 'model.current_flow_step', function(){
     var flowStepItems = [];

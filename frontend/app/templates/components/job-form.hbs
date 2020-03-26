@@ -50,6 +50,17 @@
           </div>
         </div>
 
+        <div class="form-group {{if error.errors.priority 'has-error'}}">
+          <label class="col-xs-2 control-label">{{t 'jobs.priority'}}</label>
+          <div class="col-xs-4">
+            {{#x-select value=model.priority class="form-control"}}
+              {{#x-option value=2}}{{t 'jobs.priority_values.normal'}}{{/x-option}}
+              {{#x-option value=1}}{{t 'jobs.priority_values.high'}}{{/x-option}}
+              {{#x-option value=3}}{{t 'jobs.priority_values.low'}}{{/x-option}}
+            {{/x-select}}
+          </div>
+        </div>
+
         {{#if model.id}}
         <div class="form-group {{if error.errors.treenode_id 'has-error'}}">
           <label class="col-xs-2 control-label">Katalog-id</label>
