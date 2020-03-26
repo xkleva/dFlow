@@ -77,7 +77,9 @@ export default Ember.Route.extend(ApplicationRouteMixin, {
 
     var flowSelectionArray = Ember.A([]);
     model.flows.forEach(function(flow){
-     flowSelectionArray.push({label: flow.name, value: flow.id});
+      if (flow.selectable) {
+        flowSelectionArray.push({label: flow.name, value: flow.id});
+      }
     });
     controller.set('flowSelection', flowSelectionArray);
     controller.set('flows', model.flows);

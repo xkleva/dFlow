@@ -14,6 +14,16 @@
     </div>
   </div>
   <div class="form-group">
+    <label class="control-label col-sm-2">Synlighet</label>
+    <div class="col-sm-10">
+      {{#x-select value=model.selectable class="form-control"}}
+        {{#x-option value=true}}Detta flöde ska vara valbart i listor{{/x-option}}
+        {{#x-option value=false}}Detta flöde ska inte vara valbart i listor{{/x-option}}
+      {{/x-select}}
+    </div>
+  </div>
+
+  <div class="form-group">
     <label class="control-label col-sm-2">Parameterar</label>
     <div class="col-sm-10">
       {{json-editor json=model.parameters modes=modes mode=parameters_mode name='parameters' id='jsoneditor3'}}

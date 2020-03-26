@@ -89,10 +89,10 @@
           <label class="col-xs-2 control-label">{{t 'jobs.flow'}}</label>
           <div class="col-xs-4">
             {{#x-select value=model.flow_id class="form-control"}}
-            {{#x-option}}-- Välj --{{/x-option}}
-            {{#each flowSelection as |option|}}
-            {{#x-option value=option.value}}{{option.label}}{{/x-option}}
-            {{/each}}
+              {{#x-option}}-- Välj --{{/x-option}}
+              {{#each flowSelection as |option|}}
+                {{#x-option value=option.value}}{{option.label}}{{/x-option}}
+              {{/each}}
             {{/x-select}}
           </div> 
         </div>

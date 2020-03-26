@@ -5,7 +5,11 @@
 {{#link-to 'flows.show.edit'}}Redigera{{/link-to}}
 
   <p>{{model.description}}</p>
-
+  {{#if model.selectable}}
+  <p>Detta flöde är valbart i listor</p>
+  {{else}}
+  <p>Detta flöde är inte valbart i listor</p>
+  {{/if}}
   <h3>Parameterar</h3>
   <pre>
   {{parameters_json}}

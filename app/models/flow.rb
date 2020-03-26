@@ -12,6 +12,7 @@ class Flow < ActiveRecord::Base
      id: id,
      name: name,
      description: description,
+     selectable: selectable,
      flow_steps: {flow_steps: steps_array},
      parameters: {parameters: parameters_array},
      folder_paths: {folder_paths: folder_paths_array}

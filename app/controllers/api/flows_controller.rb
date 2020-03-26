@@ -4,7 +4,7 @@ class Api::FlowsController < Api::ApiController
 
   api!
   def index
-    @response[:flows] = Flow.order(:name).all.as_json({full: true})
+    @response[:flows] = Flow.order('selectable desc, name asc').all.as_json({full: true})
 
     render_json
   end
@@ -70,7 +70,7 @@ class Api::FlowsController < Api::ApiController
 
   private 
   def permitted_params
-    params.require(:flow).permit(:name, :steps, :description, :folder_paths, :parameters)
+    params.require(:flow).permit(:name, :steps, :description, :folder_paths, :parameters, :selectable)
   end
 
   def permitted_create_params
