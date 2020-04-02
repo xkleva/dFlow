@@ -63,6 +63,11 @@
     padding-bottom: 15px;
 }
 
+.flow-hidden {
+  font-style: italic;
+  color: #f00;
+}
+
 .job-refresh {
     float: right;
     margin-top: 10px;
