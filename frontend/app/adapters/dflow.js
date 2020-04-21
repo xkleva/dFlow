@@ -13,6 +13,7 @@ export default Ember.Object.extend({
     thumbnail: {path: 'assets/thumbnail'},
     queue: {path: 'api/queued_jobs', singular: 'flow_step', plural: 'flow_steps'},
     script: {path: 'api/script', singular: 'script', plural: 'scripts'},
+    statistics: {path: 'api/statistics'},
     queue_manager: {path: 'api/queue_manager', singular: 'queue_manager', plural: 'queue_managers'}
   },
   sessionHeaders: function() {

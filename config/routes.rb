@@ -58,6 +58,12 @@ Rails.application.routes.draw do
 
     post 'script', to: 'script#create'
     get 'script/:id', to: 'script#show'
+
+    # API for downloading a job data for statistics Excel file
+    post 'statistics', to: 'statistics#create'
+    get 'statistics/:id', to: 'statistics#get_build_status'
+    get 'statistics/download/:id', to: 'statistics#download'
+
   end
   mount_ember_app :frontend, to: "/"
 end

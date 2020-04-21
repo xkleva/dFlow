@@ -21,6 +21,9 @@
       {{#if session.data.authenticated.can_view_users}}
       <ul class="nav navbar-nav">
         <li>{{#link-to 'flows.index'}}Flöden{{/link-to}}</li>
+        {{#if session.data.authenticated.can_manage_statistics}}
+        <li>{{#link-to 'statistics'}}{{t 'menu.statistics'}}{{/link-to}}</li>
+        {{/if}}
         <li>{{#link-to 'users.index'}}{{t 'menu.users'}}{{/link-to}}</li>
       </ul>
       {{/if}}

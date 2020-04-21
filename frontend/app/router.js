@@ -7,6 +7,7 @@ const Router = Ember.Router.extend({
 });
 
 Router.map(function() {
+  this.route('statistics');
   this.route('queuemanager');
   this.route('node', function() {
     this.route('show', {path: '/:node_id' }, function(){

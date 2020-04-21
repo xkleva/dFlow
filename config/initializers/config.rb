@@ -8,7 +8,7 @@ Rails.application.config.api_key = "api12345"
 Rails.application.config.user_roles = [
 	{
 		name: "ADMIN",
-    rights: ['view_users', 'manage_users', 'view_tree', 'manage_tree', 'manage_tree_root']
+    rights: ['view_users', 'manage_users', 'view_tree', 'manage_tree', 'manage_tree_root', 'manage_statistics']
 	},
 	{
 		name: "GUEST",

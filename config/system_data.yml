@@ -10,6 +10,7 @@ user_roles:
   - manage_tree
   - manage_tree_root
   - manage_jobs
+  - manage_statistics
 - name: GUEST
   rights:
   - view_tree
@@ -22,6 +23,7 @@ user_roles:
   - manage_jobs
   - manage_users
   - view_users
+  - manage_statistics
   unassignable: true
 publication_types:
 - MANUSCRIPT

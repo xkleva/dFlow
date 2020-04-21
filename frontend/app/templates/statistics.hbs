@@ -1,0 +1,49 @@
+<div class="panel panel-default">
+  <div class="panel-heading" style="padding-top:8px;">
+    <span class="panel-title">{{t 'statistics.create_file'}}</span>
+  </div>
+  <div class="panel-body">
+    <div class="form-group">
+
+      {{#if error}}
+        <div class="alert alert-danger col-xs-12">
+          {{error.msg}}
+        </div>
+      {{/if}}
+
+      <div class="form-group {{if validationErrorStartDate 'has-error'}}">
+        <label class="col-xs-12 control-label">{{t 'statistics.start_date'}}
+          {{input type         = "text" 
+                  classBinding = ":form-control :col-xs-6" 
+                  value        = startDate 
+                  placeholder  = (t 'statistics.start_date_placeholder')}}
+        </label>
+      </div>
+
+      <div class="form-group {{if validationErrorEndDate 'has-error'}}">
+        <label class="col-xs-12 control-label">{{t 'statistics.end_date'}}
+          {{input type         = "text" 
+                  classBinding = ":form-control :col-xs-6" 
+                  value        = endDate 
+                  placeholder  = (t 'statistics.end_date_placeholder')}}
+        </label>
+      </div>
+
+      <div class="col-xs-12">
+        <button class="btn btn-primary" 
+          {{action 'createJobDataForStatisticsFile' startDate endDate}} 
+          disabled={{fileCreationButtonDisabled}}>{{t 'statistics.start_creation'}}
+        </button>
+        {{if isPollingStarted (concat '[ ' pollCounter ' ]')}} {{statusMessage}}
+        {{#if fileReadyForDownload}}
+          <div class="btn-toolbar pull-right">
+            <a href="{{fileUrl}}" class="btn btn-success">
+               <i class="fa fa-table" aria-hidden='true'></i> 
+               {{t 'statistics.download_file'}}</a>
+          </div>
+        {{/if}}
+      </div>
+
+    </div>
+  </div>
+</div>

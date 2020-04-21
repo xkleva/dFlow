@@ -55,6 +55,10 @@ class ScriptManager
       redis.set("dFlow:scripts:#{process_id}:class", "ImportJobs")
       redis.set("dFlow:scripts:#{process_id}:params", params)
       process_runner(process_object: ImportJobs, process_id: process_id, params: params)
+    when "EXPORT_JOB_DATA_FOR_STATISTICS"
+      redis.set("dFlow:scripts:#{process_id}:class", "ExportJobDataForStatistics")
+      redis.set("dFlow:scripts:#{process_id}:params", params)
+      process_runner(process_object: ExportJobDataForStatistics, process_id: process_id, params: params)
     else
       redis.set("dFlow:scripts:#{process_id}:state", "ABORTED")
       redis.set("dFlow:scripts:#{process_id}:action", "execute_process")

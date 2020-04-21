@@ -9,9 +9,37 @@ export default {
     logout: "Logga ut",
     nodes: "Bläddra",
     logged_in_as: "Inloggad som:",
+    statistics: "Statistik",
     users: "Användare",
     jobs: "Jobblista",
     quarantine: "Karantän"
+  },
+  statistics: {
+    create_file: "Skapa statistikunderlag",
+    start_date: "Startdatum",
+    start_date_placeholder: "åååå-mm-dd",
+    start_date_alert: "Startdatumet måste vara ett giltigt datum på formen 'ÅÅÅÅ-MM-DD'",
+    end_date: "Slutdatum",
+    end_date_placeholder: "åååå-mm-dd",
+    end_date_alert: "Slutdatumet måste vara ett giltigt datum på formen 'ÅÅÅÅ-MM-DD'",
+    start_creation: "Skapa fil",
+    download_file: "Ladda ned fil",
+    confirm_create_file: "Välj OK om du vill skapa följande fil:",
+    file_name: {
+      header: "dFlow-statistikdata",
+      until: "till",
+      extracted: "uttaget",
+      now_format: "YYYY-MM-DD_HH.mm.ss"
+    },
+    build_status: {
+      initializing: "Förbereder",
+      querying_database: "Kör databasfråga",
+      database_queried: "Resultat erhållet från databasen. Skapar arbetsbok",
+      workbook_built: "Arbetsbok skapad",
+      xls_data_output: "Xls-data utskrivet till IO",
+      ready_for_download: "Klart för nedladdning"
+    },
+    file_creation_error: "Kunde inte skapa filen."
   },
   login: {
     password: "Lösenord",

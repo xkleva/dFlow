@@ -31,7 +31,8 @@ class ApplicationController < ActionController::Base
   def validate_rights(right_value)
     validate_access if !@current_user
     if !@current_user.has_right?(right_value)
-      error_msg(ErrorCodes::PERMISSION_ERROR, "You don't have the necessary rights (#{right_value}) to perform this action")
+      error_msg(ErrorCodes::PERMISSION_ERROR, 
+                "You (#{@current_user.username}) are #{@current_user.role} and don't have the necessary rights (#{right_value}) to perform this action")
       render_json
     end
   end
