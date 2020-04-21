@@ -124,7 +124,7 @@ class CreateGupeaPackage
 
   # Sends signal to GUPEA server to import package
   def self.import_package(job:)
-    response = HTTParty.get("http://gupea.ub.gu.se:81/dflow_import/#{job.id}")
+    response = HTTParty.get("http://gupea-server.ub.gu.se:81/dflow_import/#{job.id}")
 
     if !response || response["error"] || !response["url"]
       raise StandardError, "Error from service: #{response['error']} #{response['extra_info']}"
