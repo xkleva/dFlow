@@ -37,16 +37,20 @@ export default Ember.Route.extend({
   },
   actions: {
     startQueueManager: function() {
-      var that = this;
-      this.store.save('queue_manager', {}).then(function() {
-        that.controller.set('disable', 3);
-      });
+      if (confirm('Är du säker på att du vill starta köhanteraren?')) {
+        var that = this;
+        this.store.save('queue_manager', {}).then(function() {
+          that.controller.set('disable', 3);
+        });
+      }
     },
     stopQueueManager: function(pid) {
-      var that = this;
-      this.store.destroy('queue_manager', pid).then(function() {
-        that.controller.set('disable', 3);
-      });
+      if (confirm('Är du säker på att du vill stoppa köhanteraren?')) {
+        var that = this;
+        this.store.destroy('queue_manager', pid).then(function() {
+          that.controller.set('disable', 3);
+        });
+      }
     }
   }
 });
